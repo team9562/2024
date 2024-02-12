@@ -56,8 +56,8 @@ public class RobotContainer {
         () -> MathUtil.applyDeadband(driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND));
 
     Command yokeTeleop = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND));
 
     m_chooser.addOption("Controller TeleOp", controllerTeleop);
