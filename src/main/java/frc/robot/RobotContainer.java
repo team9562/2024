@@ -36,7 +36,7 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-      "swerve/neo"));
+      "swerve"));
 
   XboxController driverXbox = new XboxController(0);
   CommandJoystick driverYoke = new CommandJoystick(1);
