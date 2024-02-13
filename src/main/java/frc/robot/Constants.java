@@ -32,11 +32,26 @@ public final class Constants
     public static final PIDConstants ANGLE_PID   = new PIDConstants(0.4, 0, 0.01);
   }
 
-  public static final class DrivebaseConstants
-  {
-
+  public static final class DrivebaseConstants {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+  }
+
+  public static final class ElevatorConstants {
+    public static double kSprocketRadius = 4.5;
+    public static double kElevatorGearRatio = 16;
+
+    public static final int LEFT_CAN = 13;
+    public static final int RIGHT_CAN = 14;
+
+    // TODO: Find values
+    public static final double kP = 0.004;
+    public static final double kI = 0;
+    public static final double kD = 1.5;
+    
+    public static final double kS = 0;
+    public static final double kG = 0;
+    public static final double kV = 0;
   }
 
   public static class OperatorConstants
