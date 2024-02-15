@@ -9,13 +9,9 @@
     "id": 7,
     "canbus": null
   },
-  "conversionFactor": {
-    "angle": 360,
-    "drive": 0
-  },
   "encoder": {
     "type": "cancoder",
-    "id": 12,
+    "id": 11,
     "canbus": null
   },
   "inverted": {

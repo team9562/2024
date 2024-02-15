@@ -39,7 +39,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve"));
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  // private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final PowerDistribution pdh = new PowerDistribution();
 
   XboxController driverXbox = new XboxController(0);
@@ -74,7 +74,7 @@ public class RobotContainer {
 
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
-    elevator.clearStickyFaults();
+    // elevator.clearStickyFaults();
   }
 
   /**
@@ -91,16 +91,14 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
+    // new JoystickButton(driverXbox, 1).onTrue((new InstantCommand(drivebase::zeroGyro)));
+    // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
 
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-
-    new JoystickButton(driverXbox,
-        2).whileTrue(
-            Commands.deferredProxy(() -> drivebase.driveToPose(
-                new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
-
-    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    // new JoystickButton(driverXbox,
+        // 2).whileTrue(
+            // Commands.deferredProxy(() -> drivebase.driveToPose(
+                // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
+    // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 
   /**

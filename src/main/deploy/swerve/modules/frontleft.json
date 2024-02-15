@@ -9,10 +9,6 @@
     "id": 3,
     "canbus": null
   },
-  "conversionFactor": {
-    "angle": 360,
-    "drive": 0
-  },
   "encoder": {
     "type": "cancoder",
     "id": 9,
