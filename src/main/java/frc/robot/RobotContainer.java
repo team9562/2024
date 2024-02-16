@@ -5,24 +5,22 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Rotation2d;
+// import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
+// import edu.wpi.first.wpilibj2.command.Commands;
+// import edu.wpi.first.wpilibj2.command.InstantCommand;
+// import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.swervedrive.ElevatorSubsystem;
+// import frc.robot.subsystems.swervedrive.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
@@ -42,7 +40,6 @@ public class RobotContainer {
   // private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final PowerDistribution pdh = new PowerDistribution();
 
-  XboxController driverXbox = new XboxController(0);
   CommandJoystick driverYoke = new CommandJoystick(1);
 
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -53,19 +50,18 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
-    Command controllerTeleop = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverXbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND));
-
-    Command yokeTeleop = drivebase.driveCommand(
+    Command yokeTeleopFieldRelative = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND));
+        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), true);
 
-    m_chooser.addOption("Controller TeleOp", controllerTeleop);
-    m_chooser.setDefaultOption("Yoke TeleOp", yokeTeleop);
+    Command yokeTeleopRobotRelative = drivebase.driveCommand(
+        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), false);
+
+    m_chooser.addOption("Yoke TeleOp [Robot]", yokeTeleopRobotRelative);
+    m_chooser.setDefaultOption("Yoke TeleOp [Field]", yokeTeleopFieldRelative);
 
     SmartDashboard.putData(m_chooser);
 

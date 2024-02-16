@@ -47,7 +47,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
-  public        double      maximumSpeed = Units.feetToMeters(14.5);
+  public double maximumSpeed = Units.feetToMeters(14.5);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -266,14 +266,14 @@ public class SwerveSubsystem extends SubsystemBase
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
    * @return Drive command.
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX, boolean fieldRelative)
   {
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
                                           Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
                         Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
-                        true,
+                        fieldRelative,
                         false);
     });
   }
