@@ -27,6 +27,19 @@ public final class Constants {
   public static final Matter CHASSIS = new Matter(
       new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
+  
+  public static final class MotorConstants { 
+    public static final int NEO_550_NOMINAL_VOLTAGE = 12;
+    
+    public static final int NEO_550_STALL_LIMIT = 60;
+    public static final int NEO_550_FREE_LIMIT = 1;
+
+    public static final int NEO_V1_NOMINAL_VOLTAGE = 12;
+    
+    public static final int NEO_V1_STALL_LIMIT_LOW = 30;
+    public static final int NEO_V1_STALL_LIMIT_HIGH = 60;
+    public static final int NEO_V1_FREE_LIMIT = 1;
+  }
 
   public static final class AutonConstants {
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
@@ -34,7 +47,6 @@ public final class Constants {
   }
 
   public static final class DrivebaseConstants {
-    // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
@@ -53,6 +65,39 @@ public final class Constants {
     public static final double kS = 0;
     public static final double kG = 0;
     public static final double kV = 0;
+  }
+
+  public static final class ShooterConstants {
+    public static final int TOP_CAN = 15;
+    public static final int BOTTOM_CAN = 16;
+    public static final int FEEDER_CAN = 17;
+
+    // TODO: Find values
+    public static final double kP = 0.004;
+    public static final double kI = 0;
+    public static final double kD = 1.5;
+    public static final double kFF = 0.0001;
+
+    public static final double SENSOR_THRESHOLD_INCHES = 0.5;
+  }
+  
+  public static final class IntakeConstants {
+    public static final int INTAKE_CAN = 18;
+  }
+  
+  public static final class AngleConstants {
+    public static final int ANGLE_CAN = 19;
+
+    public static final double ANGLE_MAX = 50;
+    public static final double ANGLE_MIN = -40;
+    
+    // TODO: Find values
+    public static final double kP = 0.004;
+    public static final double kI = 0;
+    public static final double kD = 1.5;
+    public static final double kFF = 0.0001;
+
+    public static final double ANGLE_THRESHOLD_DEGREES = 5;
   }
 
   public static class OperatorConstants {

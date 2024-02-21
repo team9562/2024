@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.MotorConstants;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +30,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorRight.follow(elevatorLeft);
 
-        elevatorLeft.enableVoltageCompensation(8);
-        elevatorRight.enableVoltageCompensation(8);
+        elevatorLeft.setIdleMode(IdleMode.kBrake);
+        elevatorRight.setIdleMode(IdleMode.kBrake);
+
+        elevatorLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+        elevatorRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+
+        elevatorLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
+        elevatorRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
     }
 
     public void clearStickyFaults() {
