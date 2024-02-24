@@ -15,11 +15,11 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         intake.restoreFactoryDefaults();
 
-        intake.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+        intake.enableVoltageCompensation(MotorConstants.NEO_550_NOMINAL_VOLTAGE);
 
         intake.setIdleMode(IdleMode.kBrake);
 
-        intake.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+        intake.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
     }
 
     public void clearStickyFaults() {
@@ -30,16 +30,16 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.set(speed);
     }
 
-    public void suck() {
+    public void intake() {
         set(1);
 
-        SmartDashboard.putString("Intake", "suck");
+        SmartDashboard.putString("Intake", "intake");
     }
 
-    public void spit() {
+    public void exhaust() {
         set(-1);
 
-        SmartDashboard.putString("Intake", "spit");
+        SmartDashboard.putString("Intake", "exhaust");
     }
 
     public void stop() {
