@@ -24,6 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.util.Utility;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.path.PathPlannerPath;
 
 import java.io.File;
 
@@ -36,8 +39,6 @@ import java.io.File;
  * trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
-  // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve"));
   // private final ElevatorSubsystem elevator = new ElevatorSubsystem();
@@ -49,7 +50,8 @@ public class RobotContainer {
 
   Joystick driverYoke = new Joystick(1);
 
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_commandChooser = new SendableChooser<>();
+  private final SendableChooser<String> m_pathChooser = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -67,16 +69,38 @@ public class RobotContainer {
         () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), false);
 
-    m_chooser.addOption("Yoke TeleOp [Robot]", yokeTeleopRobotRelative);
-    m_chooser.setDefaultOption("Yoke TeleOp [Field]", yokeTeleopFieldRelative);
+    m_commandChooser.addOption("Yoke TeleOp [Robot]", yokeTeleopRobotRelative);
+    m_commandChooser.setDefaultOption("Yoke TeleOp [Field]", yokeTeleopFieldRelative);
 
-    SmartDashboard.putData(m_chooser);
+    getPaths();
 
-    drivebase.setDefaultCommand(m_chooser.getSelected());
+    SmartDashboard.putData(m_commandChooser);
+    SmartDashboard.putData(m_pathChooser);
+
+    drivebase.setDefaultCommand(m_commandChooser.getSelected());
+  }
+
+  private void getPaths() {
+    File[] pathFiles = new File(Filesystem.getDeployDirectory(), "pathplanner/paths").listFiles();
+
+    boolean firstIteration = true;
+
+    for (File pathFile : pathFiles) {
+      if (firstIteration) {
+        firstIteration = false;
+        continue;
+      }
+
+      m_pathChooser.addOption(Utility.stripFileExtension(pathFile.getName()),
+          Utility.stripFileExtension(pathFile.getName()));
+    }
+
+    m_pathChooser.setDefaultOption(Utility.stripFileExtension(pathFiles[0].getName()), Utility.stripFileExtension(pathFiles[0].getName()));
   }
 
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
+    intake.clearStickyFaults();
     // elevator.clearStickyFaults();
   }
 
@@ -95,15 +119,19 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverYoke, 12).onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverYoke, 3).onTrue((new InstantCommand(intake::intake))).onFalse((new InstantCommand(intake::stop)));
-    new JoystickButton(driverYoke, 4).onTrue((new InstantCommand(intake::exhaust))).onFalse((new InstantCommand(intake::stop)));
-    // new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
+    new JoystickButton(driverYoke, 3).onTrue((new InstantCommand(intake::intake)))
+        .onFalse((new InstantCommand(intake::stop)));
+    new JoystickButton(driverYoke, 4).onTrue((new InstantCommand(intake::exhaust)))
+        .onFalse((new InstantCommand(intake::stop)));
+    // new JoystickButton(driverXbox, 3).onTrue(new
+    // InstantCommand(drivebase::addFakeVisionReading));
 
     // new JoystickButton(driverXbox,
-        // 2).whileTrue(
-            // Commands.deferredProxy(() -> drivebase.driveToPose(
-                // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
-    // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    // 2).whileTrue(
+    // Commands.deferredProxy(() -> drivebase.driveToPose(
+    // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
+    // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new
+    // InstantCommand(drivebase::lock, drivebase)));
   }
 
   /**
@@ -112,7 +140,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    // PathPlannerPath testPath = PathPlannerPath.fromPathFile("path name");
+    // return AutoBuilder.followPath(testPath);
+    return m_commandChooser.getSelected();
   }
 
   public void setDriveMode() {
