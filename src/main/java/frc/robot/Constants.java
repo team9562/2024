@@ -51,11 +51,16 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
-    public static double kSprocketRadius = 4.5;
-    public static double kElevatorGearRatio = 16;
+    public static final double SPROCKET_RADIUS = 4.5;
+    public static final double GEAR_RATIO = 16;
 
     public static final int LEFT_CAN = 13;
     public static final int RIGHT_CAN = 14;
+
+    public static final int LIMIT_SWITCH_PORT = 9;
+
+    public static final double MAX_HEIGHT = (60.643845 / GEAR_RATIO) * (2 * Math.PI * SPROCKET_RADIUS);
+    public static final double MIN_HEIGHT = (0.9 / GEAR_RATIO) * (2 * Math.PI * SPROCKET_RADIUS);
 
     // TODO: Find values
     public static final double kP = 0.004;

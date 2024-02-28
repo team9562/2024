@@ -9,6 +9,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MotorConstants;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,16 +23,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     private RelativeEncoder elevatorLeftEncoder = elevatorLeft.getEncoder();
     private RelativeEncoder elevatorRightEncoder = elevatorRight.getEncoder();
 
+    private DigitalInput limitSwitch = new DigitalInput(ElevatorConstants.LIMIT_SWITCH_PORT);
+
     public ElevatorSubsystem() {
         elevatorLeft.restoreFactoryDefaults();
         elevatorRight.restoreFactoryDefaults();
 
         elevatorLeft.setInverted(true);
 
-        elevatorRight.follow(elevatorLeft);
+        elevatorRight.follow(elevatorLeft, true);
 
         elevatorLeft.setIdleMode(IdleMode.kBrake);
         elevatorRight.setIdleMode(IdleMode.kBrake);
+        // elevatorLeft.setIdleMode(IdleMode.kCoast);
+        // elevatorRight.setIdleMode(IdleMode.kCoast);
 
         elevatorLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
         elevatorRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
@@ -45,9 +50,32 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorRight.clearFaults();
     }
 
+    public boolean isBottomedOut() {
+        return limitSwitch.get();
+    }
+
+    public void TESTUP() {
+        moveElevator(0.1);
+    }
+
+    public void TESTDOWN() {
+        moveElevator(-0.1);
+    }
+
+    public void home() {
+        moveElevator(-0.1);
+
+        while (!isBottomedOut()) {
+            System.out.println("Homing elevator");
+        }
+
+        stop();
+        resetElevatorEncoder();
+    }
+
     public double getElevatorHeight() {
-        double sprocketPos = elevatorLeftEncoder.getPosition() / ElevatorConstants.kElevatorGearRatio;
-        double circum = 2 * Math.PI * ElevatorConstants.kSprocketRadius;
+        double sprocketPos = elevatorLeftEncoder.getPosition() / ElevatorConstants.GEAR_RATIO;
+        double circum = 2 * Math.PI * ElevatorConstants.SPROCKET_RADIUS;
 
         return sprocketPos * circum;
     }
@@ -94,5 +122,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         SmartDashboard.putNumber("Elevator Output Left", elevatorLeft.getAppliedOutput());
         SmartDashboard.putNumber("Elevator Output Right", elevatorRight.getAppliedOutput());
+
+        SmartDashboard.putNumber("Elevator Height", getElevatorHeight());
+        SmartDashboard.putNumber("Elevator Max Height", ElevatorConstants.MAX_HEIGHT);
+        SmartDashboard.putNumber("Elevator Min Height", ElevatorConstants.MIN_HEIGHT);
+
+        SmartDashboard.putBoolean("Bottomed Out", isBottomedOut());
     }
 }

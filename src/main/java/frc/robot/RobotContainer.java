@@ -22,7 +22,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.AngleSubystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.Utility;
 // import com.pathplanner.lib.auto.AutoBuilder;
@@ -41,10 +44,10 @@ import java.io.File;
 public class RobotContainer {
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve"));
-  // private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
-  // private final ShooterSubsystem shooter = new ShooterSubsystem();
-  // private final AngleSubystem angle = new AngleSubystem();
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final AngleSubystem angle = new AngleSubystem();
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -101,7 +104,9 @@ public class RobotContainer {
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
     intake.clearStickyFaults();
-    // elevator.clearStickyFaults();
+    elevator.clearStickyFaults();
+    angle.clearStickyFaults();
+    shooter.clearStickyFaults();
   }
 
   /**
@@ -119,10 +124,14 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(driverYoke, 12).onTrue((new InstantCommand(drivebase::zeroGyro)));
+
     new JoystickButton(driverYoke, 3).onTrue((new InstantCommand(intake::intake)))
         .onFalse((new InstantCommand(intake::stop)));
     new JoystickButton(driverYoke, 4).onTrue((new InstantCommand(intake::exhaust)))
         .onFalse((new InstantCommand(intake::stop)));
+
+        new JoystickButton(driverYoke, 5).onTrue(new InstantCommand(elevator::TESTUP)).onFalse(new InstantCommand(elevator::stop));
+        new JoystickButton(driverYoke, 6).onTrue(new InstantCommand(elevator::TESTDOWN)).onFalse(new InstantCommand(elevator::stop));
     // new JoystickButton(driverXbox, 3).onTrue(new
     // InstantCommand(drivebase::addFakeVisionReading));
 
