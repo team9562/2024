@@ -19,94 +19,94 @@ public class ShooterSubsystem extends SubsystemBase {
         private Rev2mDistanceSensor distance = new Rev2mDistanceSensor(Port.kOnboard);
 
         private CANSparkMax shooterFeeder = new CANSparkMax(ShooterConstants.FEEDER_CAN, MotorType.kBrushless);
-        private CANSparkMax shooterTop = new CANSparkMax(ShooterConstants.TOP_CAN, MotorType.kBrushless);
-        private CANSparkMax shooterBottom = new CANSparkMax(ShooterConstants.BOTTOM_CAN, MotorType.kBrushless);
+        private CANSparkMax shooterLeft = new CANSparkMax(ShooterConstants.LEFT_CAN, MotorType.kBrushless);
+        private CANSparkMax shooterRight = new CANSparkMax(ShooterConstants.RIGHT_CAN, MotorType.kBrushless);
         
         private SparkPIDController feederPidController = shooterFeeder.getPIDController();
-        private SparkPIDController topPidController = shooterTop.getPIDController();
-        private SparkPIDController bottomPidController = shooterBottom.getPIDController();
+        private SparkPIDController leftPidController = shooterLeft.getPIDController();
+        private SparkPIDController rightPidController = shooterRight.getPIDController();
         
-        private double targetTop;
-        private double targetBottom;
+        private double targetLeft;
+        private double targetRight;
         
         public ShooterSubsystem() {
             distance.setDistanceUnits(Unit.kInches);
 
             shooterFeeder.restoreFactoryDefaults();
-            shooterTop.restoreFactoryDefaults();
-            shooterBottom.restoreFactoryDefaults();
+            shooterLeft.restoreFactoryDefaults();
+            shooterRight.restoreFactoryDefaults();
 
-            shooterTop.setInverted(true);
+            shooterLeft.setInverted(true);
 
-            shooterBottom.follow(shooterTop);
+            shooterRight.follow(shooterLeft);
 
             shooterFeeder.setIdleMode(IdleMode.kBrake);
-            shooterTop.setIdleMode(IdleMode.kCoast);
-            shooterBottom.setIdleMode(IdleMode.kCoast);
+            shooterLeft.setIdleMode(IdleMode.kCoast);
+            shooterRight.setIdleMode(IdleMode.kCoast);
 
             shooterFeeder.enableVoltageCompensation(MotorConstants.NEO_550_NOMINAL_VOLTAGE);
-            shooterTop.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
-            shooterBottom.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+            shooterLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+            shooterRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
             shooterFeeder.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
-            shooterTop.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
-            shooterBottom.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+            shooterLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+            shooterRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
 
             feederPidController.setP(ShooterConstants.kP);
             feederPidController.setI(ShooterConstants.kI);
             feederPidController.setD(ShooterConstants.kD);
             feederPidController.setFF(ShooterConstants.kFF);
 
-            topPidController.setP(ShooterConstants.kP);
-            topPidController.setI(ShooterConstants.kI);
-            topPidController.setD(ShooterConstants.kD);
-            topPidController.setFF(ShooterConstants.kFF);
+            leftPidController.setP(ShooterConstants.kP);
+            leftPidController.setI(ShooterConstants.kI);
+            leftPidController.setD(ShooterConstants.kD);
+            leftPidController.setFF(ShooterConstants.kFF);
 
-            bottomPidController.setP(ShooterConstants.kP);
-            bottomPidController.setI(ShooterConstants.kI);
-            bottomPidController.setD(ShooterConstants.kD);
-            bottomPidController.setFF(ShooterConstants.kFF);
+            rightPidController.setP(ShooterConstants.kP);
+            rightPidController.setI(ShooterConstants.kI);
+            rightPidController.setD(ShooterConstants.kD);
+            rightPidController.setFF(ShooterConstants.kFF);
 
             feederPidController.setOutputRange(-1, 1);
-            topPidController.setOutputRange(-1, 1);
-            bottomPidController.setOutputRange(-1, 1);
+            leftPidController.setOutputRange(-1, 1);
+            rightPidController.setOutputRange(-1, 1);
         }
 
         public void clearStickyFaults() {
             shooterFeeder.clearFaults();
-            shooterTop.clearFaults();
-            shooterBottom.clearFaults();
+            shooterLeft.clearFaults();
+            shooterRight.clearFaults();
         }
 
-        public void setRPMs(double top, double bottom) {
-            targetTop = top;
-            targetBottom = bottom;
+        public void setRPMs(double left, double right) {
+            targetLeft = left;
+            targetRight = right;
 
-            topPidController.setReference(top, ControlType.kVelocity);
-            bottomPidController.setReference(bottom, ControlType.kVelocity);
+            leftPidController.setReference(left, ControlType.kVelocity);
+            rightPidController.setReference(right, ControlType.kVelocity);
         }
 
         public void setFeeder(double feeder) {
             feederPidController.setReference(feeder, ControlType.kVelocity);
         }
 
-        public double getTopVelocity() {
-            return shooterTop.getEncoder().getVelocity();
+        public double getLeftVelocity() {
+            return shooterLeft.getEncoder().getVelocity();
         }
 
-        public double getBottomVelocity() {
-            return shooterBottom.getEncoder().getVelocity();
+        public double getRightVelocity() {
+            return shooterRight.getEncoder().getVelocity();
         }
 
         public boolean isAtTargetSpeed() {
-            return Utility.withinTolerance(getTopVelocity(), targetTop, 100)
-                    && Utility.withinTolerance(getBottomVelocity(), targetBottom, 100);
+            return Utility.withinTolerance(getLeftVelocity(), targetLeft, 100)
+                    && Utility.withinTolerance(getRightVelocity(), targetRight, 100);
         }
 
         public void stop() {
             shooterFeeder.set(0);
-            shooterTop.set(0);
-            shooterBottom.set(0);
+            shooterLeft.set(0);
+            shooterRight.set(0);
         }
 
         @Override
@@ -114,8 +114,8 @@ public class ShooterSubsystem extends SubsystemBase {
             SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
             SmartDashboard.putBoolean("At Target Speed", isAtTargetSpeed());
             
-            SmartDashboard.putNumber("Target Speed Top", targetTop);
-            SmartDashboard.putNumber("Target Speed Bottom", targetBottom);
+            SmartDashboard.putNumber("Target Speed Left", targetLeft);
+            SmartDashboard.putNumber("Target Speed Right", targetRight);
         }
         
         public boolean isNoteLoaded() {

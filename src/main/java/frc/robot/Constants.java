@@ -68,8 +68,8 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int TOP_CAN = 15;
-    public static final int BOTTOM_CAN = 16;
+    public static final int LEFT_CAN = 15;
+    public static final int RIGHT_CAN = 16;
     public static final int FEEDER_CAN = 17;
 
     // TODO: Find values
