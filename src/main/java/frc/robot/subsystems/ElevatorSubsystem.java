@@ -63,10 +63,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void home() {
-        moveElevator(-0.1);
-
+        // TODO: move this to a command so we can set the angle to be flush with the elevator before homing
         while (!isBottomedOut()) {
-            System.out.println("Homing elevator");
+            moveElevator(-0.1);
         }
 
         stop();

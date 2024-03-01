@@ -39,6 +39,9 @@ public final class Constants {
     public static final int NEO_V1_STALL_LIMIT_LOW = 30;
     public static final int NEO_V1_STALL_LIMIT_HIGH = 60;
     public static final int NEO_V1_FREE_LIMIT = 1;
+
+    public static final int NEO_V1_MAX_RPMS = 5600; // 5676, this is a safe limit
+    public static final int NEO_550_MAX_RPMS = 10000; // 11K, this is a safe limit
   }
 
   public static final class AutonConstants {
@@ -58,9 +61,9 @@ public final class Constants {
     public static final int RIGHT_CAN = 14;
 
     public static final int LIMIT_SWITCH_PORT = 9;
-
-    public static final double MAX_HEIGHT = (60.643845 / GEAR_RATIO) * (2 * Math.PI * SPROCKET_RADIUS);
-    public static final double MIN_HEIGHT = (0.9 / GEAR_RATIO) * (2 * Math.PI * SPROCKET_RADIUS);
+    
+    public static final double MAX_HEIGHT = (0 / GEAR_RATIO) * (2 * Math.PI * SPROCKET_RADIUS); // TODO: Homing sequence, then find max
+    public static final double MIN_HEIGHT = 0;
 
     // TODO: Find values
     public static final double kP = 0.004;
@@ -95,6 +98,8 @@ public final class Constants {
 
     public static final double ANGLE_MAX = 50;
     public static final double ANGLE_MIN = -40;
+
+    public static final int ENCODER_PORT = 8;
     
     // TODO: Find values
     public static final double kP = 0.004;

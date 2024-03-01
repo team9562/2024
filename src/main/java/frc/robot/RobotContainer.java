@@ -98,7 +98,8 @@ public class RobotContainer {
           Utility.stripFileExtension(pathFile.getName()));
     }
 
-    m_pathChooser.setDefaultOption(Utility.stripFileExtension(pathFiles[0].getName()), Utility.stripFileExtension(pathFiles[0].getName()));
+    m_pathChooser.setDefaultOption(Utility.stripFileExtension(pathFiles[0].getName()),
+        Utility.stripFileExtension(pathFiles[0].getName()));
   }
 
   public void clearStickyFaults() {
@@ -130,8 +131,17 @@ public class RobotContainer {
     new JoystickButton(driverYoke, 4).onTrue((new InstantCommand(intake::exhaust)))
         .onFalse((new InstantCommand(intake::stop)));
 
-        new JoystickButton(driverYoke, 5).onTrue(new InstantCommand(elevator::TESTUP)).onFalse(new InstantCommand(elevator::stop));
-        new JoystickButton(driverYoke, 6).onTrue(new InstantCommand(elevator::TESTDOWN)).onFalse(new InstantCommand(elevator::stop));
+    new JoystickButton(driverYoke, 5).onTrue(new InstantCommand(elevator::TESTUP))
+        .onFalse(new InstantCommand(elevator::stop));
+    new JoystickButton(driverYoke, 6).onTrue(new InstantCommand(elevator::TESTDOWN))
+        .onFalse(new InstantCommand(elevator::stop));
+    new JoystickButton(driverYoke, 11).onTrue(new InstantCommand(elevator::home));
+
+    new JoystickButton(driverYoke, 1).onTrue(new InstantCommand(shooter::shootMaxSpeed))
+        .onFalse(new InstantCommand(shooter::stopShooters));
+    new JoystickButton(driverYoke, 2).onTrue(new InstantCommand(shooter::feedMaxSpeed))
+        .onFalse(new InstantCommand(shooter::stopFeeder));
+
     // new JoystickButton(driverXbox, 3).onTrue(new
     // InstantCommand(drivebase::addFakeVisionReading));
 

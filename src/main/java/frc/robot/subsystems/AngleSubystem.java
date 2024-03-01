@@ -6,6 +6,8 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AngleConstants;
 import frc.robot.Constants.MotorConstants;
@@ -14,6 +16,8 @@ import frc.robot.util.Utility;
 public class AngleSubystem extends SubsystemBase {
     private CANSparkMax angle = new CANSparkMax(AngleConstants.ANGLE_CAN, MotorType.kBrushless);
 
+    private DutyCycleEncoder angleEncoder = new DutyCycleEncoder(AngleConstants.ENCODER_PORT);
+
     private SparkPIDController anglePidController = angle.getPIDController();
     
     private double targetAngleDegrees;
@@ -21,7 +25,8 @@ public class AngleSubystem extends SubsystemBase {
     public AngleSubystem() {
         angle.restoreFactoryDefaults();
 
-        angle.setIdleMode(IdleMode.kBrake);
+        angle.setIdleMode(IdleMode.kCoast);
+        // angle.setIdleMode(IdleMode.kBrake);
 
         angle.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
@@ -46,7 +51,7 @@ public class AngleSubystem extends SubsystemBase {
     }
 
     public double getAngleDegrees() {
-        return angle.getEncoder().getPosition() * 360;
+        return angleEncoder.getAbsolutePosition() * 360;
     }
 
     public boolean isAtTargetAngle() {
@@ -55,5 +60,14 @@ public class AngleSubystem extends SubsystemBase {
 
     public void stop() {
         angle.set(0);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Target Angle", targetAngleDegrees);
+
+        SmartDashboard.putNumber("Encoder Absolute Angle", getAngleDegrees());
+
+        SmartDashboard.putBoolean("Encoder Connected", angleEncoder.isConnected());
     }
 }

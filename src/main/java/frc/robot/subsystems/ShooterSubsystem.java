@@ -28,6 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
         
         private double targetLeft;
         private double targetRight;
+        private double targetFeeder;
         
         public ShooterSubsystem() {
             distance.setDistanceUnits(Unit.kInches);
@@ -36,9 +37,9 @@ public class ShooterSubsystem extends SubsystemBase {
             shooterLeft.restoreFactoryDefaults();
             shooterRight.restoreFactoryDefaults();
 
-            shooterLeft.setInverted(true);
+            shooterLeft.setInverted(false);
 
-            shooterRight.follow(shooterLeft);
+            shooterRight.follow(shooterLeft, false);
 
             shooterFeeder.setIdleMode(IdleMode.kBrake);
             shooterLeft.setIdleMode(IdleMode.kCoast);
@@ -82,12 +83,14 @@ public class ShooterSubsystem extends SubsystemBase {
             targetLeft = left;
             targetRight = right;
 
-            leftPidController.setReference(left, ControlType.kVelocity);
-            rightPidController.setReference(right, ControlType.kVelocity);
+            leftPidController.setReference(targetLeft, ControlType.kVelocity);
+            rightPidController.setReference(targetRight, ControlType.kVelocity);
         }
 
         public void setFeeder(double feeder) {
-            feederPidController.setReference(feeder, ControlType.kVelocity);
+            targetFeeder = feeder;
+
+            feederPidController.setReference(targetFeeder, ControlType.kVelocity);
         }
 
         public double getLeftVelocity() {
@@ -98,27 +101,47 @@ public class ShooterSubsystem extends SubsystemBase {
             return shooterRight.getEncoder().getVelocity();
         }
 
-        public boolean isAtTargetSpeed() {
+        public double getFeederVelocity() {
+            return shooterFeeder.getEncoder().getVelocity();
+        }
+
+        public boolean isAtTargetVelocity() {
             return Utility.withinTolerance(getLeftVelocity(), targetLeft, 100)
                     && Utility.withinTolerance(getRightVelocity(), targetRight, 100);
         }
 
-        public void stop() {
-            shooterFeeder.set(0);
+        public void shootMaxSpeed() {
+            setRPMs(MotorConstants.NEO_V1_MAX_RPMS, MotorConstants.NEO_V1_MAX_RPMS);
+        }
+
+        public void feedMaxSpeed() {
+            setFeeder(MotorConstants.NEO_550_MAX_RPMS);
+        }
+
+        public void stopShooters() {
             shooterLeft.set(0);
             shooterRight.set(0);
+        }
+        
+        public void stopFeeder() {
+            shooterFeeder.set(0);
+        }
+
+        public boolean isNoteLoaded() {
+            return distance.getRange() <= ShooterConstants.SENSOR_THRESHOLD_INCHES;
         }
 
         @Override
         public void periodic() {
             SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
-            SmartDashboard.putBoolean("At Target Speed", isAtTargetSpeed());
-            
-            SmartDashboard.putNumber("Target Speed Left", targetLeft);
-            SmartDashboard.putNumber("Target Speed Right", targetRight);
-        }
-        
-        public boolean isNoteLoaded() {
-            return distance.getRange() <= ShooterConstants.SENSOR_THRESHOLD_INCHES;
+            SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
+
+            SmartDashboard.putNumber("Target Velocity Left", targetLeft);
+            SmartDashboard.putNumber("Target Velocity Right", targetRight);
+            SmartDashboard.putNumber("Target Velocity Feeder", targetFeeder);
+
+            SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
+            SmartDashboard.putNumber("Right Velocity", getRightVelocity());
+            SmartDashboard.putNumber("Feeder Velocity", getFeederVelocity());
         }
     }
