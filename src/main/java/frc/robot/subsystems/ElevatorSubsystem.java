@@ -17,8 +17,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private CANSparkMax elevatorLeft = new CANSparkMax(ElevatorConstants.LEFT_CAN, MotorType.kBrushless);
     private CANSparkMax elevatorRight = new CANSparkMax(ElevatorConstants.RIGHT_CAN, MotorType.kBrushless);
 
-    private final PIDController elevatorPidController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-    private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+    private final PIDController elevatorPidController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI,
+            ElevatorConstants.kD);
+    private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS,
+            ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
     private RelativeEncoder elevatorLeftEncoder = elevatorLeft.getEncoder();
     private RelativeEncoder elevatorRightEncoder = elevatorRight.getEncoder();
@@ -54,23 +56,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         return limitSwitch.get();
     }
 
-    public void TESTUP() {
-        moveElevator(0.1);
-    }
+    // public void home() {
+    //     while (!isBottomedOut()) {
+    //         moveElevator(-0.1);
+    //     }
 
-    public void TESTDOWN() {
-        moveElevator(-0.1);
-    }
-
-    public void home() {
-        // TODO: move this to a command so we can set the angle to be flush with the elevator before homing
-        while (!isBottomedOut()) {
-            moveElevator(-0.1);
-        }
-
-        stop();
-        resetElevatorEncoder();
-    }
+    //     stop();
+    //     resetElevatorEncoder();
+    // }
 
     public double getElevatorHeight() {
         double sprocketPos = elevatorLeftEncoder.getPosition() / ElevatorConstants.GEAR_RATIO;
@@ -89,19 +82,29 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setElevatorPosition(double currentPosition, double setpoint) {
-        double output = elevatorPidController.calculate(currentPosition, setpoint) + elevatorFeedforward.calculate(setpoint);
-    
-        if (output < -0.3) output = -0.3;
-        else if (output > 0.3) output = 0.3;
+        double output = elevatorPidController.calculate(currentPosition, setpoint)
+                + elevatorFeedforward.calculate(setpoint);
+
+        if (output < -0.3)
+            output = -0.3;
+        else if (output > 0.3)
+            output = 0.3;
 
         moveElevator(output);
     }
 
-    public void setElevatorPositionSpeed(double currentPosition, double setpoint, double limit) {
-        double output = elevatorPidController.calculate(currentPosition, setpoint) + elevatorFeedforward.calculate(setpoint);
+    // public void testElevatorPosition() {
+    //     setElevatorPosition(elevatorLeftEncoder.getPosition(), 0.75 * 62);
+    // }
 
-        if (output < -limit) output = -limit;
-        else if (output > limit) output = limit;
+    public void setElevatorPositionSpeed(double currentPosition, double setpoint, double limit) {
+        double output = elevatorPidController.calculate(currentPosition, setpoint)
+                + elevatorFeedforward.calculate(setpoint);
+
+        if (output < -limit)
+            output = -limit;
+        else if (output > limit)
+            output = limit;
 
         moveElevator(output);
     }
@@ -112,13 +115,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         SmartDashboard.putNumber("Elevator Encoder Left", elevatorLeftEncoder.getPosition());
         SmartDashboard.putNumber("Elevator Encoder Right ", elevatorRightEncoder.getPosition());
 
         SmartDashboard.putNumber("Elevator Voltage Left", elevatorLeft.getBusVoltage());
         SmartDashboard.putNumber("Elevator Voltage Right", elevatorRight.getBusVoltage());
-        
+
         SmartDashboard.putNumber("Elevator Output Left", elevatorLeft.getAppliedOutput());
         SmartDashboard.putNumber("Elevator Output Right", elevatorRight.getAppliedOutput());
 

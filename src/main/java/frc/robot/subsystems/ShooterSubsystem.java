@@ -16,132 +16,151 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.Utility;
 
 public class ShooterSubsystem extends SubsystemBase {
-        private Rev2mDistanceSensor distance = new Rev2mDistanceSensor(Port.kOnboard);
+    private Rev2mDistanceSensor distance = new Rev2mDistanceSensor(Port.kOnboard);
 
-        private CANSparkMax shooterFeeder = new CANSparkMax(ShooterConstants.FEEDER_CAN, MotorType.kBrushless);
-        private CANSparkMax shooterLeft = new CANSparkMax(ShooterConstants.LEFT_CAN, MotorType.kBrushless);
-        private CANSparkMax shooterRight = new CANSparkMax(ShooterConstants.RIGHT_CAN, MotorType.kBrushless);
-        
-        private SparkPIDController feederPidController = shooterFeeder.getPIDController();
-        private SparkPIDController leftPidController = shooterLeft.getPIDController();
-        private SparkPIDController rightPidController = shooterRight.getPIDController();
-        
-        private double targetLeft;
-        private double targetRight;
-        private double targetFeeder;
-        
-        public ShooterSubsystem() {
-            distance.setDistanceUnits(Unit.kInches);
+    private CANSparkMax shooterFeeder = new CANSparkMax(ShooterConstants.FEEDER_CAN, MotorType.kBrushless);
+    private CANSparkMax shooterLeft = new CANSparkMax(ShooterConstants.LEFT_CAN, MotorType.kBrushless);
+    private CANSparkMax shooterRight = new CANSparkMax(ShooterConstants.RIGHT_CAN, MotorType.kBrushless);
 
-            shooterFeeder.restoreFactoryDefaults();
-            shooterLeft.restoreFactoryDefaults();
-            shooterRight.restoreFactoryDefaults();
+    private SparkPIDController feederPidController = shooterFeeder.getPIDController();
+    private SparkPIDController leftPidController = shooterLeft.getPIDController();
+    private SparkPIDController rightPidController = shooterRight.getPIDController();
 
-            shooterLeft.setInverted(false);
+    private double targetRPMs;
+    private double targetFeeder;
 
-            shooterRight.follow(shooterLeft, false);
+    public ShooterSubsystem() {
+        distance.setDistanceUnits(Unit.kInches);
 
-            shooterFeeder.setIdleMode(IdleMode.kBrake);
-            shooterLeft.setIdleMode(IdleMode.kCoast);
-            shooterRight.setIdleMode(IdleMode.kCoast);
+        shooterFeeder.restoreFactoryDefaults();
+        shooterLeft.restoreFactoryDefaults();
+        shooterRight.restoreFactoryDefaults();
 
-            shooterFeeder.enableVoltageCompensation(MotorConstants.NEO_550_NOMINAL_VOLTAGE);
-            shooterLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
-            shooterRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+        shooterLeft.setInverted(false);
+        shooterFeeder.setInverted(true);
 
-            shooterFeeder.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
-            shooterLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
-            shooterRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+        shooterRight.follow(shooterLeft, false);
 
-            feederPidController.setP(ShooterConstants.kP);
-            feederPidController.setI(ShooterConstants.kI);
-            feederPidController.setD(ShooterConstants.kD);
-            feederPidController.setFF(ShooterConstants.kFF);
+        shooterFeeder.setIdleMode(IdleMode.kBrake);
+        shooterLeft.setIdleMode(IdleMode.kCoast);
+        shooterRight.setIdleMode(IdleMode.kCoast);
 
-            leftPidController.setP(ShooterConstants.kP);
-            leftPidController.setI(ShooterConstants.kI);
-            leftPidController.setD(ShooterConstants.kD);
-            leftPidController.setFF(ShooterConstants.kFF);
+        shooterFeeder.enableVoltageCompensation(MotorConstants.NEO_550_NOMINAL_VOLTAGE);
+        shooterLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
+        shooterRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
-            rightPidController.setP(ShooterConstants.kP);
-            rightPidController.setI(ShooterConstants.kI);
-            rightPidController.setD(ShooterConstants.kD);
-            rightPidController.setFF(ShooterConstants.kFF);
+        shooterFeeder.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
+        shooterLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+        shooterRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
 
-            feederPidController.setOutputRange(-1, 1);
-            leftPidController.setOutputRange(-1, 1);
-            rightPidController.setOutputRange(-1, 1);
-        }
+        feederPidController.setP(ShooterConstants.kP);
+        feederPidController.setI(ShooterConstants.kI);
+        feederPidController.setD(ShooterConstants.kD);
+        feederPidController.setFF(ShooterConstants.kFF);
 
-        public void clearStickyFaults() {
-            shooterFeeder.clearFaults();
-            shooterLeft.clearFaults();
-            shooterRight.clearFaults();
-        }
+        leftPidController.setP(ShooterConstants.kP);
+        leftPidController.setI(ShooterConstants.kI);
+        leftPidController.setD(ShooterConstants.kD);
+        leftPidController.setFF(ShooterConstants.kFF);
 
-        public void setRPMs(double left, double right) {
-            targetLeft = left;
-            targetRight = right;
+        rightPidController.setP(ShooterConstants.kP);
+        rightPidController.setI(ShooterConstants.kI);
+        rightPidController.setD(ShooterConstants.kD);
+        rightPidController.setFF(ShooterConstants.kFF);
 
-            leftPidController.setReference(targetLeft, ControlType.kVelocity);
-            rightPidController.setReference(targetRight, ControlType.kVelocity);
-        }
-
-        public void setFeeder(double feeder) {
-            targetFeeder = feeder;
-
-            feederPidController.setReference(targetFeeder, ControlType.kVelocity);
-        }
-
-        public double getLeftVelocity() {
-            return shooterLeft.getEncoder().getVelocity();
-        }
-
-        public double getRightVelocity() {
-            return shooterRight.getEncoder().getVelocity();
-        }
-
-        public double getFeederVelocity() {
-            return shooterFeeder.getEncoder().getVelocity();
-        }
-
-        public boolean isAtTargetVelocity() {
-            return Utility.withinTolerance(getLeftVelocity(), targetLeft, 100)
-                    && Utility.withinTolerance(getRightVelocity(), targetRight, 100);
-        }
-
-        public void shootMaxSpeed() {
-            setRPMs(MotorConstants.NEO_V1_MAX_RPMS, MotorConstants.NEO_V1_MAX_RPMS);
-        }
-
-        public void feedMaxSpeed() {
-            setFeeder(MotorConstants.NEO_550_MAX_RPMS);
-        }
-
-        public void stopShooters() {
-            shooterLeft.set(0);
-            shooterRight.set(0);
-        }
-        
-        public void stopFeeder() {
-            shooterFeeder.set(0);
-        }
-
-        public boolean isNoteLoaded() {
-            return distance.getRange() <= ShooterConstants.SENSOR_THRESHOLD_INCHES;
-        }
-
-        @Override
-        public void periodic() {
-            SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
-            SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
-
-            SmartDashboard.putNumber("Target Velocity Left", targetLeft);
-            SmartDashboard.putNumber("Target Velocity Right", targetRight);
-            SmartDashboard.putNumber("Target Velocity Feeder", targetFeeder);
-
-            SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
-            SmartDashboard.putNumber("Right Velocity", getRightVelocity());
-            SmartDashboard.putNumber("Feeder Velocity", getFeederVelocity());
-        }
+        feederPidController.setOutputRange(-1, 1);
+        leftPidController.setOutputRange(-1, 1);
+        rightPidController.setOutputRange(-1, 1);
     }
+
+    public void clearStickyFaults() {
+        shooterFeeder.clearFaults();
+        shooterLeft.clearFaults();
+        shooterRight.clearFaults();
+    }
+
+    public void setRPMs(double rpms) {
+        targetRPMs = rpms;
+
+        leftPidController.setReference(targetRPMs, ControlType.kVelocity);
+    }
+
+    public void setFeeder(double feeder) {
+        targetFeeder = feeder;
+
+        feederPidController.setReference(targetFeeder, ControlType.kVelocity);
+    }
+
+    public double getLeftVelocity() {
+        return shooterLeft.getEncoder().getVelocity();
+    }
+
+    public double getRightVelocity() {
+        return shooterRight.getEncoder().getVelocity();
+    }
+
+    public double getFeederVelocity() {
+        return shooterFeeder.getEncoder().getVelocity();
+    }
+
+    public boolean isAtTargetVelocity() {
+        return Utility.withinTolerance(getLeftVelocity(), targetRPMs, 100);
+    }
+
+    public void shootMaxSpeed() {
+        setRPMs(MotorConstants.NEO_V1_MAX_RPMS);
+    }
+
+    public void shootAmpMaxSpeed() {
+        shooterRight.follow(shooterLeft, true);
+
+        setRPMs(MotorConstants.NEO_V1_MAX_RPMS);
+    }
+
+    public void feedMaxSpeed() {
+        setFeeder(MotorConstants.NEO_550_MAX_RPMS);
+    }
+
+    public void intakeMaxSpeed() {
+        setRPMs(-MotorConstants.NEO_V1_MAX_RPMS);
+        setFeeder(-MotorConstants.NEO_550_MAX_RPMS);
+    }
+
+    public void stopShooters() {
+        shooterRight.follow(shooterLeft, false);
+
+        targetRPMs = 0;
+
+        shooterLeft.set(0);
+        shooterRight.set(0);
+    }
+
+    public void stopFeeder() {
+        targetFeeder = 0;
+
+        shooterFeeder.set(0);
+    }
+
+    public void stopAll() {
+        stopShooters();
+        stopFeeder();
+    }
+
+    public boolean isNoteLoaded() {
+        return distance.getRange() <= ShooterConstants.SENSOR_THRESHOLD_INCHES;
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
+        SmartDashboard.putNumber("Note Distance", distance.getRange());
+        SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
+
+        SmartDashboard.putNumber("Target Velocity", targetRPMs);
+        SmartDashboard.putNumber("Target Velocity Feeder", targetFeeder);
+
+        SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
+        SmartDashboard.putNumber("Right Velocity", getRightVelocity());
+        SmartDashboard.putNumber("Feeder Velocity", getFeederVelocity());
+    }
+}

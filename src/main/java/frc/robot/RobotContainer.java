@@ -15,22 +15,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-// import edu.wpi.first.wpilibj2.command.Commands;
-// import edu.wpi.first.wpilibj2.command.InstantCommand;
-// import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.subsystems.angle.RotateShooter;
+import frc.robot.commands.subsystems.elevator.HomeElevator;
+import frc.robot.commands.subsystems.elevator.MoveElevator;
+import frc.robot.commands.subsystems.intake.Intake;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.types.InOutDirection;
+import frc.robot.types.UpDownDirection;
 import frc.robot.util.Utility;
 // import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.path.PathPlannerPath;
-
 import java.io.File;
 
 /**
@@ -126,21 +128,25 @@ public class RobotContainer {
   private void configureBindings() {
     new JoystickButton(driverYoke, 12).onTrue((new InstantCommand(drivebase::zeroGyro)));
 
-    new JoystickButton(driverYoke, 3).onTrue((new InstantCommand(intake::intake)))
-        .onFalse((new InstantCommand(intake::stop)));
-    new JoystickButton(driverYoke, 4).onTrue((new InstantCommand(intake::exhaust)))
-        .onFalse((new InstantCommand(intake::stop)));
+    new JoystickButton(driverYoke, 3).whileTrue(new Intake(intake, InOutDirection.in));
+    new JoystickButton(driverYoke, 4).whileTrue(new Intake(intake, InOutDirection.out));
 
-    new JoystickButton(driverYoke, 5).onTrue(new InstantCommand(elevator::TESTUP))
-        .onFalse(new InstantCommand(elevator::stop));
-    new JoystickButton(driverYoke, 6).onTrue(new InstantCommand(elevator::TESTDOWN))
-        .onFalse(new InstantCommand(elevator::stop));
-    new JoystickButton(driverYoke, 11).onTrue(new InstantCommand(elevator::home));
+    new JoystickButton(driverYoke, 5).whileTrue(new MoveElevator(elevator, UpDownDirection.up, 0.1));
+    new JoystickButton(driverYoke, 6).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.1));
+    new JoystickButton(driverYoke, 11).onTrue(new HomeElevator(elevator, angle));
 
     new JoystickButton(driverYoke, 1).onTrue(new InstantCommand(shooter::shootMaxSpeed))
         .onFalse(new InstantCommand(shooter::stopShooters));
     new JoystickButton(driverYoke, 2).onTrue(new InstantCommand(shooter::feedMaxSpeed))
         .onFalse(new InstantCommand(shooter::stopFeeder));
+    new JoystickButton(driverYoke, 7).onTrue(new InstantCommand(shooter::intakeMaxSpeed))
+        .onFalse(new InstantCommand(shooter::stopAll));
+    new JoystickButton(driverYoke, 8).onTrue(new InstantCommand(shooter::shootAmpMaxSpeed))
+        .onFalse(new InstantCommand(shooter::stopAll));
+
+    new JoystickButton(driverYoke, 10).whileTrue(new RotateShooter(angle, UpDownDirection.up, 0.2));
+    new JoystickButton(driverYoke, 9).whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.2));
+    // new JoystickButton(driverYoke, 10).onTrue(new InstantCommand(angle::moveFlush));
 
     // new JoystickButton(driverXbox, 3).onTrue(new
     // InstantCommand(drivebase::addFakeVisionReading));

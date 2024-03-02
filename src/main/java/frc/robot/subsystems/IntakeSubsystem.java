@@ -3,8 +3,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MotorConstants;
@@ -20,8 +18,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.setIdleMode(IdleMode.kBrake);
 
         intake.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
-
-        stop();
     }
 
     public void clearStickyFaults() {
@@ -32,21 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.set(speed);
     }
 
-    public void intake() {
-        set(1);
-
-        SmartDashboard.putString("Intake", "intake");
-    }
-
-    public void exhaust() {
-        set(-1);
-
-        SmartDashboard.putString("Intake", "exhaust");
-    }
-
     public void stop() {
         set(0);
-
-        SmartDashboard.putString("Intake", "idle");
     }
 }

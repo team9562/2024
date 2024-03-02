@@ -20,13 +20,14 @@ public class AngleSubystem extends SubsystemBase {
 
     private SparkPIDController anglePidController = angle.getPIDController();
     
-    private double targetAngleDegrees;
+    private double targetAngle;
 
     public AngleSubystem() {
         angle.restoreFactoryDefaults();
 
-        angle.setIdleMode(IdleMode.kCoast);
-        // angle.setIdleMode(IdleMode.kBrake);
+        angle.setInverted(true);
+
+        angle.setIdleMode(IdleMode.kBrake);
 
         angle.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
@@ -42,20 +43,29 @@ public class AngleSubystem extends SubsystemBase {
         angle.clearFaults();
     }
 
-    public void setTargetAngleDegrees(double angle) {
-        if (angle > AngleConstants.ANGLE_MAX) targetAngleDegrees = AngleConstants.ANGLE_MAX;
-        else if (angle < AngleConstants.ANGLE_MIN) targetAngleDegrees = AngleConstants.ANGLE_MIN;
-        else targetAngleDegrees = angle;
+    public void setTargetAngle(double angle) {
+        if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
+        else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
+        else targetAngle = angle;
 
-        anglePidController.setReference(targetAngleDegrees / 360, ControlType.kPosition);
+        anglePidController.setReference(targetAngle, ControlType.kPosition);
     }
 
-    public double getAngleDegrees() {
-        return angleEncoder.getAbsolutePosition() * 360;
+    public void moveFlush() {
+        setTargetAngle(AngleConstants.ANGLE_FLUSH); // TODO: move to command
+    }
+
+    public void move(double speed) {
+        angle.set(speed);
+        // anglePidController.setReference(speed, ControlType.kVelocity);
+    }
+
+    public double getAngle() {
+        return angleEncoder.getAbsolutePosition();
     }
 
     public boolean isAtTargetAngle() {
-        return Utility.withinTolerance(getAngleDegrees(), targetAngleDegrees, AngleConstants.ANGLE_THRESHOLD_DEGREES);
+        return Utility.withinTolerance(getAngle(), targetAngle, AngleConstants.ANGLE_THRESHOLD);
     }
 
     public void stop() {
@@ -64,9 +74,10 @@ public class AngleSubystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Target Angle", targetAngleDegrees);
+        SmartDashboard.putNumber("Target Angle", targetAngle);
 
-        SmartDashboard.putNumber("Encoder Absolute Angle", getAngleDegrees());
+        SmartDashboard.putNumber("Encoder Absolute Angle", getAngle());
+        SmartDashboard.putNumber("Encoder Raw Absolute Angle", angleEncoder.getAbsolutePosition());
 
         SmartDashboard.putBoolean("Encoder Connected", angleEncoder.isConnected());
     }
