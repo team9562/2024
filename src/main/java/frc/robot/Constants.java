@@ -24,8 +24,8 @@ import swervelib.math.Matter;
  */
 public final class Constants {
   public static final double ROBOT_MASS = Units.lbsToKilograms(110);
-  // public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, 0), ROBOT_MASS);
+  public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
+  // public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, 0), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   
   public static final class MotorConstants { 
@@ -97,7 +97,7 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
 
-    public static final double ANGLE_MAX = 0.71;
+    public static final double ANGLE_MAX = 0.731;
     public static final double ANGLE_MIN = 0.41;
 
     public static final int ENCODER_PORT = 8;

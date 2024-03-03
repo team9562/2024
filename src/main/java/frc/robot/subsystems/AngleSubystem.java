@@ -2,10 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
+// import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,6 +32,8 @@ public class AngleSubystem extends SubsystemBase {
 
         angle.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
 
+        // anglePidController.setFeedbackDevice(angle.getEncoder());
+
         anglePidController.setP(AngleConstants.kP);
         anglePidController.setI(AngleConstants.kI);
         anglePidController.setD(AngleConstants.kD);
@@ -47,8 +48,8 @@ public class AngleSubystem extends SubsystemBase {
         if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
         else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
         else targetAngle = angle;
-        
-        anglePidController.setReference(targetAngle, ControlType.kPosition);
+
+        // anglePidController.setReference(targetAngle, ControlType.kPosition);
     }
     
     public void move(double speed) {

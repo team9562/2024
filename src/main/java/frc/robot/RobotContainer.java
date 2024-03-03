@@ -156,6 +156,7 @@ public class RobotContainer {
     new JoystickButton(driverXbox, XboxController.Button.kA.value)
         .whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.25));
     new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
+    new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.min));
 
     // new JoystickButton(driverXbox, 3).onTrue(new
     // InstantCommand(drivebase::addFakeVisionReading));
