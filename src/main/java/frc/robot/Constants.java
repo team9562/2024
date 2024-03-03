@@ -31,7 +31,7 @@ public final class Constants {
   public static final class MotorConstants { 
     public static final int NEO_550_NOMINAL_VOLTAGE = 12;
     
-    public static final int NEO_550_STALL_LIMIT = 30;
+    public static final int NEO_550_STALL_LIMIT = 40;
     public static final int NEO_550_FREE_LIMIT = 1;
 
     public static final int NEO_V1_NOMINAL_VOLTAGE = 12;
@@ -97,16 +97,15 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
 
-    public static final double ANGLE_MAX = 0.555;
-    public static final double ANGLE_MIN = 0.248;
-    public static final double ANGLE_FLUSH = 0.534;
+    public static final double ANGLE_MAX = 0.71;
+    public static final double ANGLE_MIN = 0.41;
 
     public static final int ENCODER_PORT = 8;
     
     // TODO: Find values
-    public static final double kP = 0.004;
+    public static final double kP = 0.04;
     public static final double kI = 0;
-    public static final double kD = 1.5;
+    public static final double kD = 0;
     public static final double kFF = 0.0001;
 
     public static final double ANGLE_THRESHOLD = 0.01;

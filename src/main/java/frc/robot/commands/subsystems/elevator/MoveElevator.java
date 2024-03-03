@@ -21,16 +21,20 @@ public class MoveElevator extends Command {
 
     @Override
     public void execute() {
-        if (direction == UpDownDirection.up) {
-            if (elevator.getElevatorHeight() < ElevatorConstants.MAX_HEIGHT)
-                elevator.moveElevator(speedPercentage);
-            else
-                elevator.stop();
-        } else if (direction == UpDownDirection.down) {
-            if (elevator.getElevatorHeight() > ElevatorConstants.MIN_HEIGHT)
-                elevator.moveElevator(-speedPercentage);
-            else
-                elevator.stop();
+        switch (direction) {
+            default:
+            case up:
+                if (elevator.getElevatorHeight() < ElevatorConstants.MAX_HEIGHT)
+                    elevator.moveElevator(speedPercentage);
+                else
+                    elevator.stop();
+                break;
+            case down:
+                if (elevator.getElevatorHeight() > ElevatorConstants.MIN_HEIGHT || !elevator.isBottomedOut())
+                    elevator.moveElevator(-speedPercentage);
+                else
+                    elevator.stop();
+                break;
         }
     }
 

@@ -19,7 +19,7 @@ public class AngleSubystem extends SubsystemBase {
     private DutyCycleEncoder angleEncoder = new DutyCycleEncoder(AngleConstants.ENCODER_PORT);
 
     private SparkPIDController anglePidController = angle.getPIDController();
-    
+
     private double targetAngle;
 
     public AngleSubystem() {
@@ -38,47 +38,46 @@ public class AngleSubystem extends SubsystemBase {
         anglePidController.setD(AngleConstants.kD);
         anglePidController.setFF(AngleConstants.kFF);
     }
-
+    
     public void clearStickyFaults() {
         angle.clearFaults();
     }
-
+    
     public void setTargetAngle(double angle) {
-        if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
-        else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
-        else targetAngle = angle;
-
+        // if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
+        // else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
+        // else targetAngle = angle;
+        targetAngle = angle;
+        
         anglePidController.setReference(targetAngle, ControlType.kPosition);
     }
-
-    public void moveFlush() {
-        setTargetAngle(AngleConstants.ANGLE_FLUSH); // TODO: move to command
-    }
-
+    
     public void move(double speed) {
         angle.set(speed);
         // anglePidController.setReference(speed, ControlType.kVelocity);
     }
-
+    
     public double getAngle() {
         return angleEncoder.getAbsolutePosition();
     }
-
+    
     public boolean isAtTargetAngle() {
         return Utility.withinTolerance(getAngle(), targetAngle, AngleConstants.ANGLE_THRESHOLD);
     }
-
+    
     public void stop() {
         angle.set(0);
     }
-
+    
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Target Angle", targetAngle);
 
         SmartDashboard.putNumber("Encoder Absolute Angle", getAngle());
-        SmartDashboard.putNumber("Encoder Raw Absolute Angle", angleEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("Encoder Integrated Angle", angle.getEncoder().getPosition());
 
         SmartDashboard.putBoolean("Encoder Connected", angleEncoder.isConnected());
+    
+        SmartDashboard.putBoolean("At Target Angle", isAtTargetAngle());
     }
 }

@@ -18,8 +18,15 @@ public class Intake extends Command {
 
     @Override
     public void execute() {
-        if (direction == InOutDirection.in) intake.set(1);
-        else if (direction == InOutDirection.out) intake.set(-1);
+        switch (direction) {
+            default:
+            case in:
+                intake.set(1);
+                break;
+            case out:
+                intake.set(-1);
+                break;
+        }
     }
 
     @Override

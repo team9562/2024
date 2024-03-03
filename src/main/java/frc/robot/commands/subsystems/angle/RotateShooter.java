@@ -21,16 +21,20 @@ public class RotateShooter extends Command {
 
     @Override
     public void execute() {
-        if (direction == UpDownDirection.up) {
-            if (angle.getAngle() < AngleConstants.ANGLE_MAX)
-                angle.move(speedPercentage);
-            else
-                angle.stop();
-        } else if (direction == UpDownDirection.down) {
-            if (angle.getAngle() > AngleConstants.ANGLE_MIN)
-                angle.move(-speedPercentage);
-            else
-                angle.stop();
+        switch (direction) {
+            default:
+            case up:
+                if (angle.getAngle() < AngleConstants.ANGLE_MAX)
+                    angle.move(speedPercentage);
+                else
+                    angle.stop();
+                break;
+            case down:
+                if (angle.getAngle() > AngleConstants.ANGLE_MIN)
+                    angle.move(-speedPercentage);
+                else
+                    angle.stop();
+                break;
         }
     }
 

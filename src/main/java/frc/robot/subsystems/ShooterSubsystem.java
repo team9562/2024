@@ -107,23 +107,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return Utility.withinTolerance(getLeftVelocity(), targetRPMs, 100);
     }
 
-    public void shootMaxSpeed() {
-        setRPMs(MotorConstants.NEO_V1_MAX_RPMS);
-    }
-
     public void shootAmpMaxSpeed() {
         shooterRight.follow(shooterLeft, true);
 
         setRPMs(MotorConstants.NEO_V1_MAX_RPMS);
-    }
-
-    public void feedMaxSpeed() {
-        setFeeder(MotorConstants.NEO_550_MAX_RPMS);
-    }
-
-    public void intakeMaxSpeed() {
-        setRPMs(-MotorConstants.NEO_V1_MAX_RPMS);
-        setFeeder(-MotorConstants.NEO_550_MAX_RPMS);
     }
 
     public void stopShooters() {
@@ -154,6 +141,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
         SmartDashboard.putNumber("Note Distance", distance.getRange());
+        SmartDashboard.putBoolean("Note Distance Valid", distance.isRangeValid());
         SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
 
         SmartDashboard.putNumber("Target Velocity", targetRPMs);

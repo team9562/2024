@@ -37,8 +37,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorLeft.setIdleMode(IdleMode.kBrake);
         elevatorRight.setIdleMode(IdleMode.kBrake);
-        // elevatorLeft.setIdleMode(IdleMode.kCoast);
-        // elevatorRight.setIdleMode(IdleMode.kCoast);
 
         elevatorLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
         elevatorRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
