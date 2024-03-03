@@ -44,10 +44,9 @@ public class AngleSubystem extends SubsystemBase {
     }
     
     public void setTargetAngle(double angle) {
-        // if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
-        // else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
-        // else targetAngle = angle;
-        targetAngle = angle;
+        if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
+        else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
+        else targetAngle = angle;
         
         anglePidController.setReference(targetAngle, ControlType.kPosition);
     }
@@ -73,8 +72,8 @@ public class AngleSubystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Target Angle", targetAngle);
 
-        SmartDashboard.putNumber("Encoder Absolute Angle", getAngle());
-        SmartDashboard.putNumber("Encoder Integrated Angle", angle.getEncoder().getPosition());
+        SmartDashboard.putNumber("Angle Absolute Encoder", getAngle());
+        SmartDashboard.putNumber("Angle Integrated Encoder", angle.getEncoder().getPosition());
 
         SmartDashboard.putBoolean("Encoder Connected", angleEncoder.isConnected());
     

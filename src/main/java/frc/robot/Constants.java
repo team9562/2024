@@ -103,10 +103,10 @@ public final class Constants {
     public static final int ENCODER_PORT = 8;
     
     // TODO: Find values
-    public static final double kP = 0.04;
+    public static final double kP = 0.045;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kFF = 0.0001;
+    public static final double kFF = 0.0002;
 
     public static final double ANGLE_THRESHOLD = 0.01;
   }

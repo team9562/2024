@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.angle.RotateShooter;
 import frc.robot.commands.subsystems.elevator.HomeElevator;
 import frc.robot.commands.subsystems.elevator.MoveElevator;
@@ -32,6 +33,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.types.AngleSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.UpDownDirection;
 import frc.robot.util.Utility;
@@ -139,7 +141,7 @@ public class RobotContainer {
         .whileTrue(new Intake(intake, InOutDirection.out));
 
     new POVButton(driverXbox, 0).whileTrue(new MoveElevator(elevator, UpDownDirection.up, 0.25));
-    new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.up, 0.25));
+    new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
     new POVButton(driverXbox, 270).onTrue(new HomeElevator(elevator, angle));
 
     new JoystickButton(driverYoke, 1).whileTrue(new Shoot(shooter, InOutDirection.out));
@@ -153,6 +155,7 @@ public class RobotContainer {
         .whileTrue(new RotateShooter(angle, UpDownDirection.up, 0.25));
     new JoystickButton(driverXbox, XboxController.Button.kA.value)
         .whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.25));
+    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
 
     // new JoystickButton(driverXbox, 3).onTrue(new
     // InstantCommand(drivebase::addFakeVisionReading));
