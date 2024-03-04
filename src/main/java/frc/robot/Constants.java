@@ -97,11 +97,10 @@ public final class Constants {
     public static final double ANGLE_MAX_ABS = 0.731;
     public static final double ANGLE_MIN_ABS = 0.39;
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 54;
+    public static final double ANGLE_MAX_REL = 56;
 
     public static final int ENCODER_PORT = 8;
     
-    // TODO: Find values
     public static final double kP = 0.03;
     public static final double kI = 0;
     public static final double kD = 0.0625;
