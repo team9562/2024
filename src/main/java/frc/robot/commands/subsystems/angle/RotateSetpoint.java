@@ -18,15 +18,7 @@ public class RotateSetpoint extends Command {
 
     @Override
     public void execute() {
-        switch (setpoint) {
-            default:
-            case max:
-                angle.setTargetAngle(1);
-                break;
-            case min:    
-                angle.setTargetAngle(0);
-                break;
-        }
+        angle.setTargetAngle(setpoint.percentage);
     }
 
     @Override
