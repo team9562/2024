@@ -62,18 +62,13 @@ public final class Constants {
 
     public static final int LIMIT_SWITCH_PORT = 9;
     
-    public static final double MAX_HEIGHT = (62 / GEAR_RATIO) * (2 * Math.PI * SPROCKET_RADIUS);
+    public static final double MAX_HEIGHT = 62;
     public static final double MIN_HEIGHT = 0;
 
-    // TODO: Find values
-    public static final double kP = 0.004;
+    public static final double kP = 0.1;
     public static final double kI = 0;
-    public static final double kD = 1.5;
-
-    public static final double kS = 0;
-    public static final double kG = 0.25;
-    public static final double kV = 17.15;
-    public static final double kA = 0.05;
+    public static final double kD = 0.0625;
+    public static final double kFF = 0.0001;
   }
 
   public static final class ShooterConstants {

@@ -25,6 +25,7 @@ import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.angle.RotateShooter;
 import frc.robot.commands.subsystems.elevator.HomeElevator;
 import frc.robot.commands.subsystems.elevator.MoveElevator;
+import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
 import frc.robot.commands.subsystems.shooter.Feed;
 import frc.robot.commands.subsystems.shooter.Shoot;
@@ -34,6 +35,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.types.AngleSetpoint;
+import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.UpDownDirection;
 import frc.robot.util.Utility;
@@ -141,8 +143,10 @@ public class RobotContainer {
         .whileTrue(new Intake(intake, InOutDirection.out));
 
     new POVButton(driverXbox, 0).whileTrue(new MoveElevator(elevator, UpDownDirection.up, 0.25));
-    new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
+    // new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
     new POVButton(driverXbox, 270).onTrue(new HomeElevator(elevator, angle));
+    new POVButton(driverXbox, 90).onTrue(new MoveSetpoint(elevator, ElevatorSetpoint.max));
+    new POVButton(driverXbox, 180).onTrue(new MoveSetpoint(elevator, ElevatorSetpoint.min));
 
     new JoystickButton(driverYoke, 1).whileTrue(new Shoot(shooter, InOutDirection.out));
     new JoystickButton(driverYoke, 2).whileTrue(new Feed(shooter, InOutDirection.out));

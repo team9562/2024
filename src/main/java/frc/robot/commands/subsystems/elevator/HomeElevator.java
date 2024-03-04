@@ -12,7 +12,8 @@ public class HomeElevator extends Command {
         this.elevator = elevator;
         this.angle = angle;
 
-        addRequirements(elevator, angle);
+        // addRequirements(elevator, angle);
+        addRequirements(elevator);
     }
 
     @Override
