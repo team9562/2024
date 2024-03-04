@@ -12,21 +12,19 @@ public class HomeElevator extends Command {
         this.elevator = elevator;
         this.angle = angle;
 
-        // addRequirements(elevator, angle);
-        addRequirements(elevator);
+        addRequirements(elevator, angle);
     }
 
     @Override
     public void initialize() {
         elevator.stop();
 
-        // angle.moveFlush();
+        angle.setTargetAngle(1);
     }
 
     @Override
     public void execute() {
-        // if (!elevator.isBottomedOut() && angle.isAtTargetAngle())
-        if (!elevator.isBottomedOut())
+        if (!elevator.isBottomedOut() && angle.isAtTargetAngle())
             elevator.moveElevator(-0.05);
     }
 

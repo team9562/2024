@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.subsystems.angle.HomeAngle;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.angle.RotateShooter;
 import frc.robot.commands.subsystems.elevator.HomeElevator;
@@ -143,10 +144,10 @@ public class RobotContainer {
         .whileTrue(new Intake(intake, InOutDirection.out));
 
     new POVButton(driverXbox, 0).whileTrue(new MoveElevator(elevator, UpDownDirection.up, 0.25));
-    // new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
+    new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
     new POVButton(driverXbox, 270).onTrue(new HomeElevator(elevator, angle));
-    new POVButton(driverXbox, 90).onTrue(new MoveSetpoint(elevator, ElevatorSetpoint.max));
-    new POVButton(driverXbox, 180).onTrue(new MoveSetpoint(elevator, ElevatorSetpoint.min));
+    new POVButton(driverXbox, 90).onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.max));
+    // new POVButton(driverXbox, 180).onTrue(new MoveSetpoint(elevator, ElevatorSetpoint.min));
 
     new JoystickButton(driverYoke, 1).whileTrue(new Shoot(shooter, InOutDirection.out));
     new JoystickButton(driverYoke, 2).whileTrue(new Feed(shooter, InOutDirection.out));
@@ -159,8 +160,9 @@ public class RobotContainer {
         .whileTrue(new RotateShooter(angle, UpDownDirection.up, 0.25));
     new JoystickButton(driverXbox, XboxController.Button.kA.value)
         .whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.25));
-    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
-    new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.min));
+        new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new HomeAngle(angle));
+    // new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
+    new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
 
     // new JoystickButton(driverXbox, 3).onTrue(new
     // InstantCommand(drivebase::addFakeVisionReading));

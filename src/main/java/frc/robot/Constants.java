@@ -69,6 +69,8 @@ public final class Constants {
     public static final double kI = 0;
     public static final double kD = 0.0625;
     public static final double kFF = 0.0001;
+
+    public static final double ELEVATOR_THRESHOLD = 0.25;
   }
 
   public static final class ShooterConstants {
@@ -92,18 +94,20 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
 
-    public static final double ANGLE_MAX = 0.731;
-    public static final double ANGLE_MIN = 0.41;
+    public static final double ANGLE_MAX_ABS = 0.731;
+    public static final double ANGLE_MIN_ABS = 0.39;
+    public static final double ANGLE_MIN_REL = 0;
+    public static final double ANGLE_MAX_REL = 54;
 
     public static final int ENCODER_PORT = 8;
     
     // TODO: Find values
-    public static final double kP = 0.045;
+    public static final double kP = 0.03;
     public static final double kI = 0;
-    public static final double kD = 0;
-    public static final double kFF = 0.0002;
+    public static final double kD = 0.0625;
+    public static final double kFF = 0.0003;
 
-    public static final double ANGLE_THRESHOLD = 0.01;
+    public static final double ANGLE_THRESHOLD = 0.25;
   }
 
   public static class OperatorConstants {

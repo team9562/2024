@@ -24,13 +24,13 @@ public class RotateShooter extends Command {
         switch (direction) {
             default:
             case up:
-                if (angle.getAngle() < AngleConstants.ANGLE_MAX)
+                if (angle.getAngle() < AngleConstants.ANGLE_MAX_ABS)
                     angle.move(speedPercentage);
                 else
                     angle.stop();
                 break;
             case down:
-                if (angle.getAngle() > AngleConstants.ANGLE_MIN)
+                if (angle.getAngle() > AngleConstants.ANGLE_MIN_ABS)
                     angle.move(-speedPercentage);
                 else
                     angle.stop();

@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
-// import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -32,7 +32,7 @@ public class AngleSubystem extends SubsystemBase {
 
         angle.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
 
-        // anglePidController.setFeedbackDevice(angle.getEncoder());
+        anglePidController.setFeedbackDevice(angle.getEncoder());
 
         anglePidController.setP(AngleConstants.kP);
         anglePidController.setI(AngleConstants.kI);
@@ -44,12 +44,9 @@ public class AngleSubystem extends SubsystemBase {
         angle.clearFaults();
     }
     
-    public void setTargetAngle(double angle) {
-        if (angle > AngleConstants.ANGLE_MAX) targetAngle = AngleConstants.ANGLE_MAX;
-        else if (angle < AngleConstants.ANGLE_MIN) targetAngle = AngleConstants.ANGLE_MIN;
-        else targetAngle = angle;
-
-        // anglePidController.setReference(targetAngle, ControlType.kPosition);
+    public void setTargetAngle(double anglePercentage) {
+        targetAngle = anglePercentage * AngleConstants.ANGLE_MAX_REL;
+        anglePidController.setReference(targetAngle, ControlType.kPosition);
     }
     
     public void move(double speed) {
@@ -62,7 +59,11 @@ public class AngleSubystem extends SubsystemBase {
     }
     
     public boolean isAtTargetAngle() {
-        return Utility.withinTolerance(getAngle(), targetAngle, AngleConstants.ANGLE_THRESHOLD);
+        return Utility.withinTolerance(angle.getEncoder().getPosition(), targetAngle, AngleConstants.ANGLE_THRESHOLD);
+    }
+
+    public void resetRelativeEncoder() {
+        angle.getEncoder().setPosition(0);
     }
     
     public void stop() {
@@ -74,9 +75,9 @@ public class AngleSubystem extends SubsystemBase {
         SmartDashboard.putNumber("Target Angle", targetAngle);
 
         SmartDashboard.putNumber("Angle Absolute Encoder", getAngle());
-        SmartDashboard.putNumber("Angle Integrated Encoder", angle.getEncoder().getPosition());
+        SmartDashboard.putNumber("Angle Relative Encoder", angle.getEncoder().getPosition());
 
-        SmartDashboard.putBoolean("Encoder Connected", angleEncoder.isConnected());
+        SmartDashboard.putBoolean("Angle Absolute Encoder Connected", angleEncoder.isConnected());
     
         SmartDashboard.putBoolean("At Target Angle", isAtTargetAngle());
     }

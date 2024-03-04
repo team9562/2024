@@ -84,7 +84,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public boolean isAtTargetHeight() {
-        return Utility.withinTolerance(elevatorLeftEncoder.getPosition(), targetHeight, 0.25);
+        return Utility.withinTolerance(elevatorLeftEncoder.getPosition(), targetHeight, ElevatorConstants.ELEVATOR_THRESHOLD);
     }
 
     public void stop() {
