@@ -40,8 +40,8 @@ import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.UpDownDirection;
 import frc.robot.util.Utility;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import java.io.File;
 
 /**
@@ -59,7 +59,7 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final AngleSubystem angle = new AngleSubystem();
-
+  private final SendableChooser<Command> autoChooser;
   private final PowerDistribution pdh = new PowerDistribution();
 
   Joystick driverYoke = new Joystick(1);
@@ -88,6 +88,10 @@ public class RobotContainer {
     m_commandChooser.setDefaultOption("Yoke TeleOp [Field]", yokeTeleopFieldRelative);
 
     getPaths();
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     SmartDashboard.putData(m_commandChooser);
     SmartDashboard.putData(m_pathChooser);
@@ -181,9 +185,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // PathPlannerPath testPath = PathPlannerPath.fromPathFile("path name");
-    // return AutoBuilder.followPath(testPath);
-    return m_commandChooser.getSelected();
+    PathPlannerPath testPath = PathPlannerPath.fromPathFile("path name");
+    return AutoBuilder.followPath(testPath);
+    // return m_commandChooser.getSelected();
   }
 
   public void setDriveMode() {
