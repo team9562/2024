@@ -18,15 +18,7 @@ public class Intake extends Command {
 
     @Override
     public void execute() {
-        switch (direction) {
-            default:
-            case in:
-                intake.set(1);
-                break;
-            case out:
-                intake.set(-1);
-                break;
-        }
+        intake.set(direction.percentage);
     }
 
     @Override

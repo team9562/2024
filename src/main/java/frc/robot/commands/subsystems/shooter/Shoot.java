@@ -19,15 +19,7 @@ public class Shoot extends Command {
 
     @Override
     public void execute() {
-        switch (direction) {
-            default:
-            case out:
-                shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS);
-                break;
-            case in:
-                shooter.setRPMs(-MotorConstants.NEO_V1_MAX_RPMS);
-                break;
-        }
+        shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS * -direction.percentage);
     }
 
     @Override

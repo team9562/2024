@@ -19,15 +19,7 @@ public class Feed extends Command {
 
     @Override
     public void execute() {
-        switch (direction) {
-            default:
-            case out:
-                shooter.setFeeder(MotorConstants.NEO_550_MAX_RPMS);
-                break;
-            case in:
-                shooter.setFeeder(-MotorConstants.NEO_550_MAX_RPMS);
-                break;
-        }
+        shooter.setFeeder(MotorConstants.NEO_550_MAX_RPMS * direction.percentage);
     }
 
     @Override

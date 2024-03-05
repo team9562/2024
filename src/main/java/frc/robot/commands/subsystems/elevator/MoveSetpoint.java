@@ -26,19 +26,10 @@ public class MoveSetpoint extends Command {
 
     @Override
     public void execute() {
-        if (angle.isAtTargetAngle()) {
-            switch (setpoint) {
-                default:
-                case max:
-                elevator.setElevatorPosition(1);
-                break;
-                case min:    
-                elevator.setElevatorPosition(0);
-                break;
-            }
-        }
+        if (angle.isAtTargetAngle())
+            elevator.setElevatorPosition(setpoint.percentage);
     }
-    
+
     @Override
     public boolean isFinished() {
         return false;
