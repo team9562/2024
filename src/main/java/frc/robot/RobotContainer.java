@@ -59,7 +59,9 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final AngleSubystem angle = new AngleSubystem();
+
   private final SendableChooser<Command> autoChooser;
+
   private final PowerDistribution pdh = new PowerDistribution();
 
   Joystick driverYoke = new Joystick(1);
@@ -185,9 +187,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath testPath = PathPlannerPath.fromPathFile("path name");
-    return AutoBuilder.followPath(testPath);
-    // return m_commandChooser.getSelected();
+    return m_commandChooser.getSelected();
   }
 
   public void setDriveMode() {
