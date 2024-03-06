@@ -25,7 +25,6 @@ import swervelib.math.Matter;
 public final class Constants {
   public static final double ROBOT_MASS = Units.lbsToKilograms(110);
   public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
-  // public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, 0), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   
   public static final class MotorConstants { 
@@ -45,8 +44,8 @@ public final class Constants {
   }
 
   public static final class AutonConstants {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0.5);
+    public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.5);
   }
 
   public static final class DrivebaseConstants {
@@ -106,7 +105,8 @@ public final class Constants {
     public static final double kD = 0.0625;
     public static final double kFF = 0.0003;
 
-    public static final double ANGLE_THRESHOLD = 0.25;
+    public static final double ANGLE_THRESHOLD = 0.6;
+    // public static final double ANGLE_THRESHOLD = 0.25;
   }
 
   public static class OperatorConstants {

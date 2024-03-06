@@ -44,6 +44,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very
@@ -145,7 +148,7 @@ public class RobotContainer {
     new JoystickButton(driverYoke, 12).onTrue((new InstantCommand(drivebase::zeroGyro)));
 
     new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value)
-        .whileTrue(new Intake(intake, InOutDirection.in));
+        .onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.min).andThen(new RotateSetpoint(angle, AngleSetpoint.min)).andThen(new Intake(intake, InOutDirection.in)).alongWith(new Shoot(shooter, InOutDirection.in))).onFalse(new InstantCommand(intake::stop).andThen(shooter::stopAll, shooter));
     new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value)
         .whileTrue(new Intake(intake, InOutDirection.out));
 
@@ -153,7 +156,6 @@ public class RobotContainer {
     new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
     new POVButton(driverXbox, 270).onTrue(new HomeElevator(elevator, angle));
     new POVButton(driverXbox, 90).onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.max));
-    // new POVButton(driverXbox, 180).onTrue(new MoveSetpoint(elevator, ElevatorSetpoint.min));
 
     new JoystickButton(driverYoke, 1).whileTrue(new Shoot(shooter, InOutDirection.out));
     new JoystickButton(driverYoke, 2).whileTrue(new Feed(shooter, InOutDirection.out));
@@ -167,7 +169,6 @@ public class RobotContainer {
     new JoystickButton(driverXbox, XboxController.Button.kA.value)
         .whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.25));
         new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new HomeAngle(angle));
-    // new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
     new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
 
     // new JoystickButton(driverXbox, 3).onTrue(new
@@ -187,7 +188,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_commandChooser.getSelected();
+    PathPlannerPath testPath = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
+    return AutoBuilder.followPath(testPath);
   }
 
   public void setDriveMode() {
