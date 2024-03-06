@@ -37,7 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.restoreFactoryDefaults();
 
         shooterLeft.setInverted(false);
-        shooterFeeder.setInverted(true);
+        shooterFeeder.setInverted(false);
 
         shooterRight.follow(shooterLeft, false);
 
@@ -50,8 +50,8 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
         shooterFeeder.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
-        shooterLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
-        shooterRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+        shooterLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
+        shooterRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
 
         feederPidController.setP(ShooterConstants.kP);
         feederPidController.setI(ShooterConstants.kI);

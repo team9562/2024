@@ -32,7 +32,8 @@ public class MoveSetpoint extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return elevator.isAtTargetHeight();
+        // return false;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class AngleSubystem extends SubsystemBase {
 
         angle.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
-        angle.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+        angle.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
 
         anglePidController.setFeedbackDevice(angle.getEncoder());
 

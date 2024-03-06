@@ -13,11 +13,13 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         intake.restoreFactoryDefaults();
 
-        intake.enableVoltageCompensation(MotorConstants.NEO_550_NOMINAL_VOLTAGE);
+        intake.setInverted(true);
+
+        intake.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
         intake.setIdleMode(IdleMode.kBrake);
 
-        intake.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
+        intake.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
     }
 
     public void clearStickyFaults() {

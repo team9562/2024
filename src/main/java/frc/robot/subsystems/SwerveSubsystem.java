@@ -30,7 +30,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
-import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -63,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     swerveDrive.setHeadingCorrection(false);
     swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
-
+    
     setupPathPlanner();
   }
 
