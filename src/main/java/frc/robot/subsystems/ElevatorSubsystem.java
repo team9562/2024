@@ -41,8 +41,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
         elevatorRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
-        elevatorLeft.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
-        elevatorRight.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_HIGH, MotorConstants.NEO_V1_FREE_LIMIT);
+        elevatorLeft.setSmartCurrentLimit(ElevatorConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
+        elevatorRight.setSmartCurrentLimit(ElevatorConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
 
         elevatorPidController.setFeedbackDevice(elevatorLeftEncoder);
 

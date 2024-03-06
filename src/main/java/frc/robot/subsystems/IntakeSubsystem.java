@@ -19,7 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         intake.setIdleMode(IdleMode.kBrake);
 
-        intake.setSmartCurrentLimit(MotorConstants.NEO_V1_STALL_LIMIT_LOW, MotorConstants.NEO_V1_FREE_LIMIT);
+        intake.setSmartCurrentLimit(IntakeConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
     }
 
     public void clearStickyFaults() {

@@ -35,8 +35,6 @@ public final class Constants {
 
     public static final int NEO_V1_NOMINAL_VOLTAGE = 12;
     
-    public static final int NEO_V1_STALL_LIMIT_LOW = 40;
-    public static final int NEO_V1_STALL_LIMIT_HIGH = 75;
     public static final int NEO_V1_FREE_LIMIT = 1;
 
     public static final int NEO_V1_MAX_RPMS = 5600; // 5676, this is a safe limit
@@ -63,12 +61,14 @@ public final class Constants {
     
     public static final double MAX_HEIGHT = 62;
     public static final double MIN_HEIGHT = 0;
-
+    
     public static final double kP = 0.1;
     public static final double kI = 0;
     public static final double kD = 0.0625;
     public static final double kFF = 0.0001;
 
+    public static final int STALL_LIMIT = 50;
+    
     public static final double ELEVATOR_THRESHOLD = 0.25;
   }
 
@@ -76,34 +76,40 @@ public final class Constants {
     public static final int LEFT_CAN = 15;
     public static final int RIGHT_CAN = 16;
     public static final int FEEDER_CAN = 17;
-
+    
     // TODO: Find values
     public static final double kP = 0.004;
     public static final double kI = 0;
     public static final double kD = 1.5;
     public static final double kFF = 0.0005;
-
+    
+    public static final int STALL_LIMIT = 40;
+    
     public static final double SENSOR_THRESHOLD_INCHES = 0.5;
   }
   
   public static final class IntakeConstants {
     public static final int INTAKE_CAN = 18;
+    
+    public static final int STALL_LIMIT = 5;
   }
   
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
-
+    
     public static final double ANGLE_MAX_ABS = 0.731;
     public static final double ANGLE_MIN_ABS = 0.39;
     public static final double ANGLE_MIN_REL = 0;
     public static final double ANGLE_MAX_REL = 56;
-
+    
     public static final int ENCODER_PORT = 8;
     
     public static final double kP = 0.03;
     public static final double kI = 0;
     public static final double kD = 0.0625;
     public static final double kFF = 0.0003;
+
+    public static final int STALL_LIMIT = 35;
 
     public static final double ANGLE_THRESHOLD = 0.6;
     // public static final double ANGLE_THRESHOLD = 0.25;
