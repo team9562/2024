@@ -6,9 +6,6 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.Rev2mDistanceSensor.Port;
-import com.revrobotics.Rev2mDistanceSensor.Unit;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
@@ -16,7 +13,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.Utility;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private Rev2mDistanceSensor distance = new Rev2mDistanceSensor(Port.kOnboard);
+    private Rev2mDistanceSensor distance;
 
     private CANSparkMax shooterFeeder = new CANSparkMax(ShooterConstants.FEEDER_CAN, MotorType.kBrushless);
     private CANSparkMax shooterLeft = new CANSparkMax(ShooterConstants.LEFT_CAN, MotorType.kBrushless);
@@ -29,8 +26,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private double targetRPMs;
     private double targetFeeder;
 
-    public ShooterSubsystem() {
-        distance.setDistanceUnits(Unit.kInches);
+    public ShooterSubsystem(Rev2mDistanceSensor distanceSensor) {
+        distance = distanceSensor;
 
         shooterFeeder.restoreFactoryDefaults();
         shooterLeft.restoreFactoryDefaults();
@@ -142,6 +139,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
         SmartDashboard.putNumber("Note Distance", distance.getRange());
         SmartDashboard.putBoolean("Note Distance Valid", distance.isRangeValid());
+        SmartDashboard.putNumber("Note Distance Timestamp", distance.getTimestamp());
         SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
 
         SmartDashboard.putNumber("Target Velocity", targetRPMs);

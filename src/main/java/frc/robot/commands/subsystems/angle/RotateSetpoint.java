@@ -23,8 +23,7 @@ public class RotateSetpoint extends Command {
 
     @Override
     public boolean isFinished() {
-        // return false;
-        return angle.isAtTargetAngle();
+        return false;
     }
 
     @Override

@@ -5,9 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -42,6 +39,7 @@ import frc.robot.types.UpDownDirection;
 import frc.robot.util.Utility;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.revrobotics.Rev2mDistanceSensor;
 import java.io.File;
 
 /**
@@ -57,7 +55,7 @@ public class RobotContainer {
       "swerve"));
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
-  private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final ShooterSubsystem shooter;
   private final AngleSubystem angle = new AngleSubystem();
 
   private final SendableChooser<Command> autoChooser;
@@ -73,12 +71,14 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(Rev2mDistanceSensor distanceSensor) {
+    shooter = new ShooterSubsystem(distanceSensor);
+
     configureBindings();
 
     Command yokeTeleopFieldRelative = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getX(), 0.2),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), true);
 
     Command yokeTeleopRobotRelative = drivebase.driveCommand(
@@ -145,7 +145,10 @@ public class RobotContainer {
     new JoystickButton(driverYoke, 12).onTrue((new InstantCommand(drivebase::zeroGyro)));
 
     new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value)
-        .onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.min).andThen(new RotateSetpoint(angle, AngleSetpoint.min)).andThen(new Intake(intake, InOutDirection.in)).alongWith(new Shoot(shooter, InOutDirection.in))).onFalse(new InstantCommand(intake::stop).andThen(shooter::stopAll, shooter));
+        .onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.min)
+            .andThen(new RotateSetpoint(angle, AngleSetpoint.min)).andThen(new Intake(intake, InOutDirection.in))
+            .alongWith(new Shoot(shooter, InOutDirection.in)))
+        .onFalse(new InstantCommand(intake::stop).andThen(shooter::stopAll, shooter));
     new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value)
         .whileTrue(new Intake(intake, InOutDirection.out));
 
@@ -165,7 +168,7 @@ public class RobotContainer {
         .whileTrue(new RotateShooter(angle, UpDownDirection.up, 0.25));
     new JoystickButton(driverXbox, XboxController.Button.kA.value)
         .whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.25));
-        new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new HomeAngle(angle));
+    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new HomeAngle(angle));
     new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
 
     // new JoystickButton(driverXbox, 3).onTrue(new
@@ -185,8 +188,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath testPath = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
-    return AutoBuilder.followPath(testPath);
+    PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
+    return AutoBuilder.followPath(path);
   }
 
   public void setDriveMode() {
