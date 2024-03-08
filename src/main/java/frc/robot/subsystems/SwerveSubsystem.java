@@ -62,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     swerveDrive.setHeadingCorrection(false);
     swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
-    
+
     setupPathPlanner();
   }
 
@@ -249,10 +249,9 @@ public class SwerveSubsystem extends SubsystemBase {
    *                         smoother controls.
    * @return Drive command.
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX,
-      boolean fieldRelative) {
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
+      DoubleSupplier angularRotationX, boolean fieldRelative) {
     return run(() -> {
-      // Make the robot move
       swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
           Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
           Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),

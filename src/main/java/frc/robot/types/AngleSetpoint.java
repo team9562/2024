@@ -2,6 +2,7 @@ package frc.robot.types;
 
 public enum AngleSetpoint {
     min(0),
+    half(0.5),
     max(1);
 
     public final double percentage;

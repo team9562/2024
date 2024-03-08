@@ -91,7 +91,7 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int INTAKE_CAN = 18;
     
-    public static final int STALL_LIMIT = 5;
+    public static final int STALL_LIMIT = 35;
   }
   
   public static final class AngleConstants {

@@ -20,13 +20,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.subsystems.angle.HomeAngle;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
-import frc.robot.commands.subsystems.angle.RotateShooter;
 import frc.robot.commands.subsystems.elevator.HomeElevator;
-import frc.robot.commands.subsystems.elevator.MoveElevator;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
 import frc.robot.commands.subsystems.shooter.Feed;
 import frc.robot.commands.subsystems.shooter.Shoot;
+import frc.robot.commands.subsystems.shooter.ShootAmp;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -35,7 +34,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
-import frc.robot.types.UpDownDirection;
 import frc.robot.util.Utility;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -68,37 +66,56 @@ public class RobotContainer {
   private final SendableChooser<Command> m_commandChooser = new SendableChooser<>();
   private final SendableChooser<String> m_pathChooser = new SendableChooser<>();
 
+  private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
+  private final Command homeElevatorCommand = new HomeElevator(elevator, angle);
+  private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
+  private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
+  private final Command homeAngleCommand = new HomeAngle(angle);
+  private final Command angleMinCommand = new RotateSetpoint(angle, AngleSetpoint.min);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, AngleSetpoint.half);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, AngleSetpoint.max);
+  private final Command shooterShootCommand;
+  private final Command shooterShootAmpCommand;
+  private final Command shooterIntakeCommand;
+  private final Command shooterFeedCommand;
+  private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
+  private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer(Rev2mDistanceSensor distanceSensor) {
     shooter = new ShooterSubsystem(distanceSensor);
 
+    shooterShootCommand = new Shoot(shooter, InOutDirection.out);
+    shooterShootAmpCommand = new ShootAmp(shooter);
+    shooterIntakeCommand = new Shoot(shooter, InOutDirection.in);
+    shooterFeedCommand = new Feed(shooter, InOutDirection.out);
+
     configureBindings();
 
-    Command yokeTeleopFieldRelative = drivebase.driveCommand(
+    Command fieldRelative = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getX(), 0.2),
+        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), true);
 
-    Command yokeTeleopRobotRelative = drivebase.driveCommand(
+    Command robotRelative = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), false);
 
-    m_commandChooser.addOption("Yoke TeleOp [Robot]", yokeTeleopRobotRelative);
-    m_commandChooser.setDefaultOption("Yoke TeleOp [Field]", yokeTeleopFieldRelative);
+    m_commandChooser.addOption("Robot Relative", robotRelative);
+    m_commandChooser.setDefaultOption("Field Relative", fieldRelative);
 
+    drivebase.setDefaultCommand(m_commandChooser.getSelected());
+    
     getPaths();
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    SmartDashboard.putData(m_commandChooser);
-    SmartDashboard.putData(m_pathChooser);
-
-    drivebase.setDefaultCommand(m_commandChooser.getSelected());
+    SmartDashboard.putData("TeleOp", m_commandChooser);
+    SmartDashboard.putData("Path", m_pathChooser);
   }
 
   private void getPaths() {
@@ -142,44 +159,30 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(driverYoke, 12).onTrue((new InstantCommand(drivebase::zeroGyro)));
+    // Yoke
+    
+    new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
+    
+    new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
+    new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
+    
+    new JoystickButton(driverYoke, 3).whileTrue(shooterIntakeCommand);
+    new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
+    
+    // Controller
 
-    new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value)
-        .onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.min)
-            .andThen(new RotateSetpoint(angle, AngleSetpoint.min)).andThen(new Intake(intake, InOutDirection.in))
-            .alongWith(new Shoot(shooter, InOutDirection.in)))
-        .onFalse(new InstantCommand(intake::stop).andThen(shooter::stopAll, shooter));
-    new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value)
-        .whileTrue(new Intake(intake, InOutDirection.out));
+    new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
+    
+    new POVButton(driverXbox, 0).onTrue(elevatorMaxCommand);
+    new POVButton(driverXbox, 180).onTrue(elevatorMinCommand);
 
-    new POVButton(driverXbox, 0).whileTrue(new MoveElevator(elevator, UpDownDirection.up, 0.25));
-    new POVButton(driverXbox, 180).whileTrue(new MoveElevator(elevator, UpDownDirection.down, 0.25));
-    new POVButton(driverXbox, 270).onTrue(new HomeElevator(elevator, angle));
-    new POVButton(driverXbox, 90).onTrue(new MoveSetpoint(elevator, angle, ElevatorSetpoint.max));
+    new JoystickButton(driverXbox, XboxController.Button.kY.value).onTrue(angleMaxCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(angleHalfCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kA.value).onTrue(angleMinCommand);
 
-    new JoystickButton(driverYoke, 1).whileTrue(new Shoot(shooter, InOutDirection.out));
-    new JoystickButton(driverYoke, 2).whileTrue(new Feed(shooter, InOutDirection.out));
-
-    new JoystickButton(driverYoke, 3).whileTrue(new Shoot(shooter, InOutDirection.in));
-    new JoystickButton(driverYoke, 6).onTrue(new InstantCommand(shooter::shootAmpMaxSpeed))
-        .onFalse(new InstantCommand(shooter::stopShooters));
-
-    new JoystickButton(driverXbox, XboxController.Button.kY.value)
-        .whileTrue(new RotateShooter(angle, UpDownDirection.up, 0.25));
-    new JoystickButton(driverXbox, XboxController.Button.kA.value)
-        .whileTrue(new RotateShooter(angle, UpDownDirection.down, 0.25));
-    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(new HomeAngle(angle));
-    new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(new RotateSetpoint(angle, AngleSetpoint.max));
-
-    // new JoystickButton(driverXbox, 3).onTrue(new
-    // InstantCommand(drivebase::addFakeVisionReading));
-
-    // new JoystickButton(driverXbox,
-    // 2).whileTrue(
-    // Commands.deferredProxy(() -> drivebase.driveToPose(
-    // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
-    // new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new
-    // InstantCommand(drivebase::lock, drivebase)));
+    new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value).whileTrue(intakeOutCommand);
   }
 
   /**
