@@ -108,7 +108,7 @@ public class RobotContainer {
     m_commandChooser.setDefaultOption("Field Relative", fieldRelative);
 
     drivebase.setDefaultCommand(m_commandChooser.getSelected());
-    
+
     getPaths();
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -116,6 +116,34 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putData("TeleOp", m_commandChooser);
     SmartDashboard.putData("Path", m_pathChooser);
+  }
+
+  public void homeAngle() {
+    homeAngleCommand.initialize();
+
+    boolean homed = false;
+
+    while (!homed) {
+      homeAngleCommand.execute();
+
+      homed = homeAngleCommand.isFinished();
+    }
+
+    homeAngleCommand.end(false);
+  }
+
+  public void homeElevator() {
+    homeElevatorCommand.initialize();
+
+    boolean homed = false;
+
+    while (!homed) {
+      homeElevatorCommand.execute();
+
+      homed = homeElevatorCommand.isFinished();
+    }
+
+    homeElevatorCommand.end(false);
   }
 
   private void getPaths() {
@@ -160,20 +188,20 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Yoke
-    
+
     new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
-    
+
     new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
     new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
-    
+
     new JoystickButton(driverYoke, 3).whileTrue(shooterIntakeCommand);
     new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
-    
+
     // Controller
 
     new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
     new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
-    
+
     new POVButton(driverXbox, 0).onTrue(elevatorMaxCommand);
     new POVButton(driverXbox, 180).onTrue(elevatorMinCommand);
 
