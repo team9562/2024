@@ -46,10 +46,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorPidController.setFeedbackDevice(elevatorLeftEncoder);
 
-        elevatorPidController.setP(ElevatorConstants.kP);
-        elevatorPidController.setI(ElevatorConstants.kI);
-        elevatorPidController.setD(ElevatorConstants.kD);
-        elevatorPidController.setFF(ElevatorConstants.kFF);
+        elevatorPidController.setP(ElevatorConstants.kP, ElevatorConstants.PID_SLOT);
+        elevatorPidController.setI(ElevatorConstants.kI, ElevatorConstants.PID_SLOT);
+        elevatorPidController.setD(ElevatorConstants.kD, ElevatorConstants.PID_SLOT);
+        elevatorPidController.setFF(ElevatorConstants.kFF, ElevatorConstants.PID_SLOT);
+        
+        elevatorPidController.setP(ElevatorConstants.kP_HANG, ElevatorConstants.PID_SLOT_HANG);
+        elevatorPidController.setI(ElevatorConstants.kI, ElevatorConstants.PID_SLOT_HANG);
+        elevatorPidController.setD(ElevatorConstants.kD, ElevatorConstants.PID_SLOT_HANG);
+        elevatorPidController.setFF(ElevatorConstants.kFF, ElevatorConstants.PID_SLOT_HANG);
     }
 
     public void clearStickyFaults() {
@@ -84,7 +89,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setElevatorPosition(double setpointPercentage) {
         targetHeight = setpointPercentage * ElevatorConstants.MAX_HEIGHT;
 
-        elevatorPidController.setReference(targetHeight, ControlType.kPosition);
+        elevatorPidController.setReference(targetHeight, ControlType.kPosition, ElevatorConstants.PID_SLOT);
+    }
+
+    public void setElevatorPositionHang(double setpointPercentage) {
+        targetHeight = setpointPercentage * ElevatorConstants.MAX_HEIGHT;
+
+        elevatorPidController.setReference(targetHeight, ControlType.kPosition, ElevatorConstants.PID_SLOT_HANG);
     }
 
     public boolean isAtTargetHeight() {

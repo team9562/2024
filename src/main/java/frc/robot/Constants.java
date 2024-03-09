@@ -63,9 +63,13 @@ public final class Constants {
     public static final double MIN_HEIGHT = 0;
     
     public static final double kP = 0.1;
+    public static final double kP_HANG = 0.01;
     public static final double kI = 0;
     public static final double kD = 0.0625;
     public static final double kFF = 0.0001;
+
+    public static final int PID_SLOT = 0;
+    public static final int PID_SLOT_HANG = 1;
 
     public static final int STALL_LIMIT = 65;
     

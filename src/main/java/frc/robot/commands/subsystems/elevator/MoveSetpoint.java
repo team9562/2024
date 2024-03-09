@@ -27,8 +27,12 @@ public class MoveSetpoint extends Command {
 
     @Override
     public void execute() {
-        if (angle.isAtTargetAngle())
-            elevator.setElevatorPosition(setpoint.percentage);
+        if (angle.isAtTargetAngle()) {
+            if (setpoint == ElevatorSetpoint.hang)
+                elevator.setElevatorPositionHang(setpoint.percentage);
+            else
+                elevator.setElevatorPosition(setpoint.percentage);
+        }
     }
 
     @Override

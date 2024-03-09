@@ -53,13 +53,15 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(distanceSensor);
-
+    
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop
     // immediately when disabled, but then also let it be pushed more
     disabledTimer = new Timer();
+    
+    m_robotContainer.zeroGyro();
   }
-
+  
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
    * like diagnostics that you want ran
@@ -81,19 +83,19 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
-
+  
   /**
    * This function is called once each time the robot enters Disabled mode.
    */
   @Override
   public void disabledInit() {
     distanceSensor.setEnabled(false);
-
+    
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
   }
-
+  
   @Override
   public void disabledPeriodic() {
     if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
@@ -101,7 +103,7 @@ public class Robot extends TimedRobot {
       disabledTimer.stop();
     }
   }
-
+  
   /**
    * This autonomous runs the autonomous command selected by your
    * {@link RobotContainer} class.
@@ -110,15 +112,15 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.setMotorBrake(true);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-
+    
     m_robotContainer.homeAngle();
     // m_robotContainer.homeElevator();
-
+    
     // Assume it starts at 0
     if (m_robotContainer.elevatorBottomedOut())
       m_robotContainer.resetElevatorEncoder();
