@@ -66,14 +66,15 @@ public class RobotContainer {
   private final SendableChooser<String> m_pathChooser = new SendableChooser<>();
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
-  // private final Command homeElevatorCommand = new HomeElevator(elevator, angle);
+  // private final Command homeElevatorCommand = new HomeElevator(elevator,
+  // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
   private final Command homeAngleCommand = new HomeAngle(angle);
-  private final Command angleMinCommand = new RotateSetpoint(angle, AngleSetpoint.min);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, AngleSetpoint.half);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, AngleSetpoint.max);
+  private final Command angleMinCommand = new RotateSetpoint(angle, AngleSetpoint.min).withTimeout(1);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, AngleSetpoint.half).withTimeout(1);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, AngleSetpoint.max).withTimeout(1);
   private final Command shooterShootCommand;
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
@@ -96,13 +97,13 @@ public class RobotContainer {
     configureBindings();
 
     Command fieldRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), true);
 
     Command robotRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
         () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), false);
 
     m_commandChooser.addOption("Robot Relative", robotRelative);
@@ -142,17 +143,17 @@ public class RobotContainer {
   }
 
   // public void homeElevator() {
-  //   homeElevatorCommand.initialize();
+  // homeElevatorCommand.initialize();
 
-  //   boolean homed = false;
+  // boolean homed = false;
 
-  //   while (!homed) {
-  //     homeElevatorCommand.execute();
+  // while (!homed) {
+  // homeElevatorCommand.execute();
 
-  //     homed = homeElevatorCommand.isFinished();
-  //   }
+  // homed = homeElevatorCommand.isFinished();
+  // }
 
-  //   homeElevatorCommand.end(false);
+  // homeElevatorCommand.end(false);
   // }
 
   private void getPaths() {
@@ -208,8 +209,10 @@ public class RobotContainer {
 
     // Controller
 
-    // new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
-    // new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
+    // new JoystickButton(driverXbox,
+    // XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
+    // new JoystickButton(driverXbox,
+    // XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
 
     new POVButton(driverXbox, 0).onTrue(elevatorMaxCommand);
     new POVButton(driverXbox, 270).onTrue(elevatorHalfCommand);
@@ -229,7 +232,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
+    // PathPlannerPath path =
+    // PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
     // return AutoBuilder.followPath(path);
     return fillerAutonLeaveLine;
   }

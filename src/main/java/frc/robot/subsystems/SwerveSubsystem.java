@@ -249,7 +249,7 @@ public class SwerveSubsystem extends SubsystemBase {
    *                         smoother controls.
    * @return Drive command.
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
+  public Command driveCommand(DoubleSupplier translationY, DoubleSupplier translationX,
       DoubleSupplier angularRotationX, boolean fieldRelative) {
     return run(() -> {
       swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
