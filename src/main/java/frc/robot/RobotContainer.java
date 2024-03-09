@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.auto.LeaveLine;
+// import frc.robot.commands.auto.LeaveLine;
 import frc.robot.commands.subsystems.angle.HomeAngle;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
@@ -36,6 +36,7 @@ import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.util.Utility;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.revrobotics.Rev2mDistanceSensor;
 import java.io.File;
 
@@ -72,16 +73,16 @@ public class RobotContainer {
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
   private final Command homeAngleCommand = new HomeAngle(angle);
-  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, AngleSetpoint.min);//.withTimeout(1);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, AngleSetpoint.half);//.withTimeout(1);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, AngleSetpoint.max);//.withTimeout(1);
+  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);//.withTimeout(1);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);//.withTimeout(1);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max);//.withTimeout(1);
   private final Command shooterShootCommand;
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
   private final Command shooterFeedCommand;
   private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
   private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
-  private final Command fillerAutonLeaveLine = new LeaveLine(drivebase);
+  // private final Command fillerAutonLeaveLine = new LeaveLine(drivebase);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -229,10 +230,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // PathPlannerPath path =
-    // PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
-    // return AutoBuilder.followPath(path);
-    return fillerAutonLeaveLine;
+    PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
+    return AutoBuilder.followPath(path);
   }
 
   public void setDriveMode() {
