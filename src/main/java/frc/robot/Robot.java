@@ -115,9 +115,13 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    
+
     m_robotContainer.homeAngle();
-    m_robotContainer.homeElevator();
+    // m_robotContainer.homeElevator();
+
+    // Assume it starts at 0
+    if (m_robotContainer.elevatorBottomedOut())
+      m_robotContainer.resetElevatorEncoder();
   }
 
   /**

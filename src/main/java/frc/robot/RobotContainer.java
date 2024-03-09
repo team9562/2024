@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.auto.LeaveLine;
 import frc.robot.commands.subsystems.angle.HomeAngle;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
-import frc.robot.commands.subsystems.elevator.HomeElevator;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
 import frc.robot.commands.subsystems.shooter.Feed;
@@ -36,7 +36,6 @@ import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.util.Utility;
 import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.path.PathPlannerPath;
 import com.revrobotics.Rev2mDistanceSensor;
 import java.io.File;
 
@@ -67,8 +66,9 @@ public class RobotContainer {
   private final SendableChooser<String> m_pathChooser = new SendableChooser<>();
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
-  private final Command homeElevatorCommand = new HomeElevator(elevator, angle);
+  // private final Command homeElevatorCommand = new HomeElevator(elevator, angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
+  private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
   private final Command homeAngleCommand = new HomeAngle(angle);
   private final Command angleMinCommand = new RotateSetpoint(angle, AngleSetpoint.min);
@@ -80,6 +80,7 @@ public class RobotContainer {
   private final Command shooterFeedCommand;
   private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
   private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
+  private final Command fillerAutonLeaveLine = new LeaveLine(drivebase);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -132,19 +133,27 @@ public class RobotContainer {
     homeAngleCommand.end(false);
   }
 
-  public void homeElevator() {
-    homeElevatorCommand.initialize();
-
-    boolean homed = false;
-
-    while (!homed) {
-      homeElevatorCommand.execute();
-
-      homed = homeElevatorCommand.isFinished();
-    }
-
-    homeElevatorCommand.end(false);
+  public boolean elevatorBottomedOut() {
+    return elevator.isBottomedOut();
   }
+
+  public void resetElevatorEncoder() {
+    elevator.resetElevatorEncoder();
+  }
+
+  // public void homeElevator() {
+  //   homeElevatorCommand.initialize();
+
+  //   boolean homed = false;
+
+  //   while (!homed) {
+  //     homeElevatorCommand.execute();
+
+  //     homed = homeElevatorCommand.isFinished();
+  //   }
+
+  //   homeElevatorCommand.end(false);
+  // }
 
   private void getPaths() {
     File[] pathFiles = new File(Filesystem.getDeployDirectory(), "pathplanner/paths").listFiles();
@@ -199,10 +208,11 @@ public class RobotContainer {
 
     // Controller
 
-    new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
+    // new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
+    // new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
 
     new POVButton(driverXbox, 0).onTrue(elevatorMaxCommand);
+    new POVButton(driverXbox, 270).onTrue(elevatorHalfCommand);
     new POVButton(driverXbox, 180).onTrue(elevatorMinCommand);
 
     new JoystickButton(driverXbox, XboxController.Button.kY.value).onTrue(angleMaxCommand);
@@ -221,7 +231,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
     // return AutoBuilder.followPath(path);
-    return new InstantCommand(drivebase::lock);
+    return fillerAutonLeaveLine;
   }
 
   public void setDriveMode() {
