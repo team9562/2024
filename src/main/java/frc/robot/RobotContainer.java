@@ -201,7 +201,7 @@ public class RobotContainer {
     new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
     new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
 
-    new JoystickButton(driverYoke, 3).whileTrue(shooterIntakeCommand);
+    new JoystickButton(driverYoke, 3).whileTrue(shooterIntakeCommand.alongWith(intakeInCommand));
     new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
 
     // Controller
@@ -219,7 +219,7 @@ public class RobotContainer {
     new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(angleHalfCommand);
     new JoystickButton(driverXbox, XboxController.Button.kA.value).onTrue(angleMinCommand);
 
-    new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
+    // new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
     new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value).whileTrue(intakeOutCommand);
   }
 
