@@ -36,7 +36,7 @@ import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.util.Utility;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
+// import com.pathplanner.lib.path.PathPlannerPath;
 import com.revrobotics.Rev2mDistanceSensor;
 import java.io.File;
 
@@ -219,8 +219,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
-    return AutoBuilder.followPath(path);
+    // PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
+    // return AutoBuilder.followPath(path);
+    return new InstantCommand(drivebase::lock);
   }
 
   public void setDriveMode() {

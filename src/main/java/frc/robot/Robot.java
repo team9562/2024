@@ -142,8 +142,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
 
-    m_robotContainer.homeAngle();
-    m_robotContainer.homeElevator();
+    // m_robotContainer.homeAngle();
+    // m_robotContainer.homeElevator();
   }
 
   /**
