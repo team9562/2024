@@ -61,8 +61,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         return limitSwitch.get();
     }
 
+    public double getEncoder() {
+        return elevatorLeftEncoder.getPosition();
+    }
+
     public double getElevatorHeight() {
-        double sprocketPos = elevatorLeftEncoder.getPosition() / ElevatorConstants.GEAR_RATIO;
+        double sprocketPos = getEncoder() / ElevatorConstants.GEAR_RATIO;
         double circum = 2 * Math.PI * ElevatorConstants.SPROCKET_RADIUS;
 
         return sprocketPos * circum;
@@ -84,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public boolean isAtTargetHeight() {
-        return Utility.withinTolerance(elevatorLeftEncoder.getPosition(), targetHeight, ElevatorConstants.ELEVATOR_THRESHOLD);
+        return Utility.withinTolerance(getEncoder(), targetHeight, ElevatorConstants.ELEVATOR_THRESHOLD);
     }
 
     public void stop() {
@@ -104,10 +108,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Output Right", elevatorRight.getAppliedOutput());
 
         SmartDashboard.putNumber("Elevator Height", getElevatorHeight());
+        SmartDashboard.putNumber("Elevator Height Percent", getEncoder() / ElevatorConstants.MAX_HEIGHT);
         SmartDashboard.putNumber("Elevator Target Height", targetHeight);
         SmartDashboard.putBoolean("Elevator Is At Target Height", isAtTargetHeight());
         SmartDashboard.putNumber("Elevator Max Height", ElevatorConstants.MAX_HEIGHT);
         SmartDashboard.putNumber("Elevator Min Height", ElevatorConstants.MIN_HEIGHT);
+
+        SmartDashboard.putBoolean("Elevator is safe", !Utility.betweenRange(getEncoder() / ElevatorConstants.MAX_HEIGHT, ElevatorConstants.SAFE_MIN_PERCENT, ElevatorConstants.SAFE_MAX_PERCENT));
 
         SmartDashboard.putBoolean("Bottomed Out", isBottomedOut());
     }

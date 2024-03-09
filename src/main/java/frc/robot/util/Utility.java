@@ -8,4 +8,8 @@ public class Utility {
     public static String stripFileExtension(final String s) {
         return s != null && s.lastIndexOf(".") > 0 ? s.substring(0, s.lastIndexOf(".")) : s;
     }
+
+    public static boolean betweenRange(double value, double min, double max) {
+        return value >= min && value <= max;
+    }
 }

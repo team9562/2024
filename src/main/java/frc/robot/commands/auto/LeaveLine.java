@@ -9,7 +9,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class LeaveLine extends SequentialCommandGroup {
     public LeaveLine(SwerveSubsystem swerve) {
         addCommands(
-                new RunCommand(() -> swerve.driveFieldOriented(new ChassisSpeeds(0, 3, 0)), swerve).withTimeout(0.5),
+                new RunCommand(() -> swerve.driveFieldOriented(new ChassisSpeeds(-3, 0, 0)), swerve).withTimeout(0.5),
                 new WaitCommand(0.5),
                 new RunCommand(() -> swerve.driveFieldOriented(new ChassisSpeeds(0, 0, 0)), swerve));
     }

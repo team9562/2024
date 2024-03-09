@@ -72,9 +72,9 @@ public class RobotContainer {
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
   private final Command homeAngleCommand = new HomeAngle(angle);
-  private final Command angleMinCommand = new RotateSetpoint(angle, AngleSetpoint.min).withTimeout(1);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, AngleSetpoint.half).withTimeout(1);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, AngleSetpoint.max).withTimeout(1);
+  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, AngleSetpoint.min);//.withTimeout(1);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, AngleSetpoint.half);//.withTimeout(1);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, AngleSetpoint.max);//.withTimeout(1);
   private final Command shooterShootCommand;
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
@@ -187,10 +187,7 @@ public class RobotContainer {
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary predicate, or via the
-   * named factories in
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses
-   * for
+   * an arbitrary predicate,  
    * {@link CommandXboxController
    * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick
@@ -209,8 +206,8 @@ public class RobotContainer {
 
     // Controller
 
-    // new JoystickButton(driverXbox,
-    // XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(new InstantCommand(elevator::resetElevatorEncoder));
     // new JoystickButton(driverXbox,
     // XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
 

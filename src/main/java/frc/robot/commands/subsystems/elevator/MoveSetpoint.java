@@ -3,6 +3,7 @@ package frc.robot.commands.subsystems.elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 
 public class MoveSetpoint extends Command {
@@ -21,7 +22,7 @@ public class MoveSetpoint extends Command {
 
     @Override
     public void initialize() {
-        angle.setTargetAngle(1);
+        angle.setTargetAngle(AngleSetpoint.max.percentage);
     }
 
     @Override

@@ -70,6 +70,9 @@ public final class Constants {
     public static final int STALL_LIMIT = 65;
     
     public static final double ELEVATOR_THRESHOLD = 0.25;
+
+    public static final double SAFE_MIN_PERCENT = 0.065;
+    public static final double SAFE_MAX_PERCENT = 0.824;
   }
 
   public static final class ShooterConstants {
@@ -97,10 +100,10 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = 0.731;
-    public static final double ANGLE_MIN_ABS = 0.39;
+    public static final double ANGLE_MAX_ABS = 0.566;
+    public static final double ANGLE_MIN_ABS = 0.23;
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 56;
+    public static final double ANGLE_MAX_REL = 54.5;
     
     public static final int ENCODER_PORT = 8;
     
@@ -111,7 +114,7 @@ public final class Constants {
 
     public static final int STALL_LIMIT = 35;
 
-    public static final double ANGLE_THRESHOLD = 0.6;
+    public static final double ANGLE_THRESHOLD = 0.5;
     // public static final double ANGLE_THRESHOLD = 0.25;
   }
 
