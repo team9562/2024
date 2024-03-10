@@ -14,7 +14,7 @@ public class Feed extends Command {
         this.shooter = shooter;
         this.direction = direction;
 
-        addRequirements(shooter);
+        // addRequirements(shooter);
     }
 
     @Override

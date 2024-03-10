@@ -54,7 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorPidController.setP(ElevatorConstants.kP_HANG, ElevatorConstants.PID_SLOT_HANG);
         elevatorPidController.setI(ElevatorConstants.kI, ElevatorConstants.PID_SLOT_HANG);
         elevatorPidController.setD(ElevatorConstants.kD, ElevatorConstants.PID_SLOT_HANG);
-        elevatorPidController.setFF(ElevatorConstants.kFF, ElevatorConstants.PID_SLOT_HANG);
+        elevatorPidController.setFF(ElevatorConstants.kFF_HANG, ElevatorConstants.PID_SLOT_HANG);
     }
 
     public void clearStickyFaults() {
@@ -100,6 +100,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean isAtTargetHeight() {
         return Utility.withinTolerance(getEncoder(), targetHeight, ElevatorConstants.ELEVATOR_THRESHOLD);
+    }
+
+    public void lock(boolean lock) {
+        if (lock) elevatorPidController.setReference(targetHeight, ControlType.kPosition);
+        else elevatorLeft.stopMotor();
     }
 
     public void stop() {

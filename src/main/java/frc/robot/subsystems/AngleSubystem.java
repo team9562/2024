@@ -69,6 +69,11 @@ public class AngleSubystem extends SubsystemBase {
     public void stop() {
         angle.set(0);
     }
+
+    public void lock(boolean lock) {
+        if (lock) anglePidController.setReference(targetAngle, ControlType.kPosition);
+        else angle.stopMotor();
+    }
     
     @Override
     public void periodic() {

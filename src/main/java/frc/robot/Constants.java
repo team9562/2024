@@ -30,7 +30,6 @@ public final class Constants {
   public static final class MotorConstants { 
     public static final int NEO_550_NOMINAL_VOLTAGE = 12;
     
-    public static final int NEO_550_STALL_LIMIT = 40;
     public static final int NEO_550_FREE_LIMIT = 1;
 
     public static final int NEO_V1_NOMINAL_VOLTAGE = 12;
@@ -47,7 +46,7 @@ public final class Constants {
   }
 
   public static final class DrivebaseConstants {
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
+    public static final double LOCK_TIME = 10; // seconds
   }
 
   public static final class ElevatorConstants {
@@ -67,7 +66,8 @@ public final class Constants {
     public static final double kI = 0;
     public static final double kD = 0.0625;
     public static final double kFF = 0.0001;
-
+    public static final double kFF_HANG = 0.0004;
+    
     public static final int PID_SLOT = 0;
     public static final int PID_SLOT_HANG = 1;
 
@@ -87,10 +87,11 @@ public final class Constants {
     // TODO: Find values
     public static final double kP = 0.004;
     public static final double kI = 0;
-    public static final double kD = 1.5;
-    public static final double kFF = 0.0005;
+    public static final double kD = 0;
+    public static final double kFF = 0.0003;
     
-    public static final int STALL_LIMIT = 40;
+    public static final int STALL_LIMIT = 50;
+    public static final int FEEDER_STALL_LIMIT = 40;
     
     public static final double SENSOR_THRESHOLD_INCHES = 0.5;
   }
@@ -107,7 +108,7 @@ public final class Constants {
     public static final double ANGLE_MAX_ABS = 0.566;
     public static final double ANGLE_MIN_ABS = 0.23;
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 54.5;
+    public static final double ANGLE_MAX_REL = 54;
     
     public static final int ENCODER_PORT = 8;
     

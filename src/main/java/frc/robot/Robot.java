@@ -57,9 +57,7 @@ public class Robot extends TimedRobot {
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop
     // immediately when disabled, but then also let it be pushed more
-    disabledTimer = new Timer();
-    
-    m_robotContainer.zeroGyro();
+    disabledTimer = new Timer(); 
   }
   
   /**
@@ -98,7 +96,7 @@ public class Robot extends TimedRobot {
   
   @Override
   public void disabledPeriodic() {
-    if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME)) {
+    if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.LOCK_TIME)) {
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
     }
@@ -110,15 +108,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_robotContainer.zeroGyro();
+    m_robotContainer.homeAngle();
+    
     m_robotContainer.setMotorBrake(true);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutoSequence();
     
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
     
-    m_robotContainer.homeAngle();
+    
     // m_robotContainer.homeElevator();
     
     // Assume it starts at 0

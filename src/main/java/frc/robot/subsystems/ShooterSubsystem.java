@@ -34,11 +34,12 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.restoreFactoryDefaults();
 
         shooterLeft.setInverted(false);
+        shooterRight.setInverted(false);
         shooterFeeder.setInverted(false);
 
-        shooterRight.follow(shooterLeft, false);
+        // shooterRight.follow(shooterLeft, false);
 
-        shooterFeeder.setIdleMode(IdleMode.kBrake);
+        shooterFeeder.setIdleMode(IdleMode.kCoast);
         shooterLeft.setIdleMode(IdleMode.kCoast);
         shooterRight.setIdleMode(IdleMode.kCoast);
 
@@ -46,7 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterLeft.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
         shooterRight.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
-        shooterFeeder.setSmartCurrentLimit(MotorConstants.NEO_550_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
+        shooterFeeder.setSmartCurrentLimit(ShooterConstants.FEEDER_STALL_LIMIT, MotorConstants.NEO_550_FREE_LIMIT);
         shooterLeft.setSmartCurrentLimit(ShooterConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
         shooterRight.setSmartCurrentLimit(ShooterConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
 
@@ -80,6 +81,7 @@ public class ShooterSubsystem extends SubsystemBase {
         targetRPMs = rpms;
 
         leftPidController.setReference(targetRPMs, ControlType.kVelocity);
+        rightPidController.setReference(targetRPMs, ControlType.kVelocity);
     }
 
     public void setFeeder(double feeder) {
@@ -105,18 +107,20 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void shootAmpMaxSpeed() {
-        shooterRight.follow(shooterLeft, true);
+        targetRPMs = MotorConstants.NEO_V1_MAX_RPMS;
 
-        setRPMs(MotorConstants.NEO_V1_MAX_RPMS);
+        leftPidController.setReference(targetRPMs, ControlType.kVelocity);
+        rightPidController.setReference(-targetRPMs, ControlType.kVelocity);
     }
 
+    /**
+     * 
+     */
     public void stopShooters() {
-        shooterRight.follow(shooterLeft, false);
-
         targetRPMs = 0;
 
-        shooterLeft.set(0);
-        shooterRight.set(0);
+        shooterLeft.stopMotor();
+        shooterRight.stopMotor();
     }
 
     public void stopFeeder() {
