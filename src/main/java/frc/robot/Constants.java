@@ -41,8 +41,10 @@ public final class Constants {
   }
 
   public static final class AutonConstants {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(2.5,0,0);
-    public static final PIDConstants ANGLE_PID = new PIDConstants(5, 0, 0);
+    // public static final PIDConstants TRANSLATION_PID = new PIDConstants(3, 0,0);
+    // public static final PIDConstants ANGLE_PID = new PIDConstants(0, 0, 0);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0,0);
+    public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
   }
 
   public static final class DrivebaseConstants {
@@ -125,10 +127,9 @@ public final class Constants {
 
   public static class OperatorConstants {
     // Joystick Deadband
-    public static final double LEFT_X_DEADBAND = 0.05;
-    public static final double LEFT_Y_DEADBAND = 0.05;
-    public static final double RIGHT_X_DEADBAND = 0.05;
-    public static final double RIGHT_Y_DEADBAND = 0.05;
+    public static final double X_DEADBAND = 0.075;
+    public static final double Y_DEADBAND = 0.075;
+    public static final double Z_DEADBAND = 0.0875;
     public static final double TURN_CONSTANT = 6;
   }
 }

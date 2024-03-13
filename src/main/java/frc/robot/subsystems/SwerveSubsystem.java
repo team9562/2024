@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -64,8 +65,10 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
 
     setupPathPlanner();
-  }
 
+    SmartDashboard.putNumber("Swerve Radius Meters", swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters());
+  }
+  
   /**
    * Construct the swerve drive.
    *
@@ -75,121 +78,121 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
   }
-
+  
   /**
    * Setup AutoBuilder for PathPlanner.
    */
   public void setupPathPlanner() {
     AutoBuilder.configureHolonomic(
-        this::getPose, // Robot pose supplier
-        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-        this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            AutonConstants.TRANSLATION_PID,
-            // Translation PID constants
-            AutonConstants.ANGLE_PID,
-            // Rotation PID constants
-            4.5,
-            // Max module speed, in m/s
-            swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
-            // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig()
-        // Default path replanning config. See the API for the options here
-        ),
-        () -> {
-          // Boolean supplier that controls when the path will be mirrored for the red
-          // alliance
-          // This will flip the path being followed to the red side of the field.
-          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+      this::getPose, // Robot pose supplier
+      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+      AutonConstants.TRANSLATION_PID,
+      // Translation PID constants
+      AutonConstants.ANGLE_PID,
+      // Rotation PID constants
+      Units.feetToMeters(14.5),
+      // Max module speed, in m/s
+      swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
+      // Drive base radius in meters. Distance from robot center to furthest module.
+      new ReplanningConfig()
+      // Default path replanning config. See the API for the options here
+      ),
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red
+        // alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
           // var alliance = DriverStation.getAlliance();
           return false;
           // return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
         },
         this // Reference to this subsystem to set requirements
-    );
-  }
-
-  /**
-   * Aim the robot at the target returned by PhotonVision.
-   *
-   * @param camera {@link PhotonCamera} to communicate with.
-   * @return A {@link Command} which will run the alignment.
-   */
-  public Command aimAtTarget(PhotonCamera camera) {
-    return run(() -> {
-      PhotonPipelineResult result = camera.getLatestResult();
-      if (result.hasTargets()) {
-        drive(getTargetSpeeds(0,
+        );
+      }
+      
+      /**
+       * Aim the robot at the target returned by PhotonVision.
+       *
+       * @param camera {@link PhotonCamera} to communicate with.
+       * @return A {@link Command} which will run the alignment.
+       */
+      public Command aimAtTarget(PhotonCamera camera) {
+        return run(() -> {
+          PhotonPipelineResult result = camera.getLatestResult();
+          if (result.hasTargets()) {
+            drive(getTargetSpeeds(0,
             0,
             Rotation2d.fromDegrees(result.getBestTarget()
-                .getYaw()))); // Not sure if this will work, more math may be required.
+            .getYaw()))); // Not sure if this will work, more math may be required.
+          }
+        });
       }
-    });
-  }
-
-  /**
-   * Get the path follower with events.
-   *
-   * @param pathName PathPlanner path name.
-   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
-   */
-  public Command getAutonomousCommand(String pathName) {
-    // Create a path following command using AutoBuilder. This will also trigger
-    // event markers.
-    return new PathPlannerAuto(pathName);
-  }
-
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
+      
+      /**
+       * Get the path follower with events.
+       *
+       * @param pathName PathPlanner path name.
+       * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
+       */
+      public Command getAutonomousCommand(String pathName) {
+        // Create a path following command using AutoBuilder. This will also trigger
+        // event markers.
+        return new PathPlannerAuto(pathName);
+      }
+      
+      /**
+       * Use PathPlanner Path finding to go to a point on the field.
+       *
+       * @param pose Target {@link Pose2d} to go to.
+       * @return PathFinding command
+       */
   public Command driveToPose(Pose2d pose) {
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumVelocity(), 4.0,
-        swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
-
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
+      swerveDrive.getMaximumVelocity(), 4.0,
+      swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
+      
+      // Since AutoBuilder is configured, we can use it to build pathfinding commands
+      return AutoBuilder.pathfindToPose(
         pose,
         constraints,
         0.0, // Goal end velocity in meters/sec
         0.0 // Rotation delay distance in meters. This is how far the robot should travel
-            // before attempting to rotate.
-    );
-  }
-
-  /**
-   * Command to drive the robot using translative values and heading as a
-   * setpoint.
-   *
-   * @param translationX Translation in the X direction. Cubed for smoother
-   *                     controls.
-   * @param translationY Translation in the Y direction. Cubed for smoother
-   *                     controls.
-   * @param headingX     Heading X to calculate angle of the joystick.
-   * @param headingY     Heading Y to calculate angle of the joystick.
-   * @return Drive command.
-   */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
+        // before attempting to rotate.
+        );
+      }
+      
+      /**
+       * Command to drive the robot using translative values and heading as a
+       * setpoint.
+       *
+       * @param translationX Translation in the X direction. Cubed for smoother
+       *                     controls.
+       * @param translationY Translation in the Y direction. Cubed for smoother
+       *                     controls.
+       * @param headingX     Heading X to calculate angle of the joystick.
+       * @param headingY     Heading Y to calculate angle of the joystick.
+       * @return Drive command.
+       */
+      public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
-    // correction for this kind of control.
-    return run(() -> {
-      double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
-      double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
-      // Make the robot move
+        // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+        // correction for this kind of control.
+        return run(() -> {
+          double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth controll out
+          double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth controll out
+          // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
-          headingX.getAsDouble(),
-          headingY.getAsDouble(),
-          swerveDrive.getOdometryHeading().getRadians(),
-          swerveDrive.getMaximumVelocity()));
+      headingX.getAsDouble(),
+      headingY.getAsDouble(),
+      swerveDrive.getOdometryHeading().getRadians(),
+      swerveDrive.getMaximumVelocity()));
     });
   }
-
+  
   /**
    * Command to drive the robot using translative values and heading as a
    * setpoint.
@@ -205,13 +208,13 @@ public class SwerveSubsystem extends SubsystemBase {
     return run(() -> {
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
-          translationY.getAsDouble(),
-          rotation.getAsDouble() * Math.PI,
-          swerveDrive.getOdometryHeading().getRadians(),
-          swerveDrive.getMaximumVelocity()));
+      translationY.getAsDouble(),
+      rotation.getAsDouble() * Math.PI,
+      swerveDrive.getOdometryHeading().getRadians(),
+      swerveDrive.getMaximumVelocity()));
     });
   }
-
+  
   /**
    * Command to characterize the robot drive motors using SysId
    *
@@ -219,53 +222,53 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command sysIdDriveMotorCommand() {
     return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setDriveSysIdRoutine(
-            new Config(),
-            this, swerveDrive, 12),
+      SwerveDriveTest.setDriveSysIdRoutine(
+        new Config(),
+        this, swerveDrive, 12),
         3.0, 5.0, 3.0);
-  }
-
-  /**
-   * Command to characterize the robot angle motors using SysId
-   *
-   * @return SysId Angle Command
-   */
-  public Command sysIdAngleMotorCommand() {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setAngleSysIdRoutine(
+      }
+      
+      /**
+       * Command to characterize the robot angle motors using SysId
+       *
+       * @return SysId Angle Command
+       */
+      public Command sysIdAngleMotorCommand() {
+        return SwerveDriveTest.generateSysIdCommand(
+          SwerveDriveTest.setAngleSysIdRoutine(
             new Config(),
             this, swerveDrive),
-        3.0, 5.0, 3.0);
-  }
-
-  /**
-   * Command to drive the robot using translative values and heading as angular
-   * velocity.
-   *
-   * @param translationX     Translation in the X direction. Cubed for smoother
-   *                         controls.
-   * @param translationY     Translation in the Y direction. Cubed for smoother
-   *                         controls.
-   * @param angularRotationX Angular velocity of the robot to set. Cubed for
-   *                         smoother controls.
-   * @return Drive command.
-   */
-  public Command driveCommand(DoubleSupplier translationY, DoubleSupplier translationX,
-      DoubleSupplier angularRotationX, boolean fieldRelative) {
-    return run(() -> {
-      swerveDrive.drive(new Translation2d(Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
-          Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
-          Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
-          fieldRelative,
-          false);
-    });
-  }
-
-  /**
-   * The primary method for controlling the drivebase. Takes a
-   * {@link Translation2d} and a rotation rate, and
-   * calculates and commands module states accordingly. Can use either open-loop
-   * or closed-loop velocity control for
+            3.0, 5.0, 3.0);
+          }
+          
+          /**
+           * Command to drive the robot using translative values and heading as angular
+           * velocity.
+           *
+           * @param translationX     Translation in the X direction. Cubed for smoother
+           *                         controls.
+           * @param translationY     Translation in the Y direction. Cubed for smoother
+           *                         controls.
+           * @param angularRotation Angular velocity of the robot to set. Cubed for
+           *                         smoother controls.
+           * @return Drive command.
+           */
+          public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
+          DoubleSupplier angularRotation, boolean fieldRelative) {
+            return run(() -> {
+              swerveDrive.drive(new Translation2d(Math.pow(translationY.getAsDouble(), 3) * swerveDrive.getMaximumVelocity(),
+              Math.pow(translationX.getAsDouble(), 3) * swerveDrive.getMaximumVelocity()),
+              Math.pow(angularRotation.getAsDouble(), 3) * swerveDrive.getMaximumAngularVelocity(),
+              fieldRelative,
+              false);
+            });
+          }
+          
+          /**
+           * The primary method for controlling the drivebase. Takes a
+           * {@link Translation2d} and a rotation rate, and
+           * calculates and commands module states accordingly. Can use either open-loop
+           * or closed-loop velocity control for
    * the wheel velocities. Also has field- and robot-relative modes, which affect
    * how the translation vector is used.
    *
@@ -286,11 +289,11 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     swerveDrive.drive(translation,
-        rotation,
-        fieldRelative,
-        false); // Open loop is disabled since it shouldn't be used most of the time.
+    rotation,
+    fieldRelative,
+    false); // Open loop is disabled since it shouldn't be used most of the time.
   }
-
+  
   /**
    * Drive the robot given a chassis field oriented velocity.
    *
@@ -299,24 +302,23 @@ public class SwerveSubsystem extends SubsystemBase {
   public void driveFieldOriented(ChassisSpeeds velocity) {
     swerveDrive.driveFieldOriented(velocity);
   }
-
+  
   /**
    * Drive according to the chassis robot oriented velocity.
    *
    * @param velocity Robot oriented {@link ChassisSpeeds}
    */
   public void drive(ChassisSpeeds velocity) {
-    swerveDrive.drive(velocity);
   }
-
+  
   @Override
   public void periodic() {
   }
-
+  
   @Override
   public void simulationPeriodic() {
   }
-
+  
   /**
    * Get the swerve drive kinematics object.
    *

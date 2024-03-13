@@ -107,14 +107,14 @@ public class RobotContainer {
     configureBindings();
 
     Command fieldRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), true);
+        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.Z_DEADBAND), true);
 
     Command robotRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.LEFT_X_DEADBAND), false);
+        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.X_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.Y_DEADBAND),
+        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.Z_DEADBAND), false);
 
     m_commandChooser.addOption("Robot Relative", robotRelative);
     m_commandChooser.setDefaultOption("Field Relative", fieldRelative);
@@ -280,7 +280,6 @@ public class RobotContainer {
     PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
     drivebase.resetOdometry(path.getPathPoses().get(0));
     return AutoBuilder.followPath(path);
-    // return m_autoChooser.getSelected();
   }
 
   public void setDriveMode() {
