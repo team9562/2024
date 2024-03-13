@@ -37,8 +37,6 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.setInverted(false);
         shooterFeeder.setInverted(false);
 
-        // shooterRight.follow(shooterLeft, false);
-
         shooterFeeder.setIdleMode(IdleMode.kCoast);
         shooterLeft.setIdleMode(IdleMode.kCoast);
         shooterRight.setIdleMode(IdleMode.kCoast);

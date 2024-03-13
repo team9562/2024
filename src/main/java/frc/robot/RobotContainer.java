@@ -277,9 +277,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
-    drivebase.resetOdometry(path.getPathPoses().get(0));
-    return AutoBuilder.followPath(path);
+    return autoChooser.getSelected();
   }
 
   public void setDriveMode() {
