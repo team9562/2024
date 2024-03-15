@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PIDConstants;
 
 import edu.wpi.first.math.geometry.Translation3d;
@@ -26,7 +27,8 @@ public final class Constants {
   public static final double ROBOT_MASS = Units.lbsToKilograms(120.8);
   public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
-  
+  public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(4.4196, 4.25, 322.415, 605.58);
+
   public static final class MotorConstants { 
     public static final int NEO_550_NOMINAL_VOLTAGE = 12;
     
@@ -123,6 +125,11 @@ public final class Constants {
 
     public static final double ANGLE_THRESHOLD = 0.5;
     // public static final double ANGLE_THRESHOLD = 0.25;
+  }
+
+  public static final class VisionConstants {
+    public static final String TABLE_KEY = "limelight";
+    public static final String NAME = "limelight";
   }
 
   public static class OperatorConstants {
