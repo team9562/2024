@@ -13,16 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.auto.LeaveLine;
-import frc.robot.commands.auto.SpeakerStart;
 import frc.robot.commands.subsystems.angle.HomeAngle;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
@@ -38,9 +33,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
-import frc.robot.util.Utility;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.revrobotics.Rev2mDistanceSensor;
 import java.io.File;
 
@@ -60,16 +54,14 @@ public class RobotContainer {
   private final ShooterSubsystem shooter;
   private final AngleSubystem angle = new AngleSubystem();  
 
-  private final SendableChooser<Command> autoChooser;
-
+  
   private final PowerDistribution pdh = new PowerDistribution();
-
+  
   Joystick driverYoke = new Joystick(1);
   XboxController driverXbox = new XboxController(0);
-
+  
   private final SendableChooser<Command> m_commandChooser = new SendableChooser<>();
-  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
-  private final SendableChooser<String> m_pathChooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_autoChooser;
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
   // private final Command homeElevatorCommand = new HomeElevator(elevator,
@@ -88,8 +80,6 @@ public class RobotContainer {
   private final Command shooterFeedCommand;
   private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
   private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
-  private final Command fillerAutonLeaveLine = new LeaveLine(drivebase);
-  private final Command fillerSpeakerInit;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,37 +92,42 @@ public class RobotContainer {
     shooterIntakeCommand = new Shoot(shooter, InOutDirection.in);
     shooterFeedCommand = new Feed(shooter, InOutDirection.out);
 
-    fillerSpeakerInit = new SpeakerStart(drivebase, angle, shooter, elevator, intake);
+    registerPathPlannerNamedCommands();
 
     configureBindings();
 
     Command fieldRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.Z_DEADBAND), true);
+        () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
+        () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND), true);
 
     Command robotRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverYoke.getX(), OperatorConstants.X_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getY(), OperatorConstants.Y_DEADBAND),
-        () -> MathUtil.applyDeadband(driverYoke.getZ(), OperatorConstants.Z_DEADBAND), false);
+        () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
+        () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND), false);
 
     m_commandChooser.addOption("Robot Relative", robotRelative);
     m_commandChooser.setDefaultOption("Field Relative", fieldRelative);
 
-    m_autoChooser.addOption("Leave Line", fillerAutonLeaveLine);
-    m_autoChooser.setDefaultOption("Speaker", fillerSpeakerInit);
-
     drivebase.setDefaultCommand(m_commandChooser.getSelected());
 
-    getPaths();
+    m_autoChooser = AutoBuilder.buildAutoChooser();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-    SmartDashboard.putData("Filler Auton", m_autoChooser);
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
     SmartDashboard.putData("TeleOp", m_commandChooser);
-    SmartDashboard.putData("Path", m_pathChooser);
 
+  }
+
+  public void registerPathPlannerNamedCommands() {
+    NamedCommands.registerCommand("ANGLE_MAX", angleMaxCommand);
+    NamedCommands.registerCommand("ANGLE_MIN", angleMinCommand);
+    
+    NamedCommands.registerCommand("SHOOTER_SHOOT", shooterShootCommand);
+    NamedCommands.registerCommand("SHOOTER_FEED", shooterFeedCommand);
+    NamedCommands.registerCommand("SHOOTER_STOP_ALL", new InstantCommand(shooter::stopAll));
+
+    NamedCommands.registerCommand("INTAKE_IN_BOTH", intakeInCommand.alongWith(shooterIntakeCommand));
+    NamedCommands.registerCommand("INTAKE_STOP", new InstantCommand(intake::stop));
   }
 
   public void homeAngle() {
@@ -174,25 +169,6 @@ public class RobotContainer {
 
   // homeElevatorCommand.end(false);
   // }
-
-  private void getPaths() {
-    File[] pathFiles = new File(Filesystem.getDeployDirectory(), "pathplanner/paths").listFiles();
-
-    boolean firstIteration = true;
-
-    for (File pathFile : pathFiles) {
-      if (firstIteration) {
-        firstIteration = false;
-        continue;
-      }
-
-      m_pathChooser.addOption(Utility.stripFileExtension(pathFile.getName()),
-          Utility.stripFileExtension(pathFile.getName()));
-    }
-
-    m_pathChooser.setDefaultOption(Utility.stripFileExtension(pathFiles[0].getName()),
-        Utility.stripFileExtension(pathFiles[0].getName()));
-  }
 
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
@@ -244,44 +220,16 @@ public class RobotContainer {
     new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value).whileTrue(intakeOutCommand);
   }
 
-  public SequentialCommandGroup getAutoSequence() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile(m_pathChooser.getSelected());
-    drivebase.resetOdometry(path.getPathPoses().get(0));
-
-    return new SequentialCommandGroup(
-      new ParallelRaceGroup(
-        angleMaxCommand,
-        shooterShootCommand,
-        new SequentialCommandGroup(
-          new WaitCommand(3),
-          shooterFeedCommand.withTimeout(1),
-          new WaitCommand(1),
-          new InstantCommand(shooter::stopAll)
-        )
-      ),
-      
-      AutoBuilder.followPath(path)
-    );
-
-    // return new SequentialCommandGroup(
-    //   elevatorMaxCommand.withTimeout(3),
-    //   shooterShootAmpCommand.withTimeout(3),
-    //   shooterFeedCommand.withTimeout(2),
-    //   AutoBuilder.followPath(path)
-    // );
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return m_autoChooser.getSelected();
   }
 
-  public void setDriveMode() {
-  }
+  public void setDriveMode() {}
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);

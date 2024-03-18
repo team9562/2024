@@ -49,10 +49,10 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterLeft.setSmartCurrentLimit(ShooterConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
         shooterRight.setSmartCurrentLimit(ShooterConstants.STALL_LIMIT, MotorConstants.NEO_V1_FREE_LIMIT);
 
-        feederPidController.setP(ShooterConstants.kP);
-        feederPidController.setI(ShooterConstants.kI);
-        feederPidController.setD(ShooterConstants.kD);
-        feederPidController.setFF(ShooterConstants.kFF);
+        feederPidController.setP(ShooterConstants.kP_FEEDER);
+        feederPidController.setI(ShooterConstants.kI_FEEDER);
+        feederPidController.setD(ShooterConstants.kD_FEEDER);
+        feederPidController.setFF(ShooterConstants.kFF_FEEDER);
 
         leftPidController.setP(ShooterConstants.kP);
         leftPidController.setI(ShooterConstants.kI);
@@ -64,9 +64,9 @@ public class ShooterSubsystem extends SubsystemBase {
         rightPidController.setD(ShooterConstants.kD);
         rightPidController.setFF(ShooterConstants.kFF);
 
-        feederPidController.setOutputRange(-1, 1);
-        leftPidController.setOutputRange(-1, 1);
-        rightPidController.setOutputRange(-1, 1);
+        // feederPidController.setOutputRange(-1, 1);
+        // leftPidController.setOutputRange(-1, 1);
+        // rightPidController.setOutputRange(-1, 1);
     }
 
     public void clearStickyFaults() {
@@ -78,8 +78,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setRPMs(double rpms) {
         targetRPMs = rpms;
 
-        leftPidController.setReference(targetRPMs, ControlType.kVelocity);
-        rightPidController.setReference(targetRPMs, ControlType.kVelocity);
+        // leftPidController.setReference(targetRPMs, ControlType.kVelocity);
+        // rightPidController.setReference(targetRPMs, ControlType.kVelocity);
+
+        shooterLeft.set(1);
+        shooterRight.set(1);
     }
 
     public void setFeeder(double feeder) {

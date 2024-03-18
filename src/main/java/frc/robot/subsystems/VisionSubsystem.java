@@ -14,10 +14,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-// import frc.robot.LimelightHelpers.LimelightResults;
 
 public class VisionSubsystem extends SubsystemBase {
-    private NetworkTable LLTable;
+    private NetworkTable LLTable; // unused
 
     public VisionSubsystem() {
         this.LLTable = NetworkTableInstance.getDefault().getTable(VisionConstants.TABLE_KEY);

@@ -43,10 +43,8 @@ public final class Constants {
   }
 
   public static final class AutonConstants {
-    // public static final PIDConstants TRANSLATION_PID = new PIDConstants(4, 0.1,0);
-    // public static final PIDConstants ANGLE_PID = new PIDConstants(5, 0.01, 0);
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0,0);
-    public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0,0);
+    public static final PIDConstants ANGLE_PID = new PIDConstants(3, 0, 0);
   }
 
   public static final class DrivebaseConstants {
@@ -89,12 +87,17 @@ public final class Constants {
     public static final int FEEDER_CAN = 17;
     
     // TODO: Find values
-    public static final double kP = 0.004;
-    public static final double kI = 0;
+    public static final double kP = 1;
+    public static final double kI = 1;
     public static final double kD = 0;
     public static final double kFF = 0.0003;
+
+    public static final double kP_FEEDER = 0.000125;
+    public static final double kI_FEEDER = 0;
+    public static final double kD_FEEDER = 0.125  ;
+    public static final double kFF_FEEDER = 0.0001;
     
-    public static final int STALL_LIMIT = 50;
+    public static final int STALL_LIMIT = 70;
     public static final int FEEDER_STALL_LIMIT = 40;
     
     public static final double SENSOR_THRESHOLD_INCHES = 0.5;
