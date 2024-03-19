@@ -94,10 +94,10 @@ public final class Constants {
 
     public static final double kP_FEEDER = 0.000125;
     public static final double kI_FEEDER = 0;
-    public static final double kD_FEEDER = 0.125  ;
+    public static final double kD_FEEDER = 0.125;
     public static final double kFF_FEEDER = 0.0001;
     
-    public static final int STALL_LIMIT = 70;
+    public static final int STALL_LIMIT = 50;
     public static final int FEEDER_STALL_LIMIT = 40;
     
     public static final double SENSOR_THRESHOLD_INCHES = 0.5;
