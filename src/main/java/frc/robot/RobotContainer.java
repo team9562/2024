@@ -126,7 +126,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("SHOOTER_FEED", shooterFeedCommand);
     NamedCommands.registerCommand("SHOOTER_STOP_ALL", new InstantCommand(shooter::stopAll));
 
-    NamedCommands.registerCommand("INTAKE_IN_BOTH", intakeInCommand.alongWith(shooterIntakeCommand));
+    NamedCommands.registerCommand("INTAKE_IN_FRONT", intakeInCommand);
+    NamedCommands.registerCommand("INTAKE_IN_SHOOTER", shooterIntakeCommand);
     NamedCommands.registerCommand("INTAKE_STOP", new InstantCommand(intake::stop));
   }
 
