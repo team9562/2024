@@ -87,10 +87,18 @@ public final class Constants {
     public static final int FEEDER_CAN = 17;
     
     // TODO: Find values
-    public static final double kP = 1;
-    public static final double kI = 1;
-    public static final double kD = 0;
-    public static final double kFF = 0.0003;
+    // Bottom
+    public static final double kP_LEFT = 1;
+    public static final double kI_LEFT = 0;
+    public static final double kD_LEFT = 0;
+    public static final double kFF_LEFT = 0.0006;
+    
+    // TODO: Find values
+    // Top
+    public static final double kP_RIGHT = 0.75;
+    public static final double kI_RIGHT = 0;
+    public static final double kD_RIGHT = 0;
+    public static final double kFF_RIGHT = 0.00015;
 
     public static final double kP_FEEDER = 0.000125;
     public static final double kI_FEEDER = 0;

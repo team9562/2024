@@ -39,9 +39,22 @@ public class AngleSubystem extends SubsystemBase {
         anglePidController.setD(AngleConstants.kD);
         anglePidController.setFF(AngleConstants.kFF);
     }
+
+    public void bootOffset() {
+        double absPercent = (getAngle() - AngleConstants.ANGLE_MIN_ABS) / (AngleConstants.ANGLE_MAX_ABS - AngleConstants.ANGLE_MIN_ABS);
+        angle.getEncoder().setPosition((1 - absPercent) * AngleConstants.ANGLE_MAX_REL);
+
+        System.out.println(absPercent * AngleConstants.ANGLE_MAX_REL);
+
+        // TODO: test this
+    }
     
     public void clearStickyFaults() {
         angle.clearFaults();
+    }
+
+    public void burnFlash() {
+        angle.burnFlash();
     }
     
     public void setTargetAngle(double anglePercentage) {

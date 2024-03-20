@@ -62,6 +62,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorRight.clearFaults();
     }
 
+    public void burnFlash() {
+        elevatorLeft.burnFlash();
+        elevatorRight.burnFlash();
+    }
+
     public boolean isBottomedOut() {
         return limitSwitch.get();
     }
