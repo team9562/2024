@@ -5,6 +5,8 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
@@ -19,6 +21,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkPIDController feederPidController = shooterFeeder.getPIDController();
     private SparkPIDController leftPidController = shooterLeft.getPIDController();
     private SparkPIDController rightPidController = shooterRight.getPIDController();
+
+    private DigitalInput limitSwitch = new DigitalInput(ShooterConstants.LIMIT_SWITCH_PORT);
 
     private double targetRPMs;
     private double targetFeeder;
@@ -89,6 +93,10 @@ public class ShooterSubsystem extends SubsystemBase {
         feederPidController.setReference(targetFeeder, ControlType.kVelocity);
     }
 
+    public boolean isBottomedOut() {
+        return !limitSwitch.get(); // Normally open
+    }
+
     public double getLeftVelocity() {
         return shooterLeft.getEncoder().getVelocity();
     }
@@ -112,9 +120,6 @@ public class ShooterSubsystem extends SubsystemBase {
         rightPidController.setReference(-targetRPMs, ControlType.kVelocity);
     }
 
-    /**
-     * 
-     */
     public void stopShooters() {
         targetRPMs = 0;
 
@@ -136,6 +141,8 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
+
+        SmartDashboard.putBoolean("Bottomed Out", isBottomedOut());
 
         SmartDashboard.putNumber("Target Velocity", targetRPMs);
         SmartDashboard.putNumber("Target Velocity Feeder", targetFeeder);

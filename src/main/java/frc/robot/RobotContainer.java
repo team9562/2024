@@ -13,18 +13,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.subsystems.angle.HomeAngle;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
 import frc.robot.commands.subsystems.shooter.Feed;
 import frc.robot.commands.subsystems.shooter.Shoot;
 import frc.robot.commands.subsystems.shooter.ShootAmp;
+import frc.robot.commands.subsystems.shooter.ShooterIntake;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -68,7 +69,6 @@ public class RobotContainer {
   private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
-  private final Command homeAngleCommand = new HomeAngle(angle);
   private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);// .withTimeout(1);
   private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);// .withTimeout(1);
   private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium);// .withTimeout(1);
@@ -86,9 +86,9 @@ public class RobotContainer {
   public RobotContainer() {
     shooter = new ShooterSubsystem();
 
-    shooterShootCommand = new Shoot(shooter, InOutDirection.out);
+    shooterShootCommand = new Shoot(shooter);
     shooterShootAmpCommand = new ShootAmp(shooter);
-    shooterIntakeCommand = new Shoot(shooter, InOutDirection.in);
+    shooterIntakeCommand = new ShooterIntake(shooter);
     shooterFeedCommand = new Feed(shooter, InOutDirection.out);
 
     registerPathPlannerNamedCommands();
@@ -116,8 +116,6 @@ public class RobotContainer {
     SmartDashboard.putData("TeleOp", m_commandChooser);
 
     burnFlash();
-
-    angle.bootOffset();
   }
 
   public void registerPathPlannerNamedCommands() {
@@ -134,17 +132,7 @@ public class RobotContainer {
   }
 
   public void homeAngle() {
-    homeAngleCommand.initialize();
-
-    boolean homed = false;
-
-    while (!homed) {
-      homeAngleCommand.execute();
-
-      homed = homeAngleCommand.isFinished();
-    }
-
-    homeAngleCommand.end(false);
+    angle.bootOffset();
   }
 
   public boolean elevatorBottomedOut() {
@@ -158,21 +146,7 @@ public class RobotContainer {
   public void zeroGyro() {
     drivebase.zeroGyro();
   }
-
-  // public void homeElevator() {
-  // homeElevatorCommand.initialize();
-
-  // boolean homed = false;
-
-  // while (!homed) {
-  // homeElevatorCommand.execute();
-
-  // homed = homeElevatorCommand.isFinished();
-  // }
-
-  // homeElevatorCommand.end(false);
-  // }
-
+  
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
     intake.clearStickyFaults();
@@ -209,14 +183,13 @@ public class RobotContainer {
 
     new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
     new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
-    new JoystickButton(driverYoke, 3).whileTrue(shooterIntakeCommand.alongWith(intakeInCommand));
+    new JoystickButton(driverYoke, 3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
     new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
 
     new JoystickButton(driverYoke, 5).onTrue(elevatorHangCommand);
 
     // Controller
 
-    new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
     new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value)
         .onTrue(new InstantCommand(elevator::resetElevatorEncoder));
     // new JoystickButton(driverXbox,

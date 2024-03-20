@@ -42,13 +42,9 @@ public class AngleSubystem extends SubsystemBase {
 
     public void bootOffset() {
         double absPercent = (getAngle() - AngleConstants.ANGLE_MIN_ABS) / (AngleConstants.ANGLE_MAX_ABS - AngleConstants.ANGLE_MIN_ABS);
-        angle.getEncoder().setPosition((1 - absPercent) * AngleConstants.ANGLE_MAX_REL);
-
-        System.out.println(absPercent * AngleConstants.ANGLE_MAX_REL);
-
-        // TODO: test this
+        angle.getEncoder().setPosition(absPercent * AngleConstants.ANGLE_MAX_REL);
     }
-    
+
     public void clearStickyFaults() {
         angle.clearFaults();
     }
@@ -56,21 +52,21 @@ public class AngleSubystem extends SubsystemBase {
     public void burnFlash() {
         angle.burnFlash();
     }
-    
+
     public void setTargetAngle(double anglePercentage) {
         targetAngle = anglePercentage * AngleConstants.ANGLE_MAX_REL;
         anglePidController.setReference(targetAngle, ControlType.kPosition);
-    }
-    
+    } 
+
     public void move(double speed) {
         angle.set(speed);
         // anglePidController.setReference(speed, ControlType.kVelocity);
     }
-    
+
     public double getAngle() {
         return angleEncoder.getAbsolutePosition();
     }
-    
+
     public boolean isAtTargetAngle() {
         return Utility.withinTolerance(angle.getEncoder().getPosition(), targetAngle, AngleConstants.ANGLE_THRESHOLD);
     }
@@ -78,25 +74,27 @@ public class AngleSubystem extends SubsystemBase {
     public void resetRelativeEncoder() {
         angle.getEncoder().setPosition(0);
     }
-    
+
     public void stop() {
         angle.set(0);
     }
 
     public void lock(boolean lock) {
-        if (lock) anglePidController.setReference(targetAngle, ControlType.kPosition);
-        else angle.stopMotor();
+        if (lock)
+            angle.stopMotor();
     }
-    
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Target Angle", targetAngle);
+
+        SmartDashboard.putNumber("Angle Current", angle.getOutputCurrent());
 
         SmartDashboard.putNumber("Angle Absolute Encoder", getAngle());
         SmartDashboard.putNumber("Angle Relative Encoder", angle.getEncoder().getPosition());
 
         SmartDashboard.putBoolean("Angle Absolute Encoder Connected", angleEncoder.isConnected());
-    
+
         SmartDashboard.putBoolean("At Target Angle", isAtTargetAngle());
     }
 }
