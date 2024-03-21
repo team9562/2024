@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
@@ -63,6 +65,7 @@ public class RobotContainer {
   private final SendableChooser<Command> m_autoChooser;
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
+  private final Command aimTowardNoteCommand = new InstantCommand(this::aimTowardsNote, drivebase);
   // private final Command homeElevatorCommand = new HomeElevator(elevator,
   // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
@@ -116,6 +119,8 @@ public class RobotContainer {
     SmartDashboard.putData("TeleOp", m_commandChooser);
 
     burnFlash();
+
+    System.out.println(drivebase.getSwerveController().config.maxAngularVelocity + " rad/s");
   }
 
   public void registerPathPlannerNamedCommands() {
@@ -146,7 +151,7 @@ public class RobotContainer {
   public void zeroGyro() {
     drivebase.zeroGyro();
   }
-  
+
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
     intake.clearStickyFaults();
@@ -180,6 +185,8 @@ public class RobotContainer {
     // Yoke
 
     new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
+
+    new JoystickButton(driverYoke, 4).whileTrue(aimTowardNoteCommand);
 
     new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
     new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
@@ -225,5 +232,14 @@ public class RobotContainer {
     drivebase.setMotorBrake(brake);
     elevator.lock(brake);
     angle.lock(brake);
+  }
+
+  public double limelightAimProportional() {
+    return -((LimelightHelpers.getTX(VisionConstants.NAME) * VisionConstants.kP_AIM)
+        * drivebase.getSwerveController().config.maxAngularVelocity);
+  }
+
+  public void aimTowardsNote() {
+    drivebase.drive(new Translation2d(0, 0), () -> limelightAimProportional(), true);
   }
 }

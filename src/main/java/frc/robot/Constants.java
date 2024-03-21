@@ -143,6 +143,8 @@ public final class Constants {
   public static final class VisionConstants {
     public static final String TABLE_KEY = "limelight";
     public static final String NAME = "limelight";
+
+    public static final double kP_AIM = 0.035;
   }
 
   public static class OperatorConstants {
