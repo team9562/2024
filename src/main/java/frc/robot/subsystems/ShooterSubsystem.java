@@ -142,7 +142,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
 
-        SmartDashboard.putBoolean("Bottomed Out", isBottomedOut());
+        SmartDashboard.putBoolean("Shooter Bottomed Out", isBottomedOut());
 
         SmartDashboard.putNumber("Target Velocity", targetRPMs);
         SmartDashboard.putNumber("Target Velocity Feeder", targetFeeder);
