@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -13,18 +14,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.subsystems.angle.HomeAngle;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
 import frc.robot.commands.subsystems.shooter.Feed;
 import frc.robot.commands.subsystems.shooter.Shoot;
 import frc.robot.commands.subsystems.shooter.ShootAmp;
+import frc.robot.commands.subsystems.shooter.ShooterIntake;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -35,7 +40,6 @@ import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.revrobotics.Rev2mDistanceSensor;
 import java.io.File;
 
 /**
@@ -52,28 +56,28 @@ public class RobotContainer {
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ShooterSubsystem shooter;
-  private final AngleSubystem angle = new AngleSubystem();  
+  private final AngleSubystem angle = new AngleSubystem();
 
-  
   private final PowerDistribution pdh = new PowerDistribution();
-  
+
   Joystick driverYoke = new Joystick(1);
   XboxController driverXbox = new XboxController(0);
-  
+
   private final SendableChooser<Command> m_commandChooser = new SendableChooser<>();
   private final SendableChooser<Command> m_autoChooser;
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
+  private final Command aimTowardNoteCommand = new InstantCommand(this::aimTowardsNote, drivebase);
   // private final Command homeElevatorCommand = new HomeElevator(elevator,
   // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
   private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
-  private final Command homeAngleCommand = new HomeAngle(angle);
-  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);//.withTimeout(1);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);//.withTimeout(1);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max);//.withTimeout(1);
+  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);// .withTimeout(1);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);// .withTimeout(1);
+  private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium);// .withTimeout(1);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max);// .withTimeout(1);
   private final Command shooterShootCommand;
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
@@ -84,12 +88,12 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer(Rev2mDistanceSensor distanceSensor) {
-    shooter = new ShooterSubsystem(distanceSensor);
+  public RobotContainer() {
+    shooter = new ShooterSubsystem();
 
-    shooterShootCommand = new Shoot(shooter, InOutDirection.out);
+    shooterShootCommand = new Shoot(shooter);
     shooterShootAmpCommand = new ShootAmp(shooter);
-    shooterIntakeCommand = new Shoot(shooter, InOutDirection.in);
+    shooterIntakeCommand = new ShooterIntake(shooter);
     shooterFeedCommand = new Feed(shooter, InOutDirection.out);
 
     registerPathPlannerNamedCommands();
@@ -116,12 +120,13 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
     SmartDashboard.putData("TeleOp", m_commandChooser);
 
+    burnFlash();
   }
 
   public void registerPathPlannerNamedCommands() {
     NamedCommands.registerCommand("ANGLE_MAX", angleMaxCommand);
     NamedCommands.registerCommand("ANGLE_MIN", angleMinCommand);
-    
+
     NamedCommands.registerCommand("SHOOTER_SHOOT", shooterShootCommand);
     NamedCommands.registerCommand("SHOOTER_FEED", shooterFeedCommand);
     NamedCommands.registerCommand("SHOOTER_STOP_ALL", new InstantCommand(shooter::stopAll));
@@ -132,17 +137,7 @@ public class RobotContainer {
   }
 
   public void homeAngle() {
-    homeAngleCommand.initialize();
-
-    boolean homed = false;
-
-    while (!homed) {
-      homeAngleCommand.execute();
-
-      homed = homeAngleCommand.isFinished();
-    }
-
-    homeAngleCommand.end(false);
+    angle.bootOffset();
   }
 
   public boolean elevatorBottomedOut() {
@@ -157,20 +152,6 @@ public class RobotContainer {
     drivebase.zeroGyro();
   }
 
-  // public void homeElevator() {
-  // homeElevatorCommand.initialize();
-
-  // boolean homed = false;
-
-  // while (!homed) {
-  // homeElevatorCommand.execute();
-
-  // homed = homeElevatorCommand.isFinished();
-  // }
-
-  // homeElevatorCommand.end(false);
-  // }
-
   public void clearStickyFaults() {
     pdh.clearStickyFaults();
     intake.clearStickyFaults();
@@ -179,11 +160,22 @@ public class RobotContainer {
     shooter.clearStickyFaults();
   }
 
+  public void burnFlash() {
+    System.out.println("Burning flash to SparkMAXes...");
+
+    angle.burnFlash();
+    elevator.burnFlash();
+    intake.burnFlash();
+    shooter.burnFlash();
+
+    System.out.println("Done");
+  }
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary predicate,  
+   * an arbitrary predicate,
    * {@link CommandXboxController
    * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick
@@ -194,17 +186,25 @@ public class RobotContainer {
 
     new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
 
+    new JoystickButton(driverYoke, 4).whileTrue(new RepeatCommand(aimTowardNoteCommand));
+    // new JoystickButton(driverYoke, 8).onTrue(new
+    // SequentialCommandGroup(elevatorMinCommand.withTimeout(1.5),
+    // angleMinCommand.withTimeout(1.5), new ParallelRaceGroup(intakeInCommand,
+    // shooterIntakeCommand,
+    // new InstantCommand(() -> drivebase.drive(new Translation2d(0, 1), 0,
+    // false)))));
+
     new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
     new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
-    new JoystickButton(driverYoke, 3).whileTrue(shooterIntakeCommand.alongWith(intakeInCommand));
+    new JoystickButton(driverYoke, 3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
     new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
 
     new JoystickButton(driverYoke, 5).onTrue(elevatorHangCommand);
 
     // Controller
 
-    new JoystickButton(driverXbox, XboxController.Button.kRightStick.value).onTrue(homeAngleCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value).onTrue(new InstantCommand(elevator::resetElevatorEncoder));
+    new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value)
+        .onTrue(new InstantCommand(elevator::resetElevatorEncoder));
     // new JoystickButton(driverXbox,
     // XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
 
@@ -213,10 +213,12 @@ public class RobotContainer {
     new POVButton(driverXbox, 180).onTrue(elevatorMinCommand);
 
     new JoystickButton(driverXbox, XboxController.Button.kY.value).onTrue(angleMaxCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(angleHalfCommand);
     new JoystickButton(driverXbox, XboxController.Button.kA.value).onTrue(angleMinCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(angleHalfCommand);
+    new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(anglePodiumCommand);
 
-    // new JoystickButton(driverXbox, XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
+    // new JoystickButton(driverXbox,
+    // XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
     new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value).whileTrue(intakeOutCommand);
   }
 
@@ -229,11 +231,25 @@ public class RobotContainer {
     return m_autoChooser.getSelected();
   }
 
-  public void setDriveMode() {}
+  public void setDriveMode() {
+  }
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
     elevator.lock(brake);
     angle.lock(brake);
+  }
+
+  public double limelightAimProportional() {
+    return -((LimelightHelpers.getTX(VisionConstants.NAME) * VisionConstants.kP_AIM)
+        * drivebase.getSwerveController().config.maxAngularVelocity);
+  }
+
+  public double limelightRangeProportional() {
+    return -((LimelightHelpers.getTY(VisionConstants.NAME) * VisionConstants.kP_RANGE) * drivebase.maximumSpeed);
+  }
+
+  public void aimTowardsNote() {
+    drivebase.driveLLAim(() -> limelightRangeProportional(), () -> limelightAimProportional());
   }
 }

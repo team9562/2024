@@ -55,7 +55,8 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param directory Directory of swerve drive config files.
    */
   public SwerveSubsystem(File directory) {
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
+    
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
     } catch (Exception e) {
@@ -283,6 +284,13 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.drive(translation,
         rotation,
         fieldRelative,
+        false); // Open loop is disabled since it shouldn't be used most of the time.
+  }
+
+  public void driveLLAim(DoubleSupplier xSpeed, DoubleSupplier rotation) {
+    swerveDrive.drive(new Translation2d(xSpeed.getAsDouble(), 0),
+        rotation.getAsDouble(),
+        false,
         false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 

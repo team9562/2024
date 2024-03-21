@@ -1,11 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
@@ -13,8 +14,6 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.Utility;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private Rev2mDistanceSensor distance;
-
     private CANSparkMax shooterFeeder = new CANSparkMax(ShooterConstants.FEEDER_CAN, MotorType.kBrushless);
     private CANSparkMax shooterLeft = new CANSparkMax(ShooterConstants.LEFT_CAN, MotorType.kBrushless);
     private CANSparkMax shooterRight = new CANSparkMax(ShooterConstants.RIGHT_CAN, MotorType.kBrushless);
@@ -23,12 +22,12 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkPIDController leftPidController = shooterLeft.getPIDController();
     private SparkPIDController rightPidController = shooterRight.getPIDController();
 
+    private DigitalInput limitSwitch = new DigitalInput(ShooterConstants.LIMIT_SWITCH_PORT);
+
     private double targetRPMs;
     private double targetFeeder;
 
-    public ShooterSubsystem(Rev2mDistanceSensor distanceSensor) {
-        distance = distanceSensor;
-
+    public ShooterSubsystem() {
         shooterFeeder.restoreFactoryDefaults();
         shooterLeft.restoreFactoryDefaults();
         shooterRight.restoreFactoryDefaults();
@@ -54,19 +53,19 @@ public class ShooterSubsystem extends SubsystemBase {
         feederPidController.setD(ShooterConstants.kD_FEEDER);
         feederPidController.setFF(ShooterConstants.kFF_FEEDER);
 
-        leftPidController.setP(ShooterConstants.kP);
-        leftPidController.setI(ShooterConstants.kI);
-        leftPidController.setD(ShooterConstants.kD);
-        leftPidController.setFF(ShooterConstants.kFF);
+        leftPidController.setP(ShooterConstants.kP_LEFT);
+        leftPidController.setI(ShooterConstants.kI_LEFT);
+        leftPidController.setD(ShooterConstants.kD_LEFT);
+        leftPidController.setFF(ShooterConstants.kFF_LEFT);
 
-        rightPidController.setP(ShooterConstants.kP);
-        rightPidController.setI(ShooterConstants.kI);
-        rightPidController.setD(ShooterConstants.kD);
-        rightPidController.setFF(ShooterConstants.kFF);
+        rightPidController.setP(ShooterConstants.kP_RIGHT);
+        rightPidController.setI(ShooterConstants.kI_RIGHT);
+        rightPidController.setD(ShooterConstants.kD_RIGHT);
+        rightPidController.setFF(ShooterConstants.kFF_RIGHT);
 
-        // feederPidController.setOutputRange(-1, 1);
-        // leftPidController.setOutputRange(-1, 1);
-        // rightPidController.setOutputRange(-1, 1);
+        feederPidController.setOutputRange(-1, 1);
+        leftPidController.setOutputRange(-1, 1);
+        rightPidController.setOutputRange(-1, 1);
     }
 
     public void clearStickyFaults() {
@@ -75,20 +74,27 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterRight.clearFaults();
     }
 
+    public void burnFlash() {
+        shooterFeeder.burnFlash();
+        shooterLeft.burnFlash();
+        shooterRight.burnFlash();
+    }
+
     public void setRPMs(double rpms) {
         targetRPMs = rpms;
 
-        // leftPidController.setReference(targetRPMs, ControlType.kVelocity);
-        // rightPidController.setReference(targetRPMs, ControlType.kVelocity);
-
-        shooterLeft.set(1);
-        shooterRight.set(1);
+        leftPidController.setReference(targetRPMs, ControlType.kVelocity);
+        rightPidController.setReference(targetRPMs, ControlType.kVelocity);
     }
 
     public void setFeeder(double feeder) {
         targetFeeder = feeder;
 
         feederPidController.setReference(targetFeeder, ControlType.kVelocity);
+    }
+
+    public boolean isBottomedOut() {
+        return !limitSwitch.get(); // Normally open
     }
 
     public double getLeftVelocity() {
@@ -110,13 +116,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void shootAmpMaxSpeed() {
         targetRPMs = MotorConstants.NEO_V1_MAX_RPMS;
 
-        leftPidController.setReference(targetRPMs, ControlType.kVelocity);
-        rightPidController.setReference(-targetRPMs, ControlType.kVelocity);
+        leftPidController.setReference(-targetRPMs, ControlType.kVelocity);
+        rightPidController.setReference(targetRPMs, ControlType.kVelocity);
     }
 
-    /**
-     * 
-     */
     public void stopShooters() {
         targetRPMs = 0;
 
@@ -135,17 +138,11 @@ public class ShooterSubsystem extends SubsystemBase {
         stopFeeder();
     }
 
-    public boolean isNoteLoaded() {
-        return distance.getRange() <= ShooterConstants.SENSOR_THRESHOLD_INCHES;
-    }
-
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Note Loaded", isNoteLoaded());
-        SmartDashboard.putNumber("Note Distance", distance.getRange());
-        SmartDashboard.putBoolean("Note Distance Valid", distance.isRangeValid());
-        SmartDashboard.putNumber("Note Distance Timestamp", distance.getTimestamp());
         SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
+
+        SmartDashboard.putBoolean("Shooter Bottomed Out", isBottomedOut());
 
         SmartDashboard.putNumber("Target Velocity", targetRPMs);
         SmartDashboard.putNumber("Target Velocity Feeder", targetFeeder);

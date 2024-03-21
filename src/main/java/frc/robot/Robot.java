@@ -11,10 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
-import com.revrobotics.Rev2mDistanceSensor;
-import com.revrobotics.Rev2mDistanceSensor.Port;
-import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
-import com.revrobotics.Rev2mDistanceSensor.Unit;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -31,9 +27,6 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
-
-  private final Rev2mDistanceSensor distanceSensor = new Rev2mDistanceSensor(Port.kOnboard, Unit.kInches,
-      RangeProfile.kHighAccuracy);
 
   public Robot() {
     instance = this;
@@ -52,7 +45,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer(distanceSensor);
+    m_robotContainer = new RobotContainer();
 
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop
@@ -87,8 +80,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    distanceSensor.setEnabled(false);
-
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
@@ -119,8 +110,6 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    // m_robotContainer.homeElevator();
-
     // Assume it starts at 0
     if (m_robotContainer.elevatorBottomedOut())
       m_robotContainer.resetElevatorEncoder();
@@ -135,8 +124,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    distanceSensor.setAutomaticMode(true);
-    distanceSensor.setEnabled(true);
+    m_robotContainer.homeAngle();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -145,11 +133,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
-
-    // m_robotContainer.homeAngle();
-    // m_robotContainer.homeElevator();
   }
 
   /**

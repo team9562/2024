@@ -72,25 +72,35 @@ public final class Constants {
     
     public static final int PID_SLOT = 0;
     public static final int PID_SLOT_HANG = 1;
-
+    
     public static final int STALL_LIMIT = 65;
     
     public static final double ELEVATOR_THRESHOLD = 0.25;
-
+    
     public static final double SAFE_MIN_PERCENT = 0.065;
     public static final double SAFE_MAX_PERCENT = 0.824;
   }
-
+  
   public static final class ShooterConstants {
     public static final int LEFT_CAN = 15;
     public static final int RIGHT_CAN = 16;
     public static final int FEEDER_CAN = 17;
     
+    public static final int LIMIT_SWITCH_PORT = 7;
+    
     // TODO: Find values
-    public static final double kP = 1;
-    public static final double kI = 1;
-    public static final double kD = 0;
-    public static final double kFF = 0.0003;
+    // Bottom
+    public static final double kP_LEFT = 1;
+    public static final double kI_LEFT = 0;
+    public static final double kD_LEFT = 0;
+    public static final double kFF_LEFT = 0.0006;
+    
+    // TODO: Find values
+    // Top
+    public static final double kP_RIGHT = 0.75;
+    public static final double kI_RIGHT = 0;
+    public static final double kD_RIGHT = 0;
+    public static final double kFF_RIGHT = 0.00015;
 
     public static final double kP_FEEDER = 0.000125;
     public static final double kI_FEEDER = 0;
@@ -112,10 +122,10 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = 0.566;
-    public static final double ANGLE_MIN_ABS = 0.23;
+    public static final double ANGLE_MAX_ABS = 0.558;
+    public static final double ANGLE_MIN_ABS = 0.22;
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 54;
+    public static final double ANGLE_MAX_REL = 53.4;
     
     public static final int ENCODER_PORT = 8;
     
@@ -133,6 +143,9 @@ public final class Constants {
   public static final class VisionConstants {
     public static final String TABLE_KEY = "limelight";
     public static final String NAME = "limelight";
+
+    public static final double kP_AIM = 0.035;
+    public static final double kP_RANGE = 0.1;
   }
 
   public static class OperatorConstants {

@@ -30,6 +30,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public void clearStickyFaults() {
         intake.clearFaults();
     }
+
+    public void burnFlash() {
+        intake.burnFlash();
+    }
     
     public IntakeState getState() {
         return state;

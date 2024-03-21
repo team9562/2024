@@ -62,6 +62,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorRight.clearFaults();
     }
 
+    public void burnFlash() {
+        elevatorLeft.burnFlash();
+        elevatorRight.burnFlash();
+    }
+
     public boolean isBottomedOut() {
         return limitSwitch.get();
     }
@@ -132,6 +137,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Elevator is safe", !Utility.betweenRange(getEncoder() / ElevatorConstants.MAX_HEIGHT, ElevatorConstants.SAFE_MIN_PERCENT, ElevatorConstants.SAFE_MAX_PERCENT));
 
-        SmartDashboard.putBoolean("Bottomed Out", isBottomedOut());
+        SmartDashboard.putBoolean("Elevator Bottomed Out", isBottomedOut());
     }
 }

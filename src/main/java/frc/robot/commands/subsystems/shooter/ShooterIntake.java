@@ -5,10 +5,10 @@ import frc.robot.Constants.MotorConstants;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.types.InOutDirection;
 
-public class Shoot extends Command {
+public class ShooterIntake extends Command {
     private final ShooterSubsystem shooter;
 
-    public Shoot(ShooterSubsystem shooter) {
+    public ShooterIntake(ShooterSubsystem shooter) {
         this.shooter = shooter;
 
         addRequirements(shooter);
@@ -16,16 +16,17 @@ public class Shoot extends Command {
 
     @Override
     public void execute() {
-        shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS * -InOutDirection.out.percentage);
+        shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS * -InOutDirection.in.percentage);
+        shooter.setFeeder(MotorConstants.NEO_550_MAX_RPMS * InOutDirection.in.percentage);
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return shooter.isBottomedOut();
     }
 
     @Override
     public void end(boolean interrupted) {
-        shooter.stopShooters();
+        shooter.stopAll();
     }
 }
