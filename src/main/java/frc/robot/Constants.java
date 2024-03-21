@@ -145,6 +145,7 @@ public final class Constants {
     public static final String NAME = "limelight";
 
     public static final double kP_AIM = 0.035;
+    public static final double kP_RANGE = 0.1;
   }
 
   public static class OperatorConstants {

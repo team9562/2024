@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -119,8 +121,6 @@ public class RobotContainer {
     SmartDashboard.putData("TeleOp", m_commandChooser);
 
     burnFlash();
-
-    System.out.println(drivebase.getSwerveController().config.maxAngularVelocity + " rad/s");
   }
 
   public void registerPathPlannerNamedCommands() {
@@ -186,7 +186,13 @@ public class RobotContainer {
 
     new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
 
-    new JoystickButton(driverYoke, 4).whileTrue(aimTowardNoteCommand);
+    new JoystickButton(driverYoke, 4).whileTrue(new RepeatCommand(aimTowardNoteCommand));
+    // new JoystickButton(driverYoke, 8).onTrue(new
+    // SequentialCommandGroup(elevatorMinCommand.withTimeout(1.5),
+    // angleMinCommand.withTimeout(1.5), new ParallelRaceGroup(intakeInCommand,
+    // shooterIntakeCommand,
+    // new InstantCommand(() -> drivebase.drive(new Translation2d(0, 1), 0,
+    // false)))));
 
     new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
     new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
@@ -239,7 +245,11 @@ public class RobotContainer {
         * drivebase.getSwerveController().config.maxAngularVelocity);
   }
 
+  public double limelightRangeProportional() {
+    return -((LimelightHelpers.getTY(VisionConstants.NAME) * VisionConstants.kP_RANGE) * drivebase.maximumSpeed);
+  }
+
   public void aimTowardsNote() {
-    drivebase.drive(new Translation2d(0, 0), () -> limelightAimProportional(), true);
+    drivebase.driveLLAim(() -> limelightRangeProportional(), () -> limelightAimProportional());
   }
 }

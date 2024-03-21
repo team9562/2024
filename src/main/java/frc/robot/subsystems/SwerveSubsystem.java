@@ -287,10 +287,10 @@ public class SwerveSubsystem extends SubsystemBase {
         false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
-  public void drive(Translation2d translation, DoubleSupplier rotation, boolean fieldRelative) {
-    swerveDrive.drive(translation,
+  public void driveLLAim(DoubleSupplier xSpeed, DoubleSupplier rotation) {
+    swerveDrive.drive(new Translation2d(xSpeed.getAsDouble(), 0),
         rotation.getAsDouble(),
-        fieldRelative,
+        false,
         false); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
