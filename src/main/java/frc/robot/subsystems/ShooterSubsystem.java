@@ -116,8 +116,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void shootAmpMaxSpeed() {
         targetRPMs = MotorConstants.NEO_V1_MAX_RPMS;
 
-        leftPidController.setReference(targetRPMs, ControlType.kVelocity);
-        rightPidController.setReference(-targetRPMs, ControlType.kVelocity);
+        leftPidController.setReference(-targetRPMs, ControlType.kVelocity);
+        rightPidController.setReference(targetRPMs, ControlType.kVelocity);
     }
 
     public void stopShooters() {
