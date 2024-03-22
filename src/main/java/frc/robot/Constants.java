@@ -150,9 +150,9 @@ public final class Constants {
 
   public static class OperatorConstants {
     // Joystick Deadband
-    public static final double X_DEADBAND = 0.075;
-    public static final double Y_DEADBAND = 0.075;
-    public static final double Z_DEADBAND = 0.0875;
+    public static final double X_DEADBAND = 0.055;
+    public static final double Y_DEADBAND = 0.055;
+    public static final double Z_DEADBAND = 0.075;
     public static final double TURN_CONSTANT = 6;
   }
 }
