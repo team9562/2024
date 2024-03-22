@@ -26,7 +26,20 @@ public class VisionSubsystem extends SubsystemBase {
         return LimelightHelpers.getBotPose2d(VisionConstants.NAME);
     }
 
-    public Command autoAlignFollowPath() {
+    // Field Positions for speaker:
+    // Blue:
+    // center: 1.17, 5.55
+    // near amp: 1.17, 7.08
+    // near outpost: 1.17, 2.05
+
+    //Red:
+    // center: 15.10, 5.55
+    // near amp: 15.10, 7.08
+    // near outpost: 15.10, 2.05
+
+    // Notes: maybe invert IMU for Red side??? 
+
+    public Command goToSpeakerCenter() {
         // LimelightResults llresults = LimelightHelpers.getLatestResults(VisionConstants.NAME);
 
         // llresults.targetingResults
@@ -42,16 +55,25 @@ public class VisionSubsystem extends SubsystemBase {
          * 
          */
 
+        // PathPlannerPath path = new PathPlannerPath(null, Constants.PATH_CONSTRAINTS, null);
+
+        // if (LimelightHelpers.getFiducialID(VisionConstants.NAME) == 4) {
+        //     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+        //             getPose2d(),
+        //             new Pose2d(14.81, 5.48, Rotation2d.fromDegrees(0)));
+
+        //     path = new PathPlannerPath(bezierPoints, Constants.PATH_CONSTRAINTS,
+        //             new GoalEndState(0, Rotation2d.fromDegrees(0)));
+        // }
+
         PathPlannerPath path = new PathPlannerPath(null, Constants.PATH_CONSTRAINTS, null);
 
-        if (LimelightHelpers.getFiducialID(VisionConstants.NAME) == 4) {
-            List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
-                    getPose2d(),
-                    new Pose2d(14.81, 5.48, Rotation2d.fromDegrees(0)));
+        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+                getPose2d(),
+                new Pose2d(14.81, 5.48, Rotation2d.fromDegrees(0)));
 
-            path = new PathPlannerPath(bezierPoints, Constants.PATH_CONSTRAINTS,
-                    new GoalEndState(0, Rotation2d.fromDegrees(0)));
-        }
+        path = new PathPlannerPath(bezierPoints, Constants.PATH_CONSTRAINTS,
+                new GoalEndState(0, Rotation2d.fromDegrees(0)));
 
         return AutoBuilder.followPath(path);
     }
