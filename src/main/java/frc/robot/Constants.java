@@ -44,7 +44,7 @@ public final class Constants {
 
   public static final class AutonConstants {
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0,0);
-    public static final PIDConstants ANGLE_PID = new PIDConstants(3.5, 0.05, 0);
+    public static final PIDConstants ANGLE_PID = new PIDConstants(3.375, 0.005, 0);
   }
 
   public static final class DrivebaseConstants {
@@ -147,7 +147,7 @@ public final class Constants {
     public static final double kP_AIM = 0.035;
     public static final double kP_RANGE = 0.1;
   }
-
+ 
   public static class OperatorConstants {
     // Joystick Deadband
     public static final double X_DEADBAND = 0.055;
