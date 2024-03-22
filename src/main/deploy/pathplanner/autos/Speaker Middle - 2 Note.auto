@@ -93,6 +93,12 @@
                       "data": {
                         "name": "INTAKE_IN_SHOOTER"
                       }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
+                      }
                     }
                   ]
                 }

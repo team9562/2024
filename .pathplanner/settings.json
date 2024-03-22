@@ -4,11 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "Blue",
-    "test",
     "Red",
     "Reuse",
     "Speaker Middle",
-    "Test 1"
+    "test"
   ],
   "autoFolders": [
     "Blue",
