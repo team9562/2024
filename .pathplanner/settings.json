@@ -3,15 +3,17 @@
   "robotLength": 0.9779,
   "holonomicMode": true,
   "pathFolders": [
-    "Blue",
-    "Red"
+    "Red",
+    "Reuse",
+    "Speaker Middle",
+    "Test 1"
   ],
   "autoFolders": [
     "Blue",
     "Red"
   ],
   "defaultMaxVel": 4.4196,
-  "defaultMaxAccel": 4,
+  "defaultMaxAccel": 4.0,
   "defaultMaxAngVel": 322.415,
   "defaultMaxAngAccel": 605.58,
   "maxModuleSpeed": 4.60248
