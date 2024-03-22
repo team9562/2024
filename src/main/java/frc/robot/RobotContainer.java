@@ -121,6 +121,7 @@ public class RobotContainer {
     SmartDashboard.putData("TeleOp", m_commandChooser);
 
     burnFlash();
+    clearStickyFaults();
   }
 
   public void registerPathPlannerNamedCommands() {
