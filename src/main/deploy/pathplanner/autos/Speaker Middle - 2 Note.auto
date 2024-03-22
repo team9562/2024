@@ -2,34 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5024413203244242,
-      "y": 5.525138184875874
+      "x": 1.4478070904944451,
+      "y": 5.5592845785196126
     },
-    "rotation": 120.1916229609576
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "INTAKE_IN_FRONT"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "INTAKE_IN_SHOOTER"
-                }
-              }
-            ]
-          }
-        },
         {
           "type": "race",
           "data": {
@@ -87,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Test 1 - Path 1"
+                  "pathName": "Speaker Middle - Path 1"
                 }
               }
             ]
@@ -119,7 +100,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Bottom"
+                  "pathName": "Home Amp"
                 }
               }
             ]
@@ -138,7 +119,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Test 1 - Path 3"
+                  "pathName": "Speaker Middle - Path 3"
                 }
               }
             ]
