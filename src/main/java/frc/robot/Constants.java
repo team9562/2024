@@ -43,8 +43,8 @@ public final class Constants {
   }
 
   public static final class AutonConstants {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0,0);
-    public static final PIDConstants ANGLE_PID = new PIDConstants(3.375, 0.005, 0);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(6.115, 0,0);
+    public static final PIDConstants ANGLE_PID = new PIDConstants(3.175, 0, 0);
   }
 
   public static final class DrivebaseConstants {
@@ -122,10 +122,10 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = 0.558;
-    public static final double ANGLE_MIN_ABS = 0.22;
+    public static final double ANGLE_MAX_ABS = 0.3842;
+    public static final double ANGLE_MIN_ABS = 0.0605;
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 53.4;
+    public static final double ANGLE_MAX_REL = 53.6;
     
     public static final int ENCODER_PORT = 8;
     
@@ -144,15 +144,15 @@ public final class Constants {
     public static final String TABLE_KEY = "limelight";
     public static final String NAME = "limelight";
 
-    public static final double kP_AIM = 0.035;
-    public static final double kP_RANGE = 0.1;
+    public static final double kP_AIM = 0.03;
+    public static final double kP_RANGE = 0.08;
   }
  
   public static class OperatorConstants {
     // Joystick Deadband
-    public static final double X_DEADBAND = 0.055;
-    public static final double Y_DEADBAND = 0.055;
-    public static final double Z_DEADBAND = 0.075;
+    public static final double X_DEADBAND = 0.05;
+    public static final double Y_DEADBAND = 0.05;
+    public static final double Z_DEADBAND = 0.07;
     public static final double TURN_CONSTANT = 6;
   }
 }
