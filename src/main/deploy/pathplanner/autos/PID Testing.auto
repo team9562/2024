@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.4535216733541423,
-      "y": 5.57998439840296
+      "y": 5.599460783737701
     },
     "rotation": 0
   },
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Testing PID"
+            "pathName": "PID Testing"
           }
         }
       ]

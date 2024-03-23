@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 2.0,
-        "y": 5.55
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.05,
-        "y": 5.55
+        "y": 7.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8,
-        "y": 5.55
+        "x": 3.2,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 2.75,
-        "y": 5.55
+        "x": 3.1500000000000004,
+        "y": 7.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   "folder": "Reuse",
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 1.0
+    "velocity": 2.5
   },
   "useDefaultConstraints": false
 }

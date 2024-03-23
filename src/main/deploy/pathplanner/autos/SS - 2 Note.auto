@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4478070904944451,
-      "y": 5.5592845785196126
+      "x": 0.8108009573077279,
+      "y": 4.294542966310132
     },
-    "rotation": 180.0
+    "rotation": 119.15
   },
   "command": {
     "type": "sequential",
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Speaker Middle - Path 1"
+                  "pathName": "SS - C5"
                 }
               }
             ]
@@ -97,7 +97,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 1.07
                       }
                     }
                   ]
@@ -106,7 +106,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Home Amp"
+                  "pathName": "C5 Intake"
                 }
               }
             ]
@@ -125,7 +125,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Speaker Middle - Path 3"
+                  "pathName": "C5 - SS"
                 }
               }
             ]

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.8108009573077279,
-      "y": 4.294542966310132
+      "x": 1.4478070904944451,
+      "y": 5.5592845785196126
     },
-    "rotation": 119.15
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Speaker Right - Path 1"
+                  "pathName": "SM - H1"
                 }
               }
             ]
@@ -97,7 +97,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 1.58
                       }
                     }
                   ]
@@ -106,7 +106,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center Bottom"
+                  "pathName": "H1 Intake"
                 }
               }
             ]
@@ -125,7 +125,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Speaker Right - Path 3"
+                  "pathName": "H1 - SM"
                 }
               }
             ]

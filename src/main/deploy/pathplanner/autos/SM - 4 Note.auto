@@ -97,7 +97,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.5
+                        "waitTime": 1.7
                       }
                     }
                   ]
@@ -182,7 +182,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "H2 - SM"
+                  "pathName": "SM - H2"
                 }
               }
             ]
@@ -211,7 +211,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.5
+                        "waitTime": 1.7
                       }
                     }
                   ]
@@ -282,10 +282,124 @@
               }
             ]
           }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ANGLE_MIN"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SM - H3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "INTAKE_IN_FRONT"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "INTAKE_IN_SHOOTER"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.7
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "H3 Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ANGLE_MAX"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "H3 - SM"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "SHOOTER_SHOOT"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "SHOOTER_FEED"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
+          }
         }
       ]
     }
   },
-  "folder": "Blue",
+  "folder": null,
   "choreoAuto": false
 }

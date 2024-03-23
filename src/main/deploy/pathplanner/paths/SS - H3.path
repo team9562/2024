@@ -33,17 +33,17 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.4196,
-    "maxAcceleration": 4.25,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 322.42,
-    "maxAngularAcceleration": 464.46
+    "maxAngularAcceleration": 720.926
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 2.5,
     "rotation": 0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Speaker Right",
+  "folder": "SS",
   "previewStartingState": {
     "rotation": 119.15,
     "velocity": 0

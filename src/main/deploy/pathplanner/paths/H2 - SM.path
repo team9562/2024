@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 15.1,
+        "x": 3.2,
         "y": 5.55
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.563448386156033,
-        "y": 5.199923486266726
+        "x": 2.664806504921652,
+        "y": 5.515511277936136
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.851190196207556,
-        "y": 4.327416062239531
+        "x": 2.268143103415836,
+        "y": 5.451037756705143
       },
       "prevControl": {
-        "x": 14.97203930170667,
-        "y": 4.72017565511165
+        "x": 2.32978046203006,
+        "y": 5.450537320827728
       },
       "nextControl": {
-        "x": 14.739806269735999,
-        "y": 3.9654183012069724
+        "x": 2.0319331508792526,
+        "y": 5.452955553598287
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 13.978682772180361,
-        "y": 4.086084221551159
+        "x": 1.45,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 14.687053029661618,
-        "y": 4.108578412465467
+        "x": 2.1905505539406143,
+        "y": 5.561921247299285
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,31 +46,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.95,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "INTAKE_IN_FRONT"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "INTAKE_IN_SHOOTER"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.4196,
     "maxAcceleration": 5.0,
@@ -83,7 +59,7 @@
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Red",
+  "folder": "SM",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

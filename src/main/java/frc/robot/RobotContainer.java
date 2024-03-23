@@ -69,7 +69,7 @@ public class RobotContainer {
   // private final Command homeElevatorCommand = new HomeElevator(elevator,
   // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
-  private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
+  // private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
   private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);// .withTimeout(1);
@@ -198,7 +198,7 @@ public class RobotContainer {
     new JoystickButton(driverYoke, 3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
     new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
 
-    new JoystickButton(driverYoke, 5).onTrue(elevatorHangCommand);
+    // new JoystickButton(driverYoke, 5).onTrue(elevatorHangCommand);
 
     // Controller
 

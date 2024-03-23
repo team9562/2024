@@ -69,7 +69,7 @@
             {
               "type": "named",
               "data": {
-                "name": "INTAKE_SHOOTER"
+                "name": "INTAKE_IN_SHOOTER"
               }
             }
           ]
@@ -79,9 +79,9 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.4196,
-    "maxAcceleration": 4.25,
-    "maxAngularVelocity": 322.415,
-    "maxAngularAcceleration": 605.58
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 322.42,
+    "maxAngularAcceleration": 720.926
   },
   "goalEndState": {
     "velocity": 0,
