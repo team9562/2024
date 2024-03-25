@@ -14,13 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
 import frc.robot.commands.subsystems.elevator.MoveSetpoint;
 import frc.robot.commands.subsystems.intake.Intake;
@@ -28,6 +26,7 @@ import frc.robot.commands.subsystems.shooter.Feed;
 import frc.robot.commands.subsystems.shooter.Shoot;
 import frc.robot.commands.subsystems.shooter.ShootAmp;
 import frc.robot.commands.subsystems.shooter.ShooterIntake;
+import frc.robot.commands.swervedrive.auto.AimTowardsNoteCommand;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -65,7 +64,7 @@ public class RobotContainer {
   private final SendableChooser<Command> m_autoChooser;
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
-  private final Command aimTowardNoteCommand = new InstantCommand(this::aimTowardsNote, drivebase);
+  private final Command aimTowardNoteCommand = new AimTowardsNoteCommand(drivebase);
   // private final Command homeElevatorCommand = new HomeElevator(elevator,
   // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
@@ -185,7 +184,7 @@ public class RobotContainer {
 
     new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
 
-    new JoystickButton(driverYoke, 4).whileTrue(new RepeatCommand(aimTowardNoteCommand));
+    new JoystickButton(driverYoke, 4).whileTrue(aimTowardNoteCommand);
     // new JoystickButton(driverYoke, 8).onTrue(new
     // SequentialCommandGroup(elevatorMinCommand.withTimeout(1.5),
     // angleMinCommand.withTimeout(1.5), new ParallelRaceGroup(intakeInCommand,
@@ -237,18 +236,5 @@ public class RobotContainer {
     drivebase.setMotorBrake(brake);
     elevator.lock(brake);
     angle.lock(brake);
-  }
-
-  public double limelightAimProportional() {
-    return -((LimelightHelpers.getTX(VisionConstants.NAME) * VisionConstants.kP_AIM)
-        * drivebase.getSwerveController().config.maxAngularVelocity);
-  }
-
-  public double limelightRangeProportional() {
-    return -((LimelightHelpers.getTY(VisionConstants.NAME) * VisionConstants.kP_RANGE) * drivebase.maximumSpeed);
-  }
-
-  public void aimTowardsNote() {
-    drivebase.driveLLAim(() -> limelightRangeProportional(), () -> limelightAimProportional());
   }
 }

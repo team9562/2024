@@ -24,6 +24,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.LimelightHelpers;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import org.photonvision.PhotonCamera;
@@ -286,7 +289,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void driveLLAim(DoubleSupplier xSpeed, DoubleSupplier rotation) {
-    swerveDrive.drive(new Translation2d(xSpeed.getAsDouble(), 0),
+    swerveDrive.drive(new Translation2d(Math.abs(xSpeed.getAsDouble()), 0),
         rotation.getAsDouble(),
         false,
         false); // Open loop is disabled since it shouldn't be used most of the time.
@@ -495,5 +498,18 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void addFakeVisionReading() {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
+  public double limelightAimProportional() {
+    return -((LimelightHelpers.getTX(VisionConstants.NAME) * VisionConstants.kP_AIM)
+        * this.getSwerveController().config.maxAngularVelocity);
+  }
+
+  public double limelightRangeProportional() {
+    return -((LimelightHelpers.getTY(VisionConstants.NAME) * VisionConstants.kP_RANGE) * this.maximumSpeed);
+  }
+
+  public void aimTowardsNote() {
+    this.driveLLAim(() -> limelightRangeProportional(), () -> limelightAimProportional());
   }
 }
