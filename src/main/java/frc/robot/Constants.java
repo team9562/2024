@@ -144,8 +144,8 @@ public final class Constants {
     public static final String TABLE_KEY = "limelight";
     public static final String NAME = "limelight";
 
-    public static final double kP_AIM = 0.0185;
-    public static final double kP_RANGE = 0.07;
+    public static final double kP_AIM = 0.00533;
+    public static final double kP_RANGE = 0.0376;
   }
  
   public static class OperatorConstants {

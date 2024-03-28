@@ -6,17 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.subsystems.angle.RotateSetpoint;
@@ -26,7 +23,7 @@ import frc.robot.commands.subsystems.shooter.Feed;
 import frc.robot.commands.subsystems.shooter.Shoot;
 import frc.robot.commands.subsystems.shooter.ShootAmp;
 import frc.robot.commands.subsystems.shooter.ShooterIntake;
-import frc.robot.commands.swervedrive.auto.AimTowardsNoteCommand;
+import frc.robot.commands.swervedrive.AutoIntakeCommand;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -57,18 +54,19 @@ public class RobotContainer {
 
   private final PowerDistribution pdh = new PowerDistribution();
 
-  Joystick driverYoke = new Joystick(1);
-  XboxController driverXbox = new XboxController(0);
+  CommandJoystick driverYoke = new CommandJoystick(1);
+  CommandXboxController driverXbox = new CommandXboxController(0);
 
-  private final SendableChooser<Command> m_commandChooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_teleopChooser = new SendableChooser<>();
   private final SendableChooser<Command> m_autoChooser;
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
-  private final Command aimTowardNoteCommand = new AimTowardsNoteCommand(drivebase);
+  private final Command autoIntakeCommand;
   // private final Command homeElevatorCommand = new HomeElevator(elevator,
   // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
-  // private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
+  // private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle,
+  // ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
   private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);// .withTimeout(1);
@@ -93,6 +91,8 @@ public class RobotContainer {
     shooterIntakeCommand = new ShooterIntake(shooter);
     shooterFeedCommand = new Feed(shooter, InOutDirection.out);
 
+    autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake);
+
     registerPathPlannerNamedCommands();
 
     configureBindings();
@@ -105,17 +105,16 @@ public class RobotContainer {
     Command robotRelative = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
         () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND), false);
+        () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND),
+        false);
 
-    m_commandChooser.addOption("Robot Relative", robotRelative);
-    m_commandChooser.setDefaultOption("Field Relative", fieldRelative);
-
-    drivebase.setDefaultCommand(m_commandChooser.getSelected());
+    m_teleopChooser.addOption("Robot Relative", robotRelative);
+    m_teleopChooser.setDefaultOption("Field Relative", fieldRelative);
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
 
-    SmartDashboard.putData("Auto Chooser", m_autoChooser);
-    SmartDashboard.putData("TeleOp", m_commandChooser);
+    SmartDashboard.putData("Auto", m_autoChooser);
+    SmartDashboard.putData("TeleOp", m_teleopChooser);
 
     burnFlash();
     clearStickyFaults();
@@ -159,14 +158,10 @@ public class RobotContainer {
   }
 
   public void burnFlash() {
-    System.out.println("Burning flash to SparkMAXes...");
-
     angle.burnFlash();
     elevator.burnFlash();
     intake.burnFlash();
     shooter.burnFlash();
-
-    System.out.println("Done");
   }
 
   /**
@@ -182,42 +177,34 @@ public class RobotContainer {
   private void configureBindings() {
     // Yoke
 
-    new JoystickButton(driverYoke, 12).onTrue(zeroGyroCommand);
+    driverYoke.button(12).onTrue(zeroGyroCommand);
 
-    new JoystickButton(driverYoke, 4).whileTrue(aimTowardNoteCommand);
-    // new JoystickButton(driverYoke, 8).onTrue(new
-    // SequentialCommandGroup(elevatorMinCommand.withTimeout(1.5),
-    // angleMinCommand.withTimeout(1.5), new ParallelRaceGroup(intakeInCommand,
-    // shooterIntakeCommand,
-    // new InstantCommand(() -> drivebase.drive(new Translation2d(0, 1), 0,
-    // false)))));
+    driverYoke.button(4).whileTrue(autoIntakeCommand);
 
-    new JoystickButton(driverYoke, 1).whileTrue(shooterShootCommand);
-    new JoystickButton(driverYoke, 2).whileTrue(shooterFeedCommand);
-    new JoystickButton(driverYoke, 3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
-    new JoystickButton(driverYoke, 6).whileTrue(shooterShootAmpCommand);
+    driverYoke.button(1).whileTrue(shooterShootCommand);
+    driverYoke.button(2).whileTrue(shooterFeedCommand);
+    driverYoke.button(3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
+    driverYoke.button(6).whileTrue(shooterShootAmpCommand);
+    driverYoke.button(10).whileTrue(new InstantCommand(drivebase::lock));
 
     // new JoystickButton(driverYoke, 5).onTrue(elevatorHangCommand);
 
     // Controller
 
-    new JoystickButton(driverXbox, XboxController.Button.kLeftStick.value)
-        .onTrue(new InstantCommand(elevator::resetElevatorEncoder));
-    // new JoystickButton(driverXbox,
-    // XboxController.Button.kLeftStick.value).onTrue(homeElevatorCommand);
+    driverXbox.leftStick().onTrue(new InstantCommand(elevator::resetElevatorEncoder));
 
-    new POVButton(driverXbox, 0).onTrue(elevatorMaxCommand);
-    new POVButton(driverXbox, 270).onTrue(elevatorHalfCommand);
-    new POVButton(driverXbox, 180).onTrue(elevatorMinCommand);
+    driverXbox.pov(0).onTrue(elevatorMaxCommand);
+    driverXbox.pov(270).onTrue(elevatorHalfCommand);
+    driverXbox.pov(180).onTrue(elevatorMinCommand);
 
-    new JoystickButton(driverXbox, XboxController.Button.kY.value).onTrue(angleMaxCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kA.value).onTrue(angleMinCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kX.value).onTrue(angleHalfCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kB.value).onTrue(anglePodiumCommand);
+    driverXbox.y().onTrue(angleMaxCommand);
+    driverXbox.a().onTrue(angleMinCommand);
+    driverXbox.x().onTrue(angleHalfCommand);
+    driverXbox.b().onTrue(anglePodiumCommand);
 
     // new JoystickButton(driverXbox,
     // XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
-    new JoystickButton(driverXbox, XboxController.Button.kRightBumper.value).whileTrue(intakeOutCommand);
+    driverXbox.rightBumper().whileTrue(intakeOutCommand);
   }
 
   /**
@@ -230,6 +217,7 @@ public class RobotContainer {
   }
 
   public void setDriveMode() {
+    drivebase.setDefaultCommand(m_teleopChooser.getSelected());
   }
 
   public void setMotorBrake(boolean brake) {
