@@ -1,4 +1,4 @@
-package frc.robot.commands.subsystems.angle;
+package frc.robot.commands.angle;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
@@ -35,7 +35,7 @@ public class RotateSetpoint extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return false; // Angle sags when command is ended, so it runs infinitely for the time being
     }
 
     @Override

@@ -1,4 +1,4 @@
-package frc.robot.commands.swervedrive;
+package frc.robot.commands.swerve;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.MotorConstants;
@@ -25,7 +25,7 @@ public class AutoIntakeCommand extends Command {
         intake.set(InOutDirection.in.percentage);
         shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS * -InOutDirection.in.percentage);
         shooter.setFeeder(MotorConstants.NEO_550_MAX_RPMS * InOutDirection.in.percentage);
-        swerve.aimTowardsNote();
+        swerve.driveTowardsTarget();
     }
 
     @Override

@@ -12,7 +12,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.Constants;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.LimelightHelpers;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -66,13 +66,13 @@ public class VisionSubsystem extends SubsystemBase {
         //             new GoalEndState(0, Rotation2d.fromDegrees(0)));
         // }
 
-        PathPlannerPath path = new PathPlannerPath(null, Constants.PATH_CONSTRAINTS, null);
+        PathPlannerPath path = new PathPlannerPath(null, AutonConstants.PATH_CONSTRAINTS, null);
 
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
                 getPose2d(),
                 new Pose2d(14.81, 5.48, Rotation2d.fromDegrees(0)));
 
-        path = new PathPlannerPath(bezierPoints, Constants.PATH_CONSTRAINTS,
+        path = new PathPlannerPath(bezierPoints, AutonConstants.PATH_CONSTRAINTS,
                 new GoalEndState(0, Rotation2d.fromDegrees(0)));
 
         return AutoBuilder.followPath(path);

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.types.SpeakerPosition;
 import frc.robot.LimelightHelpers;
 
 import java.io.File;
@@ -57,8 +58,8 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param directory Directory of swerve drive config files.
    */
   public SwerveSubsystem(File directory) {
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
-    
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
+
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
     } catch (Exception e) {
@@ -103,8 +104,7 @@ public class SwerveSubsystem extends SubsystemBase {
           var alliance = DriverStation.getAlliance();
           return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
         },
-        this
-    );
+        this);
   }
 
   /**
@@ -509,7 +509,24 @@ public class SwerveSubsystem extends SubsystemBase {
     return -((LimelightHelpers.getTY(VisionConstants.NAME) * VisionConstants.kP_RANGE) * this.maximumSpeed);
   }
 
-  public void aimTowardsNote() {
+  public void driveTowardsTarget() {
     this.driveLLAim(() -> limelightRangeProportional(), () -> limelightAimProportional());
   }
+
+  public void aimTowardsTarget() {
+    this.driveLLAim(() -> 0, () -> limelightAimProportional());
+  }
+
+  public Command pathfindToSpeaker(SpeakerPosition position) {
+    return AutoBuilder.pathfindToPose(position.pose, AutonConstants.PATH_CONSTRAINTS, 0,
+        AutonConstants.ROTATION_DELAY_METERS);
+  }
+
+  // public Command rotate180() {
+  //   List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+  //     getPose(),
+  //     new Pose2d(getPose().getX() + 1, getPose().getY() + 0.3, Rotation2d.fromDegrees(180)));
+    
+      
+  // }
 }

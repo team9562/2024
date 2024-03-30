@@ -1,25 +1,22 @@
-package frc.robot.commands.subsystems.shooter;
+package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.types.InOutDirection;
 
-public class Feed extends Command {
+public class Shoot extends Command {
     private final ShooterSubsystem shooter;
 
-    private final InOutDirection direction;
-
-    public Feed(ShooterSubsystem shooter, InOutDirection direction) {
+    public Shoot(ShooterSubsystem shooter) {
         this.shooter = shooter;
-        this.direction = direction;
 
-        // addRequirements(shooter);
+        addRequirements(shooter);
     }
 
     @Override
     public void execute() {
-        shooter.setFeeder(MotorConstants.NEO_550_MAX_RPMS * direction.percentage);
+        shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS * -InOutDirection.out.percentage);
     }
 
     @Override
@@ -29,6 +26,6 @@ public class Feed extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        shooter.stopFeeder();
+        shooter.stopShooters();
     }
 }

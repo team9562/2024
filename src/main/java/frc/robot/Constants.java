@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PIDConstants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -27,30 +29,47 @@ public final class Constants {
   public static final double ROBOT_MASS = Units.lbsToKilograms(120.8);
   public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
-  public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(4.4196, 4.25, 322.415, 605.58);
-
+  
   public static final class MotorConstants { 
     public static final int NEO_550_NOMINAL_VOLTAGE = 12;
     
     public static final int NEO_550_FREE_LIMIT = 1;
-
+    
     public static final int NEO_V1_NOMINAL_VOLTAGE = 12;
     
     public static final int NEO_V1_FREE_LIMIT = 1;
-
+    
     public static final int NEO_V1_MAX_RPMS = 5600; // 5676, this is a safe limit
     public static final int NEO_550_MAX_RPMS = 10000; // 11K, this is a safe limit
   }
-
+  
   public static final class AutonConstants {
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(5.01, 0,0);
     public static final PIDConstants ANGLE_PID = new PIDConstants(2.75, 0, 0.045);
-  }
 
+    public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(4.4196, 5, 322.415, 720.93);
+    public static final double ROTATION_DELAY_METERS = 1;
+
+    public static final class PPSpeakerPositions {
+      // Blue side, mirrors for red
+
+      public static final Pose2d MIDDLE = new Pose2d(1.45, 5.55, Rotation2d.fromDegrees(180));
+      public static final Pose2d SOURCE_SIDE = new Pose2d(0.75, 4.35, Rotation2d.fromDegrees(120));
+      public static final Pose2d AMP_SIDE = new Pose2d(0.75, 6.75, Rotation2d.fromDegrees(-120));
+    }
+  }
+  
   public static final class DrivebaseConstants {
     public static final double LOCK_TIME = 10; // seconds
-  }
 
+    // TODO: tune
+    public static final class TurnAroundPIDConstants {
+      public static final double kP = 0.01;    
+      public static final double kI = 0;    
+      public static final double kD = 0;    
+    }
+  }
+  
   public static final class ElevatorConstants {
     public static final double SPROCKET_RADIUS = 4.5;
     public static final double GEAR_RATIO = 16;
@@ -73,7 +92,7 @@ public final class Constants {
     public static final int PID_SLOT = 0;
     public static final int PID_SLOT_HANG = 1;
     
-    public static final int STALL_LIMIT = 65;
+    public static final int STALL_LIMIT = 50;
     
     public static final double ELEVATOR_THRESHOLD = 0.25;
     
@@ -137,15 +156,15 @@ public final class Constants {
     public static final int STALL_LIMIT = 35;
 
     public static final double ANGLE_THRESHOLD = 0.5;
-    // public static final double ANGLE_THRESHOLD = 0.25;
   }
 
   public static final class VisionConstants {
     public static final String TABLE_KEY = "limelight";
     public static final String NAME = "limelight";
 
-    public static final double kP_AIM = 0.00533;
-    public static final double kP_RANGE = 0.0376;
+    // TODO: tune
+    public static final double kP_AIM = 0.015;
+    public static final double kP_RANGE = 0.06;
   }
  
   public static class OperatorConstants {
