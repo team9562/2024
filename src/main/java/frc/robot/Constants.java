@@ -139,8 +139,10 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
+    // TODO: get new values
     public static final double ANGLE_MAX_ABS = 0.3842;
     public static final double ANGLE_MIN_ABS = 0.0605;
+    
     public static final double ANGLE_MIN_REL = 0;
     public static final double ANGLE_MAX_REL = 53.6;
     
@@ -157,12 +159,23 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String TABLE_KEY = "limelight";
-    public static final String NAME = "limelight";
+    public static final class NotesConstants {
+      public static final String TABLE_KEY = "LLNotes";
+      public static final String NAME = "LLNotes";
 
-    // TODO: tune
-    public static final double kP_AIM = 0.015;
-    public static final double kP_RANGE = 0.06;
+      // TODO: tune + crosshair + pipeline
+      public static final double kP_AIM = 0.015;
+      public static final double kP_RANGE = 0.06;
+    }
+    
+    public static final class AprilTagConstants {
+      public static final String TABLE_KEY = "LLAprilTags";
+      public static final String NAME = "LLAprilTags";
+      
+      // TODO: tune + crosshair + pipeline
+      public static final double kP_AIM = 0.015;
+      public static final double kP_RANGE = 0.06;
+    }
   }
  
   public static class OperatorConstants {

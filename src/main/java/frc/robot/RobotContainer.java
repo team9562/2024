@@ -29,8 +29,10 @@ import frc.robot.commands.shooter.ShooterIntake;
 import frc.robot.commands.swerve.AutoIntakeCommand;
 import frc.robot.commands.swerve.TurnAroundCommand;
 import frc.robot.subsystems.AngleSubystem;
+import frc.robot.subsystems.AprilTagsVisionSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.NotesVisionSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.types.AngleSetpoint;
@@ -56,6 +58,8 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ShooterSubsystem shooter;
   private final AngleSubystem angle = new AngleSubystem();
+  private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
+  private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -76,10 +80,10 @@ public class RobotContainer {
   // ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
-  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);// .withTimeout(1);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);// .withTimeout(1);
-  private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium);// .withTimeout(1);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max);// .withTimeout(1);
+  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);
+  private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max);
   private final Command shooterShootCommand;
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
@@ -101,12 +105,12 @@ public class RobotContainer {
     shootSequenceCommand = new SequentialCommandGroup(new ParallelRaceGroup(
         angleMaxCommand,
         shooterShootCommand,
-        new WaitCommand(1.5)),
+        new WaitCommand(1.15)),
         new ParallelRaceGroup(
             shooterFeedCommand,
-            new WaitCommand(0.5)));
+            new WaitCommand(0.2)));
 
-    autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake);
+    autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake, notesVision);
 
     registerPathPlannerNamedCommands();
 
