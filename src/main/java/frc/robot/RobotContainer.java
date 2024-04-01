@@ -37,7 +37,6 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import java.io.File;
@@ -65,6 +64,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> m_teleopChooser = new SendableChooser<>();
   private final SendableChooser<Command> m_autoChooser;
+  private final SendableChooser<SpeakerPosition> m_startPositionChooser = new SendableChooser<>();
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
   private final Command turnAroundCommand = new TurnAroundCommand(drivebase);
@@ -128,8 +128,17 @@ public class RobotContainer {
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
 
+    m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
+    m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
+    m_startPositionChooser.setDefaultOption("[BLUE] Speaker Middle", SpeakerPosition.blueMiddle);
+
+    m_startPositionChooser.addOption("[RED] Speaker Amp Side", SpeakerPosition.redAmpSide);
+    m_startPositionChooser.addOption("[RED] Speaker Source Side", SpeakerPosition.redSourceSide);
+    m_startPositionChooser.addOption("[RED] Speaker Middle", SpeakerPosition.redMiddle);
+
     SmartDashboard.putData("Auto", m_autoChooser);
     SmartDashboard.putData("TeleOp", m_teleopChooser);
+    SmartDashboard.putData("Starting Position", m_startPositionChooser);
 
     burnFlash();
     clearStickyFaults();
@@ -146,6 +155,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("INTAKE_IN_FRONT", intakeInCommand);
     NamedCommands.registerCommand("INTAKE_IN_SHOOTER", shooterIntakeCommand);
     NamedCommands.registerCommand("INTAKE_STOP", new InstantCommand(intake::stop));
+  }
+
+  public void setStartPositionOdometry() {
+    drivebase.resetOdometry(m_startPositionChooser.getSelected().pose);
   }
 
   public void homeAngle() {
@@ -194,11 +207,17 @@ public class RobotContainer {
 
     driverYoke.button(12).onTrue(zeroGyroCommand);
 
-    driverYoke.button(4).whileTrue(autoIntakeCommand);
+    driverYoke.button(4).whileTrue(
+        elevator.isBottomedOut() ? new ParallelRaceGroup(angleMinCommand, autoIntakeCommand)
+            : new SequentialCommandGroup(elevatorMinCommand,
+                new ParallelRaceGroup(angleMinCommand, autoIntakeCommand)));
 
     driverYoke.button(1).whileTrue(shooterShootCommand);
     driverYoke.button(2).whileTrue(shooterFeedCommand);
-    driverYoke.button(3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
+    driverYoke.button(3).whileTrue(
+        elevator.isBottomedOut() ? new ParallelRaceGroup(angleMinCommand, shooterIntakeCommand, intakeInCommand)
+            : new SequentialCommandGroup(elevatorMinCommand,
+                new ParallelRaceGroup(angleMinCommand, shooterIntakeCommand, intakeInCommand)));
     driverYoke.button(6).whileTrue(shooterShootAmpCommand);
     driverYoke.button(10).whileTrue(new InstantCommand(drivebase::lock));
 
@@ -241,7 +260,7 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 turnAroundCommand,
                 new ParallelRaceGroup(angleMinCommand, autoIntakeCommand),
-                new ParallelRaceGroup(angleMaxCommand, drivebase.pathfindToSpeaker(SpeakerPosition.middle)),
+                new ParallelRaceGroup(angleMaxCommand, drivebase.pathfindToSpeaker(SpeakerPosition.blueMiddle)),
                 shootSequenceCommand)));
   }
 

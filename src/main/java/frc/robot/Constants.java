@@ -51,11 +51,13 @@ public final class Constants {
     public static final double ROTATION_DELAY_METERS = 1;
 
     public static final class PPSpeakerPositions {
-      // Blue side, mirrors for red
-
-      public static final Pose2d MIDDLE = new Pose2d(1.45, 5.55, Rotation2d.fromDegrees(180));
-      public static final Pose2d SOURCE_SIDE = new Pose2d(0.75, 4.35, Rotation2d.fromDegrees(120));
-      public static final Pose2d AMP_SIDE = new Pose2d(0.75, 6.75, Rotation2d.fromDegrees(-120));
+      public static final Pose2d MIDDLE_BLUE = new Pose2d(1.45, 5.55, Rotation2d.fromDegrees(180));
+      public static final Pose2d SOURCE_SIDE_BLUE = new Pose2d(0.75, 4.35, Rotation2d.fromDegrees(120));
+      public static final Pose2d AMP_SIDE_BLUE = new Pose2d(0.75, 6.75, Rotation2d.fromDegrees(-120));
+      
+      public static final Pose2d MIDDLE_RED = new Pose2d(15.1, 5.55, Rotation2d.fromDegrees(0));
+      public static final Pose2d SOURCE_SIDE_RED = new Pose2d(15.75, 4.35, Rotation2d.fromDegrees(60));
+      public static final Pose2d AMP_SIDE_RED = new Pose2d(15.75, 6.75, Rotation2d.fromDegrees(-60));
     }
   }
   
@@ -107,15 +109,11 @@ public final class Constants {
     
     public static final int LIMIT_SWITCH_PORT = 7;
     
-    // TODO: Find values
-    // Bottom
     public static final double kP_LEFT = 1;
     public static final double kI_LEFT = 0;
     public static final double kD_LEFT = 0;
     public static final double kFF_LEFT = 0.0006;
-    
-    // TODO: Find values
-    // Top
+
     public static final double kP_RIGHT = 0.75;
     public static final double kI_RIGHT = 0;
     public static final double kD_RIGHT = 0;
@@ -168,7 +166,6 @@ public final class Constants {
   }
  
   public static class OperatorConstants {
-    // Joystick Deadband
     public static final double X_DEADBAND = 0.05;
     public static final double Y_DEADBAND = 0.05;
     public static final double Z_DEADBAND = 0.07;

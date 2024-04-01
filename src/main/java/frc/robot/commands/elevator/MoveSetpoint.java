@@ -37,7 +37,8 @@ public class MoveSetpoint extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        if (setpoint == ElevatorSetpoint.min) return elevator.isBottomedOut();
+        else return false;
     }
 
     @Override

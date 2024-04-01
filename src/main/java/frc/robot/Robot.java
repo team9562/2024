@@ -99,20 +99,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_robotContainer.zeroGyro();
+    // m_robotContainer.zeroGyro();
     m_robotContainer.homeAngle();
-
-    m_robotContainer.setMotorBrake(true);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-
+    
     // Assume it starts at 0
     if (m_robotContainer.elevatorBottomedOut())
       m_robotContainer.resetElevatorEncoder();
+
+    m_robotContainer.setMotorBrake(true);
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.setStartPositionOdometry();
+    m_autonomousCommand = m_robotContainer.getSmartAutonomous();
+
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /**
