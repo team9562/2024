@@ -31,7 +31,7 @@ public class AutoIntakeCommand extends Command {
         shooter.setRPMs(MotorConstants.NEO_V1_MAX_RPMS * -InOutDirection.in.percentage);
         shooter.setFeeder(MotorConstants.NEO_550_MAX_RPMS * InOutDirection.in.percentage);
 
-        swerve.driveLLAim(() -> notesVision.rangeP(swerve.maximumSpeed),
+        swerve.driveLLAim(() -> Math.abs(notesVision.rangeP(swerve.maximumSpeed)),
                 () -> notesVision.aimP(swerve.getSwerveController().config.maxAngularVelocity));
     }
 

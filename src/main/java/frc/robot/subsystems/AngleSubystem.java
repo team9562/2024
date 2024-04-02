@@ -26,6 +26,7 @@ public class AngleSubystem extends SubsystemBase {
 
         angle.setInverted(true);
 
+        // angle.setIdleMode(IdleMode.kCoast);
         angle.setIdleMode(IdleMode.kBrake);
 
         angle.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
@@ -38,6 +39,9 @@ public class AngleSubystem extends SubsystemBase {
         anglePidController.setI(AngleConstants.kI);
         anglePidController.setD(AngleConstants.kD);
         anglePidController.setFF(AngleConstants.kFF);
+
+        // angleEncoder.setPositionOffset(AngleConstants.ANGLE_OFFSET_ABS);
+        // angleEncoder.setDistancePerRotation(18 / 64);
     }
 
     public void bootOffset() {
@@ -64,7 +68,7 @@ public class AngleSubystem extends SubsystemBase {
     }
 
     public double getAngle() {
-        return angleEncoder.getAbsolutePosition();
+        return angleEncoder.get();
     }
 
     public boolean isAtTargetAngle() {

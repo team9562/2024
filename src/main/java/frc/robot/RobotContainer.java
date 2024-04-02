@@ -12,14 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.angle.RotateSetpoint;
+import frc.robot.commands.auto.AutoSequenceCommand;
 import frc.robot.commands.elevator.MoveSetpoint;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.shooter.Feed;
@@ -27,9 +25,9 @@ import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootAmp;
 import frc.robot.commands.shooter.ShooterIntake;
 import frc.robot.commands.swerve.AutoIntakeCommand;
+import frc.robot.commands.swerve.FaceAngleCommand;
 import frc.robot.commands.swerve.TurnAroundCommand;
 import frc.robot.subsystems.AngleSubystem;
-import frc.robot.subsystems.AprilTagsVisionSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NotesVisionSubsystem;
@@ -41,6 +39,8 @@ import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+// import com.pathplanner.lib.auto.NamedCommands;
 import java.io.File;
 
 /**
@@ -59,7 +59,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooter;
   private final AngleSubystem angle = new AngleSubystem();
   private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
-  private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
+  // private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -88,7 +88,6 @@ public class RobotContainer {
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
   private final Command shooterFeedCommand;
-  private final Command shootSequenceCommand;
   private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
   private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
 
@@ -102,13 +101,6 @@ public class RobotContainer {
     shooterShootAmpCommand = new ShootAmp(shooter);
     shooterIntakeCommand = new ShooterIntake(shooter);
     shooterFeedCommand = new Feed(shooter, InOutDirection.out);
-    shootSequenceCommand = new SequentialCommandGroup(new ParallelRaceGroup(
-        angleMaxCommand,
-        shooterShootCommand,
-        new WaitCommand(1.15)),
-        new ParallelRaceGroup(
-            shooterFeedCommand,
-            new WaitCommand(0.2)));
 
     autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake, notesVision);
 
@@ -211,17 +203,14 @@ public class RobotContainer {
 
     driverYoke.button(12).onTrue(zeroGyroCommand);
 
-    driverYoke.button(4).whileTrue(
-        elevator.isBottomedOut() ? new ParallelRaceGroup(angleMinCommand, autoIntakeCommand)
-            : new SequentialCommandGroup(elevatorMinCommand,
-                new ParallelRaceGroup(angleMinCommand, autoIntakeCommand)));
+    driverYoke.button(4).whileTrue(autoIntakeCommand);
 
     driverYoke.button(1).whileTrue(shooterShootCommand);
     driverYoke.button(2).whileTrue(shooterFeedCommand);
-    driverYoke.button(3).whileTrue(
-        elevator.isBottomedOut() ? new ParallelRaceGroup(angleMinCommand, shooterIntakeCommand, intakeInCommand)
-            : new SequentialCommandGroup(elevatorMinCommand,
-                new ParallelRaceGroup(angleMinCommand, shooterIntakeCommand, intakeInCommand)));
+
+    driverYoke.button(8).onTrue(turnAroundCommand);
+
+    driverYoke.button(3).whileTrue(new ParallelRaceGroup(shooterIntakeCommand, intakeInCommand));
     driverYoke.button(6).whileTrue(shooterShootAmpCommand);
     driverYoke.button(10).whileTrue(new InstantCommand(drivebase::lock));
 
@@ -240,8 +229,6 @@ public class RobotContainer {
     driverXbox.x().onTrue(angleHalfCommand);
     driverXbox.b().onTrue(anglePodiumCommand);
 
-    // new JoystickButton(driverXbox,
-    // XboxController.Button.kLeftBumper.value).whileTrue(intakeInCommand);
     driverXbox.rightBumper().whileTrue(intakeOutCommand);
   }
 
@@ -255,17 +242,7 @@ public class RobotContainer {
   }
 
   public Command getSmartAutonomous() {
-    return new SequentialCommandGroup(
-        // Preloaded note
-        shootSequenceCommand,
-
-        // LL intake, pathfind, shoot loop
-        new RepeatCommand(
-            new SequentialCommandGroup(
-                turnAroundCommand,
-                new ParallelRaceGroup(angleMinCommand, autoIntakeCommand),
-                new ParallelRaceGroup(angleMaxCommand, drivebase.pathfindToSpeaker(SpeakerPosition.blueMiddle)),
-                shootSequenceCommand)));
+    return new AutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision);
   }
 
   public void setDriveMode() {

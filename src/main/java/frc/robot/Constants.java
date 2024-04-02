@@ -44,11 +44,11 @@ public final class Constants {
   }
   
   public static final class AutonConstants {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5.01, 0,0);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0,0.045);
     public static final PIDConstants ANGLE_PID = new PIDConstants(2.75, 0, 0.045);
 
     public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(4.4196, 5, 322.415, 720.93);
-    public static final double ROTATION_DELAY_METERS = 1;
+    public static final double ROTATION_DELAY_METERS = 0;
 
     public static final class PPSpeakerPositions {
       public static final Pose2d MIDDLE_BLUE = new Pose2d(1.45, 5.55, Rotation2d.fromDegrees(180));
@@ -64,11 +64,11 @@ public final class Constants {
   public static final class DrivebaseConstants {
     public static final double LOCK_TIME = 10; // seconds
 
-    // TODO: tune
     public static final class TurnAroundPIDConstants {
-      public static final double kP = 0.01;    
-      public static final double kI = 0;    
-      public static final double kD = 0;    
+      public static final double kP = 0.0505;
+      public static final double kI = 0.000275;
+      public static final double kD = 0;
+      public static final double TOLERANCE = 4;
     }
   }
   
@@ -139,9 +139,8 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    // TODO: get new values
-    public static final double ANGLE_MAX_ABS = 0.3842;
-    public static final double ANGLE_MIN_ABS = 0.0605;
+    public static final double ANGLE_MAX_ABS = -0.435;
+    public static final double ANGLE_MIN_ABS = 0.712;
     
     public static final double ANGLE_MIN_REL = 0;
     public static final double ANGLE_MAX_REL = 53.6;
@@ -160,21 +159,27 @@ public final class Constants {
 
   public static final class VisionConstants {
     public static final class NotesConstants {
-      public static final String TABLE_KEY = "LLNotes";
-      public static final String NAME = "LLNotes";
+      public static final String TABLE_KEY = "limelight-notes";
+      public static final String NAME = "limelight-notes";
 
       // TODO: tune + crosshair + pipeline
-      public static final double kP_AIM = 0.015;
-      public static final double kP_RANGE = 0.06;
+      public static final double kP_AIM = 0.035;
+      public static final double kP_RANGE = 0.061;
     }
     
     public static final class AprilTagConstants {
-      public static final String TABLE_KEY = "LLAprilTags";
-      public static final String NAME = "LLAprilTags";
+      public static final String TABLE_KEY = "limelight-apriltags";
+      public static final String NAME = "limelight-apriltags";
       
       // TODO: tune + crosshair + pipeline
       public static final double kP_AIM = 0.015;
       public static final double kP_RANGE = 0.06;
+
+      public static final double APRILTAG_HEIGHT = 53.88; // inches
+
+      // TODO: get measurement from CAD or IRL
+      public static final double LIMELIGHT_HEIGHT = 27; // inches
+      public static final double LIMELIGHT_ANGLE = 56; // degrees from horizontal
     }
   }
  

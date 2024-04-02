@@ -99,7 +99,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    // m_robotContainer.zeroGyro();
     m_robotContainer.homeAngle();
     
     // Assume it starts at 0
@@ -107,7 +106,6 @@ public class Robot extends TimedRobot {
       m_robotContainer.resetElevatorEncoder();
 
     m_robotContainer.setMotorBrake(true);
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.setStartPositionOdometry();
     m_autonomousCommand = m_robotContainer.getSmartAutonomous();
 
@@ -131,9 +129,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+    if (m_autonomousCommand != null) m_autonomousCommand.cancel();
 
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
