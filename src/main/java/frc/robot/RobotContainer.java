@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.angle.RotateSetpoint;
-import frc.robot.commands.auto.AutoSequenceCommand;
+import frc.robot.commands.auto.FourNoteAutoSequenceCommand;
+import frc.robot.commands.auto.ThreeNoteAutoSequenceCommand;
 import frc.robot.commands.elevator.MoveSetpoint;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.shooter.Feed;
@@ -36,7 +37,7 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
-import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 // import com.pathplanner.lib.auto.NamedCommands;
@@ -66,7 +67,7 @@ public class RobotContainer {
   CommandXboxController driverXbox = new CommandXboxController(0);
 
   private final SendableChooser<Command> m_teleopChooser = new SendableChooser<>();
-  private final SendableChooser<Command> m_autoChooser;
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   private final SendableChooser<SpeakerPosition> m_startPositionChooser = new SendableChooser<>();
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
@@ -118,14 +119,17 @@ public class RobotContainer {
     m_teleopChooser.addOption("Robot Relative", robotRelative);
     m_teleopChooser.setDefaultOption("Field Relative", fieldRelative);
 
-    m_autoChooser = AutoBuilder.buildAutoChooser();
+    m_autoChooser.addOption("4 Note - Speaker Middle (19s)", new FourNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.setDefaultOption("3 Note - Speaker Middle", new ThreeNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
 
-    // m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
-    // m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
+    // m_autoChooser = AutoBuilder.buildAutoChooser();
+
+    m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
+    m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
     m_startPositionChooser.setDefaultOption("[BLUE] Speaker Middle", SpeakerPosition.blueMiddle);
 
-    // m_startPositionChooser.addOption("[RED] Speaker Amp Side", SpeakerPosition.redAmpSide);
-    // m_startPositionChooser.addOption("[RED] Speaker Source Side", SpeakerPosition.redSourceSide);
+    m_startPositionChooser.addOption("[RED] Speaker Amp Side", SpeakerPosition.redAmpSide);
+    m_startPositionChooser.addOption("[RED] Speaker Source Side", SpeakerPosition.redSourceSide);
     m_startPositionChooser.addOption("[RED] Speaker Middle", SpeakerPosition.redMiddle);
 
     SmartDashboard.putData("Auto", m_autoChooser);
@@ -238,7 +242,7 @@ public class RobotContainer {
   }
 
   public Command getSmartAutonomous() {
-    return new AutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision);
+    return m_autoChooser.getSelected();
   }
 
   public void setDriveMode() {

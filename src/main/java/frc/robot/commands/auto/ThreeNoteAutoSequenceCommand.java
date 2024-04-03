@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.AutonConstants.VantagePoints;
 import frc.robot.commands.angle.RotateSetpoint;
 import frc.robot.commands.shooter.Feed;
 import frc.robot.commands.shooter.Shoot;
@@ -23,8 +22,8 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
 
-public class AutoSequenceCommand extends SequentialCommandGroup {
-    public AutoSequenceCommand(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
+public class ThreeNoteAutoSequenceCommand extends SequentialCommandGroup {
+    public ThreeNoteAutoSequenceCommand(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
             IntakeSubsystem intake, SwerveSubsystem swerve, NotesVisionSubsystem notesVision) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
@@ -71,22 +70,22 @@ public class AutoSequenceCommand extends SequentialCommandGroup {
                         swerve.pathfindToSpeaker(speakerPosition),
                         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
-                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay),
+                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay)//,
                 
-                // H3
-                new FaceAngleCommand(swerve, driversTargetAngleAway),
-                new ParallelRaceGroup(
-                        swerve.pathfind(isRed ? VantagePoints.PP_H3_VANTAGE_POINT_RED : VantagePoints.PP_H3_VANTAGE_POINT_BLUE),
-                        new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, true)
-                ),
-                new AutoIntakeCommand(swerve, shooter, intake, notesVision),
-                new FaceAngleCommand(swerve, driversTargetAngle),
-                new ParallelDeadlineGroup(
-                        new Shoot(shooter, true),
-                        swerve.pathfindToSpeaker(speakerPosition),
-                        new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, true)
-                ),
-                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay)
+                // // H3
+                // new FaceAngleCommand(swerve, driversTargetAngleAway),
+                // new ParallelRaceGroup(
+                //         swerve.pathfind(isRed ? VantagePoints.PP_H3_VANTAGE_POINT_RED : VantagePoints.PP_H3_VANTAGE_POINT_BLUE),
+                //         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, true)
+                // ),
+                // new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                // new FaceAngleCommand(swerve, driversTargetAngle),
+                // new ParallelDeadlineGroup(
+                //         new Shoot(shooter, true),
+                //         swerve.pathfindToSpeaker(speakerPosition),
+                //         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, true)
+                // ),
+                // new Feed(shooter, InOutDirection.out).withTimeout(feedDelay)
         );
 
         addRequirements(angle, shooter, elevator, intake, swerve);
