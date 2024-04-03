@@ -63,7 +63,7 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
 
                 // H1
                 new ParallelRaceGroup(
-                        new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -40 : 40)),
+                        new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -90 : 90)),
                         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
                 new AutoIntakeCommand(swerve, shooter, intake, notesVision),
@@ -76,7 +76,7 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
                 new Feed(shooter, InOutDirection.out).withTimeout(feedDelay),
                 
                 // H3
-                new FaceAngleCommand(swerve, driversTargetAngleAway),
+                new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? 90 : -90)),
                 new ParallelRaceGroup(
                         swerve.pathfind(shootPoint),
                         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, true)
