@@ -25,7 +25,6 @@ import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootAmp;
 import frc.robot.commands.shooter.ShooterIntake;
 import frc.robot.commands.swerve.AutoIntakeCommand;
-import frc.robot.commands.swerve.FaceAngleCommand;
 import frc.robot.commands.swerve.TurnAroundCommand;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -73,17 +72,14 @@ public class RobotContainer {
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
   private final Command turnAroundCommand = new TurnAroundCommand(drivebase);
   private final Command autoIntakeCommand;
-  // private final Command homeElevatorCommand = new HomeElevator(elevator,
-  // angle);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
-  // private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle,
-  // ElevatorSetpoint.hang);
+  private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
-  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half);
-  private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max);
+  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, false);
+  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half, false);
+  private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium, false);
+  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, false);
   private final Command shooterShootCommand;
   private final Command shooterShootAmpCommand;
   private final Command shooterIntakeCommand;
@@ -97,7 +93,7 @@ public class RobotContainer {
   public RobotContainer() {
     shooter = new ShooterSubsystem();
 
-    shooterShootCommand = new Shoot(shooter);
+    shooterShootCommand = new Shoot(shooter, false);
     shooterShootAmpCommand = new ShootAmp(shooter);
     shooterIntakeCommand = new ShooterIntake(shooter);
     shooterFeedCommand = new Feed(shooter, InOutDirection.out);
@@ -124,12 +120,12 @@ public class RobotContainer {
 
     m_autoChooser = AutoBuilder.buildAutoChooser();
 
-    m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
-    m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
+    // m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
+    // m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
     m_startPositionChooser.setDefaultOption("[BLUE] Speaker Middle", SpeakerPosition.blueMiddle);
 
-    m_startPositionChooser.addOption("[RED] Speaker Amp Side", SpeakerPosition.redAmpSide);
-    m_startPositionChooser.addOption("[RED] Speaker Source Side", SpeakerPosition.redSourceSide);
+    // m_startPositionChooser.addOption("[RED] Speaker Amp Side", SpeakerPosition.redAmpSide);
+    // m_startPositionChooser.addOption("[RED] Speaker Source Side", SpeakerPosition.redSourceSide);
     m_startPositionChooser.addOption("[RED] Speaker Middle", SpeakerPosition.redMiddle);
 
     SmartDashboard.putData("Auto", m_autoChooser);
@@ -214,7 +210,7 @@ public class RobotContainer {
     driverYoke.button(6).whileTrue(shooterShootAmpCommand);
     driverYoke.button(10).whileTrue(new InstantCommand(drivebase::lock));
 
-    // new JoystickButton(driverYoke, 5).onTrue(elevatorHangCommand);
+    driverYoke.button(5).onTrue(elevatorHangCommand);
 
     // Controller
 

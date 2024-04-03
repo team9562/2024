@@ -44,18 +44,25 @@ public final class Constants {
   }
   
   public static final class AutonConstants {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0,0.045);
-    public static final PIDConstants ANGLE_PID = new PIDConstants(2.75, 0, 0.045);
+    public static final PIDConstants TRANSLATION_PID = new PIDConstants(5, 0,0.125);
+    public static final PIDConstants ANGLE_PID = new PIDConstants(2.75, 0, 0.055);
 
     public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(4.4196, 5, 322.415, 720.93);
     public static final double ROTATION_DELAY_METERS = 0;
 
+    public static final class VantagePoints {
+      public static final Pose2d PP_H3_VANTAGE_POINT_BLUE = new Pose2d(1.75, 4.125, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_H3_VANTAGE_POINT_RED = new Pose2d(15, 4.1, Rotation2d.fromDegrees(180));
+    }
+
     public static final class PPSpeakerPositions {
       public static final Pose2d MIDDLE_BLUE = new Pose2d(1.45, 5.55, Rotation2d.fromDegrees(180));
+      public static final Pose2d MIDDLE_BLUE_BACK = new Pose2d(1.75, 5.55, Rotation2d.fromDegrees(180));
       public static final Pose2d SOURCE_SIDE_BLUE = new Pose2d(0.75, 4.35, Rotation2d.fromDegrees(120));
       public static final Pose2d AMP_SIDE_BLUE = new Pose2d(0.75, 6.75, Rotation2d.fromDegrees(-120));
       
       public static final Pose2d MIDDLE_RED = new Pose2d(15.1, 5.55, Rotation2d.fromDegrees(0));
+      public static final Pose2d MIDDLE_RED_BACK = new Pose2d(14.85, 5.55, Rotation2d.fromDegrees(0));
       public static final Pose2d SOURCE_SIDE_RED = new Pose2d(15.75, 4.35, Rotation2d.fromDegrees(60));
       public static final Pose2d AMP_SIDE_RED = new Pose2d(15.75, 6.75, Rotation2d.fromDegrees(-60));
     }
@@ -66,9 +73,9 @@ public final class Constants {
 
     public static final class TurnAroundPIDConstants {
       public static final double kP = 0.0505;
-      public static final double kI = 0.000275;
+      public static final double kI = 0.00028;
       public static final double kD = 0;
-      public static final double TOLERANCE = 4;
+      public static final double TOLERANCE = 4.5;
     }
   }
   
@@ -106,26 +113,28 @@ public final class Constants {
     public static final int LEFT_CAN = 15;
     public static final int RIGHT_CAN = 16;
     public static final int FEEDER_CAN = 17;
+
+    public static final double RPM_THRESHOLD = 5000;
     
     public static final int LIMIT_SWITCH_PORT = 7;
     
     public static final double kP_LEFT = 1;
-    public static final double kI_LEFT = 0;
+    public static final double kI_LEFT = 0.2;
     public static final double kD_LEFT = 0;
     public static final double kFF_LEFT = 0.0006;
 
-    public static final double kP_RIGHT = 0.75;
-    public static final double kI_RIGHT = 0;
+    public static final double kP_RIGHT = 1;
+    public static final double kI_RIGHT = 0.25;
     public static final double kD_RIGHT = 0;
-    public static final double kFF_RIGHT = 0.00015;
+    public static final double kFF_RIGHT = 0.0006;
 
     public static final double kP_FEEDER = 0.000125;
     public static final double kI_FEEDER = 0;
     public static final double kD_FEEDER = 0.125;
     public static final double kFF_FEEDER = 0.0001;
     
-    public static final int STALL_LIMIT = 50;
-    public static final int FEEDER_STALL_LIMIT = 40;
+    public static final int STALL_LIMIT = 40;
+    public static final int FEEDER_STALL_LIMIT = 25;
     
     public static final double SENSOR_THRESHOLD_INCHES = 0.5;
   }
@@ -133,7 +142,7 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int INTAKE_CAN = 18;
     
-    public static final int STALL_LIMIT = 35;
+    public static final int STALL_LIMIT = 25;
   }
   
   public static final class AngleConstants {
@@ -147,14 +156,14 @@ public final class Constants {
     
     public static final int ENCODER_PORT = 8;
     
-    public static final double kP = 0.03;
+    public static final double kP = 0.0315;
     public static final double kI = 0;
     public static final double kD = 0.0625;
     public static final double kFF = 0.0003;
 
     public static final int STALL_LIMIT = 35;
 
-    public static final double ANGLE_THRESHOLD = 0.5;
+    public static final double ANGLE_THRESHOLD = 2;
   }
 
   public static final class VisionConstants {
@@ -162,9 +171,8 @@ public final class Constants {
       public static final String TABLE_KEY = "limelight-notes";
       public static final String NAME = "limelight-notes";
 
-      // TODO: tune + crosshair + pipeline
       public static final double kP_AIM = 0.035;
-      public static final double kP_RANGE = 0.061;
+      public static final double kP_RANGE = 0.06;
     }
     
     public static final class AprilTagConstants {
@@ -176,10 +184,8 @@ public final class Constants {
       public static final double kP_RANGE = 0.06;
 
       public static final double APRILTAG_HEIGHT = 53.88; // inches
-
-      // TODO: get measurement from CAD or IRL
-      public static final double LIMELIGHT_HEIGHT = 27; // inches
-      public static final double LIMELIGHT_ANGLE = 56; // degrees from horizontal
+      public static final double LIMELIGHT_HEIGHT = 26.461; // inches
+      public static final double LIMELIGHT_ANGLE = 65; // degrees from horizontal
     }
   }
  

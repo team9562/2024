@@ -503,4 +503,26 @@ public class SwerveSubsystem extends SubsystemBase {
     return AutoBuilder.pathfindToPose(position.pose, AutonConstants.PATH_CONSTRAINTS, 0,
         AutonConstants.ROTATION_DELAY_METERS);
   }
+
+  public Command pathfind(Pose2d position) {
+    return AutoBuilder.pathfindToPose(position, AutonConstants.PATH_CONSTRAINTS, 0,
+        AutonConstants.ROTATION_DELAY_METERS);
+  }
+
+  public Pose2d nearestSpeakerPosition(Pose2d[] positions) {
+    Pose2d nearestPose = null;
+    Pose2d currentPosition = getPose();
+    double nearestDistance = Double.MAX_VALUE;
+
+    for (Pose2d position : positions) {
+      double distance = currentPosition.getTranslation().getDistance(position.getTranslation());
+
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestPose = position;
+      }
+    }
+
+    return nearestPose;
+  }
 }

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.util.Utility;
 
 public class ShooterSubsystem extends SubsystemBase {
     private CANSparkMax shooterFeeder = new CANSparkMax(ShooterConstants.FEEDER_CAN, MotorType.kBrushless);
@@ -109,8 +108,8 @@ public class ShooterSubsystem extends SubsystemBase {
         return shooterFeeder.getEncoder().getVelocity();
     }
 
-    public boolean isAtTargetVelocity() {
-        return Utility.withinTolerance(getLeftVelocity(), targetRPMs, 100);
+    public boolean isFastEnough() {
+        return getRightVelocity() >= ShooterConstants.RPM_THRESHOLD;
     }
 
     public void shootAmpMaxSpeed() {
@@ -140,8 +139,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("At Target Velocity", isAtTargetVelocity());
-
         SmartDashboard.putBoolean("Shooter Bottomed Out", isBottomedOut());
 
         SmartDashboard.putNumber("Target Velocity", targetRPMs);

@@ -28,7 +28,6 @@ public class FaceAngleCommand extends Command {
 
     @Override
     public void execute() {
-        System.out.println(angle);
         double output = pid.calculate(swerve.getHeading().getDegrees());
         swerve.drive(new Translation2d(0, 0), output, false);
     }

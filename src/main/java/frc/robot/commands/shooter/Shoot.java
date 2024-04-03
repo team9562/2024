@@ -7,9 +7,11 @@ import frc.robot.types.InOutDirection;
 
 public class Shoot extends Command {
     private final ShooterSubsystem shooter;
+    private final boolean auto;
 
-    public Shoot(ShooterSubsystem shooter) {
+    public Shoot(ShooterSubsystem shooter, boolean auto) {
         this.shooter = shooter;
+        this.auto = auto;
 
         addRequirements(shooter);
     }
@@ -21,7 +23,7 @@ public class Shoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return auto ? shooter.isFastEnough() : false;
     }
 
     @Override

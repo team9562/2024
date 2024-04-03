@@ -13,14 +13,16 @@ public class RotateSetpoint extends Command {
     private final AngleSubystem angle;
     private final ElevatorSubsystem elevator;
     private final IntakeSubsystem intake;
-
+    
     private final AngleSetpoint setpoint;
+    private final boolean auto;
 
-    public RotateSetpoint(AngleSubystem angle, ElevatorSubsystem elevator, IntakeSubsystem intake, AngleSetpoint setpoint) {
+    public RotateSetpoint(AngleSubystem angle, ElevatorSubsystem elevator, IntakeSubsystem intake, AngleSetpoint setpoint, boolean auto) {
         this.angle = angle;
         this.elevator = elevator;
         this.intake = intake;
         this.setpoint = setpoint;
+        this.auto = auto;
 
         addRequirements(angle);
     }
@@ -35,7 +37,7 @@ public class RotateSetpoint extends Command {
 
     @Override
     public boolean isFinished() {
-        return false; // Angle sags when command is ended, so it runs infinitely for the time being
+        return auto ? angle.isAtTargetAngle() : false;
     }
 
     @Override
