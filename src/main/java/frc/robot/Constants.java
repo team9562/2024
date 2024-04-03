@@ -53,6 +53,8 @@ public final class Constants {
     public static final class VantagePoints {
       public static final Pose2d PP_H3_VANTAGE_POINT_BLUE = new Pose2d(1.75, 4.125, Rotation2d.fromDegrees(0));
       public static final Pose2d PP_H3_VANTAGE_POINT_RED = new Pose2d(15, 4.1, Rotation2d.fromDegrees(180));
+      public static final Pose2d PP_SHOOTING_BLUE = new Pose2d(2.70, 5.55, Rotation2d.fromDegrees(180));
+      public static final Pose2d PP_SHOOTING_RED = new Pose2d(13.85, 5.55, Rotation2d.fromDegrees(0));
     }
 
     public static final class PPSpeakerPositions {
@@ -72,7 +74,8 @@ public final class Constants {
     public static final double LOCK_TIME = 10; // seconds
 
     public static final class TurnAroundPIDConstants {
-      public static final double kP = 0.0505;
+      //public static final double kP = 0.0505;
+      public static final double kP = 0.055;
       public static final double kI = 0.00028;
       public static final double kD = 0;
       public static final double TOLERANCE = 4.5;

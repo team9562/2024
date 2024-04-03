@@ -499,6 +499,11 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
+  public Command pathFindThenPath(PathPlannerPath path) {
+    return AutoBuilder.pathfindThenFollowPath(path, AutonConstants.PATH_CONSTRAINTS,
+        AutonConstants.ROTATION_DELAY_METERS);
+  }
+
   public Command pathfindToSpeaker(SpeakerPosition position) {
     return AutoBuilder.pathfindToPose(position.pose, AutonConstants.PATH_CONSTRAINTS, 0,
         AutonConstants.ROTATION_DELAY_METERS);

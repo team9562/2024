@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.angle.RotateSetpoint;
 import frc.robot.commands.auto.FourNoteAutoSequenceCommand;
+import frc.robot.commands.auto.MessUpCenterNotesCommand;
 import frc.robot.commands.auto.ThreeNoteAutoSequenceCommand;
 import frc.robot.commands.elevator.MoveSetpoint;
 import frc.robot.commands.intake.Intake;
@@ -59,7 +60,8 @@ public class RobotContainer {
   private final ShooterSubsystem shooter;
   private final AngleSubystem angle = new AngleSubystem();
   private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
-  // private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
+  // private final AprilTagsVisionSubsystem aprilTagsVision = new
+  // AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -119,8 +121,15 @@ public class RobotContainer {
     m_teleopChooser.addOption("Robot Relative", robotRelative);
     m_teleopChooser.setDefaultOption("Field Relative", fieldRelative);
 
-    m_autoChooser.addOption("4 Note - Speaker Middle (19s)", new FourNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
-    m_autoChooser.setDefaultOption("3 Note - Speaker Middle", new ThreeNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.addOption("Mess Up Center Notes",
+        new MessUpCenterNotesCommand(angle, shooter, elevator, intake, drivebase, () -> {
+          return m_startPositionChooser.getSelected() == SpeakerPosition.blueSourceSide
+              || m_startPositionChooser.getSelected() == SpeakerPosition.blueSourceSide;
+        }));
+    m_autoChooser.addOption("4 Note - Speaker Middle",
+        new FourNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.setDefaultOption("3 Note - Speaker Middle",
+        new ThreeNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
 
     // m_autoChooser = AutoBuilder.buildAutoChooser();
 
