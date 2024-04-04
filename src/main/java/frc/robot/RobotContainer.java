@@ -38,9 +38,6 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
-import com.pathplanner.lib.auto.NamedCommands;
-
-// import com.pathplanner.lib.auto.NamedCommands;
 import java.io.File;
 
 /**
@@ -59,7 +56,8 @@ public class RobotContainer {
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final AngleSubystem angle = new AngleSubystem();
   private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
-  // private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
+  // private final AprilTagsVisionSubsystem aprilTagsVision = new
+  // AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -88,25 +86,24 @@ public class RobotContainer {
   private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
   private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  private final Command fieldRelative = drivebase.driveCommand(
+      () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
+      () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
+      () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND), true);
+  private final Command robotRelative = drivebase.driveCommand(
+      () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
+      () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
+      () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND),
+      false);
+
   public RobotContainer() {
-    registerPathPlannerNamedCommands();
-
     configureBindings();
+    populateChoosers();
+    burnFlash();
+    clearStickyFaults();
+  }
 
-    Command fieldRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND), true);
-
-    Command robotRelative = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverYoke.getY(), OperatorConstants.Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-driverYoke.getZ(), OperatorConstants.Z_DEADBAND),
-        false);
-
+  private void populateChoosers() {
     m_teleopChooser.addOption("Robot Relative", robotRelative);
     m_teleopChooser.setDefaultOption("Field Relative", fieldRelative);
 
@@ -120,8 +117,6 @@ public class RobotContainer {
     m_autoChooser.setDefaultOption("3 Note - Speaker Middle",
         new ThreeNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
 
-    // m_autoChooser = AutoBuilder.buildAutoChooser();
-
     m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
     m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
     m_startPositionChooser.setDefaultOption("[BLUE] Speaker Middle", SpeakerPosition.blueMiddle);
@@ -133,22 +128,6 @@ public class RobotContainer {
     SmartDashboard.putData("Auto", m_autoChooser);
     SmartDashboard.putData("TeleOp", m_teleopChooser);
     SmartDashboard.putData("Starting Position", m_startPositionChooser);
-
-    burnFlash();
-    clearStickyFaults();
-  }
-
-  public void registerPathPlannerNamedCommands() {
-    NamedCommands.registerCommand("ANGLE_MAX", angleMaxCommand);
-    NamedCommands.registerCommand("ANGLE_MIN", angleMinCommand);
-
-    NamedCommands.registerCommand("SHOOTER_SHOOT", shooterShootCommand);
-    NamedCommands.registerCommand("SHOOTER_FEED", shooterFeedCommand);
-    NamedCommands.registerCommand("SHOOTER_STOP_ALL", new InstantCommand(shooter::stopAll));
-
-    NamedCommands.registerCommand("INTAKE_IN_FRONT", intakeInCommand);
-    NamedCommands.registerCommand("INTAKE_IN_SHOOTER", shooterIntakeCommand);
-    NamedCommands.registerCommand("INTAKE_STOP", new InstantCommand(intake::stop));
   }
 
   public void setStartPositionOdometry() {
@@ -217,6 +196,8 @@ public class RobotContainer {
     // Controller
 
     driverXbox.leftStick().onTrue(new InstantCommand(elevator::resetElevatorEncoder));
+
+    driverXbox.rightStick().onTrue(new InstantCommand(angle::bootOffset)); // TODO: temporary
 
     driverXbox.pov(0).onTrue(elevatorMaxCommand);
     driverXbox.pov(270).onTrue(elevatorHalfCommand);
