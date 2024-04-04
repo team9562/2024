@@ -19,7 +19,7 @@ public class HomeElevator extends Command {
     public void initialize() {
         elevator.stop();
 
-        angle.setTargetAngle(1);
+        angle.setTargetAnglePercentage(1);
     }
 
     @Override
