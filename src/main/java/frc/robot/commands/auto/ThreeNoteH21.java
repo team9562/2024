@@ -1,13 +1,13 @@
 package frc.robot.commands.auto;
 
 import java.util.Optional;
-import edu.wpi.first.math.geometry.Pose2d;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.AutonConstants.VantagePoints;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.angle.RotateSetpointPercentage;
 import frc.robot.commands.shooter.Feed;
 import frc.robot.commands.shooter.Shoot;
@@ -23,8 +23,8 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
 
-public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
-    public FourNoteAutoSequenceCommand(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
+public class ThreeNoteH21 extends SequentialCommandGroup {
+    public ThreeNoteH21(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
             IntakeSubsystem intake, SwerveSubsystem swerve, NotesVisionSubsystem notesVision) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
@@ -32,10 +32,8 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
 
         double driversTargetAngle = isRed ? 0 : 180;
         double driversTargetAngleAway = isRed ? 180 : 0;
-        //SpeakerPosition speakerPosition = isRed ? SpeakerPosition.redMiddle : SpeakerPosition.blueMiddle;
-        Pose2d shootPoint = isRed ? VantagePoints.PP_SHOOTING_RED : VantagePoints.PP_SHOOTING_BLUE;
+        SpeakerPosition speakerPosition = isRed ? SpeakerPosition.redMiddle : SpeakerPosition.blueMiddle;
         SpeakerPosition speakerPositionBack = isRed ? SpeakerPosition.redMiddleBack : SpeakerPosition.blueMiddleBack;
-        double feedDelay = 0.125;
 
         addCommands(
                 // Preloaded note
@@ -43,7 +41,7 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
                         new Shoot(shooter, true),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
-                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay),
+                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION),
 
                 // H2
                 swerve.pathfindToSpeaker(speakerPositionBack),
@@ -55,39 +53,39 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
-                        swerve.pathfind(shootPoint),
-                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.podium, true)
+                        swerve.pathfindToSpeaker(isRed ? speakerPositionBack : speakerPosition),
+                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
-                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay),
+                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION),
 
                 // H1
                 new ParallelRaceGroup(
-                        new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -90 : 90)),
+                        new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -40 : 40)),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
                 new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
-                        swerve.pathfind(shootPoint),
-                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.podium, true)
+                        swerve.pathfindToSpeaker(speakerPosition),
+                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
-                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay),
+                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION)//,
                 
-                // H3
-                new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? 90 : -90)),
-                new ParallelDeadlineGroup(
-                        swerve.pathfind(shootPoint),
-                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
-                ),
-                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
-                new FaceAngleCommand(swerve, driversTargetAngle),
-                new ParallelDeadlineGroup(
-                        new Shoot(shooter, true),
-                        swerve.pathfind(shootPoint),
-                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.podium, true)
-                ),
-                new Feed(shooter, InOutDirection.out).withTimeout(feedDelay)
+                // // H3
+                // new FaceAngleCommand(swerve, driversTargetAngleAway),
+                // new ParallelRaceGroup(
+                //         swerve.pathfind(isRed ? VantagePoints.PP_H3_VANTAGE_POINT_RED : VantagePoints.PP_H3_VANTAGE_POINT_BLUE),
+                //         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, true)
+                // ),
+                // new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                // new FaceAngleCommand(swerve, driversTargetAngle),
+                // new ParallelDeadlineGroup(
+                //         new Shoot(shooter, true),
+                //         swerve.pathfindToSpeaker(speakerPosition),
+                //         new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, true)
+                // ),
+                // new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION)
         );
 
         addRequirements(angle, shooter, elevator, intake, swerve);

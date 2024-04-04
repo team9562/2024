@@ -514,6 +514,11 @@ public class SwerveSubsystem extends SubsystemBase {
         AutonConstants.ROTATION_DELAY_METERS);
   }
 
+  public Command pathfind(Pose2d position, double rotationDelay) {
+    return AutoBuilder.pathfindToPose(position, AutonConstants.PATH_CONSTRAINTS, 0,
+        rotationDelay);
+  }
+
   public Pose2d nearestSpeakerPosition(Pose2d[] positions) {
     Pose2d nearestPose = null;
     Pose2d currentPosition = getPose();

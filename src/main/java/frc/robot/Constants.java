@@ -32,13 +32,20 @@ public final class Constants {
     public static final PIDConstants ANGLE_PID = new PIDConstants(2.75, 0, 0.055);
 
     public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(4.4196, 5, 322.415, 720.93);
-    public static final double ROTATION_DELAY_METERS = 0;
+    public static final double ROTATION_DELAY_METERS = 0.35;
 
     public static final class VantagePoints {
       public static final Pose2d PP_H3_VANTAGE_POINT_BLUE = new Pose2d(1.75, 4.125, Rotation2d.fromDegrees(0));
       public static final Pose2d PP_H3_VANTAGE_POINT_RED = new Pose2d(15, 4.1, Rotation2d.fromDegrees(180));
+     
       public static final Pose2d PP_SHOOTING_BLUE = new Pose2d(2.70, 5.55, Rotation2d.fromDegrees(180));
       public static final Pose2d PP_SHOOTING_RED = new Pose2d(13.85, 5.55, Rotation2d.fromDegrees(0));
+     
+      public static final Pose2d PP_C5_VANTAGE_POINT_BLUE = new Pose2d(7.15, 0.8, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_C5_VANTAGE_POINT_RED = new Pose2d(9.55, 0.8, Rotation2d.fromDegrees(180));
+
+      public static final Pose2d PP_C4_VANTAGE_POINT_BLUE = new Pose2d(7.15, 2.1, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_C4_VANTAGE_POINT_RED = new Pose2d(9.55, 2.1, Rotation2d.fromDegrees(180));
     }
 
     public static final class PPSpeakerPositions {
@@ -101,6 +108,8 @@ public final class Constants {
     public static final int RIGHT_CAN = 16;
     public static final int FEEDER_CAN = 17;
 
+    public static final double FEED_DURATION = 0.125;
+
     public static final double RPM_THRESHOLD = 5000;
     
     public static final int LIMIT_SWITCH_PORT = 7;
@@ -135,14 +144,11 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = -0.7405;
-    public static final double ANGLE_MIN_ABS = 0.359;
-    // public static final double ANGLE_MAX_ABS = -0.736;
-    // public static final double ANGLE_MIN_ABS = 0.297;
+    public static final double ANGLE_MAX_ABS = -0.543;
+    public static final double ANGLE_MIN_ABS = 0.555;
     
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 51.35;
-    // public static final double ANGLE_MAX_REL = 47.36;
+    public static final double ANGLE_MAX_REL = 53.5;
     
     public static final double ANGLE_OFFSET_FLAT = 21; // degrees
 
@@ -183,8 +189,8 @@ public final class Constants {
   }
  
   public static class OperatorConstants {
-    public static final double X_DEADBAND = 0.05;
-    public static final double Y_DEADBAND = 0.05;
+    public static final double X_DEADBAND = 0.0425;
+    public static final double Y_DEADBAND = 0.0425;
     public static final double Z_DEADBAND = 0.075;
     public static final double TURN_CONSTANT = 6;
   }

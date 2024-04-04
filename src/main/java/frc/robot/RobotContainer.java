@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.angle.RotateSetpointPercentage;
-import frc.robot.commands.auto.FourNoteAutoSequenceCommand;
-import frc.robot.commands.auto.MessUpCenterNotesCommand;
-import frc.robot.commands.auto.ThreeNoteAutoSequenceCommand;
+import frc.robot.commands.auto.FourNoteH213;
+import frc.robot.commands.auto.MessUpC;
+import frc.robot.commands.auto.ThreeNoteH21;
+import frc.robot.commands.auto.TwoNoteC4;
+import frc.robot.commands.auto.TwoNoteC5;
 import frc.robot.commands.elevator.MoveSetpoint;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.shooter.Feed;
@@ -44,7 +46,8 @@ public class RobotContainer {
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final AngleSubystem angle = new AngleSubystem();
   private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
-  // private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
+  // private final AprilTagsVisionSubsystem aprilTagsVision = new
+  // AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -62,10 +65,14 @@ public class RobotContainer {
   private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
-  private final Command angleMinCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, false);
-  private final Command angleHalfCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.half, false);
-  private final Command anglePodiumCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.podium, false);
-  private final Command angleMaxCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, false);
+  private final Command angleMinCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min,
+      false);
+  private final Command angleHalfCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.half,
+      false);
+  private final Command anglePodiumCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.podium,
+      false);
+  private final Command angleMaxCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max,
+      false);
   private final Command shooterShootCommand = new Shoot(shooter, false);
   private final Command shooterShootAmpCommand = new ShootAmp(shooter);
   private final Command shooterIntakeCommand = new ShooterIntake(shooter);
@@ -95,14 +102,18 @@ public class RobotContainer {
     m_teleopChooser.setDefaultOption("Field Relative", fieldRelative);
 
     m_autoChooser.addOption("Mess Up Center Notes",
-        new MessUpCenterNotesCommand(angle, shooter, elevator, intake, drivebase, () -> {
+        new MessUpC(angle, shooter, elevator, intake, drivebase, () -> {
           return m_startPositionChooser.getSelected() == SpeakerPosition.blueSourceSide
               || m_startPositionChooser.getSelected() == SpeakerPosition.redSourceSide;
         }));
-    m_autoChooser.addOption("4 Note - Speaker Middle",
-        new FourNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
-    m_autoChooser.setDefaultOption("3 Note - Speaker Middle",
-        new ThreeNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.addOption("4 Note H231 - Speaker Middle",
+        new FourNoteH213(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.addOption("2 Note C5 - Speaker Source",
+        new TwoNoteC5(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.addOption("2 Note C4 - Speaker Source",
+        new TwoNoteC4(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.setDefaultOption("3 Note H21 - Speaker Middle",
+        new ThreeNoteH21(angle, shooter, elevator, intake, drivebase, notesVision));
 
     m_startPositionChooser.addOption("[BLUE] Speaker Amp Side", SpeakerPosition.blueAmpSide);
     m_startPositionChooser.addOption("[BLUE] Speaker Source Side", SpeakerPosition.blueSourceSide);
