@@ -135,11 +135,14 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = -0.736;
-    public static final double ANGLE_MIN_ABS = 0.297;
+    public static final double ANGLE_MAX_ABS = -0.7405;
+    public static final double ANGLE_MIN_ABS = 0.359;
+    // public static final double ANGLE_MAX_ABS = -0.736;
+    // public static final double ANGLE_MIN_ABS = 0.297;
     
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 47.36;
+    // public static final double ANGLE_MAX_REL = 47.36;
+    public static final double ANGLE_MAX_REL = 51.35;
     
     public static final double ANGLE_OFFSET_FLAT = 21; // degrees
 

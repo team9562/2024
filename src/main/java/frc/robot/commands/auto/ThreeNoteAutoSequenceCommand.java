@@ -49,7 +49,7 @@ public class ThreeNoteAutoSequenceCommand extends SequentialCommandGroup {
                         new FaceAngleCommand(swerve, driversTargetAngleAway),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
-                new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
@@ -63,7 +63,7 @@ public class ThreeNoteAutoSequenceCommand extends SequentialCommandGroup {
                         new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -40 : 40)),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
-                new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),

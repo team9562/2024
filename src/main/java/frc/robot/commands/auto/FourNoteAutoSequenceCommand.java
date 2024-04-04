@@ -51,7 +51,7 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
                         new FaceAngleCommand(swerve, driversTargetAngleAway),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
-                new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
@@ -65,7 +65,7 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
                         new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -90 : 90)),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
-                new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
@@ -80,7 +80,7 @@ public class FourNoteAutoSequenceCommand extends SequentialCommandGroup {
                         swerve.pathfind(shootPoint),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
-                new AutoIntakeCommand(swerve, shooter, intake, notesVision),
+                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
                 new FaceAngleCommand(swerve, driversTargetAngle),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),

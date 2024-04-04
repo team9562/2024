@@ -20,12 +20,14 @@ public class AngleSubystem extends SubsystemBase {
     private SparkPIDController anglePidController = angle.getPIDController();
 
     private double targetAngle;
+    private boolean isMin;
 
     public AngleSubystem() {
         angle.restoreFactoryDefaults();
 
         angle.setInverted(true);
 
+        // angle.setIdleMode(IdleMode.kCoast);
         angle.setIdleMode(IdleMode.kBrake);
 
         angle.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
@@ -53,12 +55,20 @@ public class AngleSubystem extends SubsystemBase {
         angle.burnFlash();
     }
 
+    public boolean isAtMin() {
+        return isMin && isAtTargetAngle();
+    }
+
     public void setTargetAnglePercentage(double anglePercentage) {
+        isMin = anglePercentage == 0;
+
         targetAngle = anglePercentage * AngleConstants.ANGLE_MAX_REL;
         anglePidController.setReference(targetAngle, ControlType.kPosition);
     }
 
     public void setTargetAngleDegrees(double degrees) {
+        isMin = degrees == 0;
+
         if (degrees > AngleConstants.ANGLE_MAX_REL) degrees = AngleConstants.ANGLE_MAX_REL;
         else if (degrees < AngleConstants.ANGLE_MIN_REL) degrees = AngleConstants.ANGLE_MIN_REL;
 
@@ -95,14 +105,12 @@ public class AngleSubystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Target Angle", targetAngle);
-
         SmartDashboard.putNumber("Angle Current", angle.getOutputCurrent());
-
         SmartDashboard.putNumber("Angle Absolute Encoder", getAngle());
         SmartDashboard.putNumber("Angle Relative Encoder", angle.getEncoder().getPosition());
-
+        
+        SmartDashboard.putBoolean("Angle At Min", isAtMin());
         SmartDashboard.putBoolean("Angle Absolute Encoder Connected", angleEncoder.isConnected());
-
         SmartDashboard.putBoolean("At Target Angle", isAtTargetAngle());
     }
 }

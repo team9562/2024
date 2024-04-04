@@ -57,7 +57,7 @@ public class RobotContainer {
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
   private final Command turnAroundCommand = new TurnAroundCommand(drivebase);
-  private final Command autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake, notesVision);
+  private final Command autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake, angle, notesVision);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
   private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
@@ -70,8 +70,8 @@ public class RobotContainer {
   private final Command shooterShootAmpCommand = new ShootAmp(shooter);
   private final Command shooterIntakeCommand = new ShooterIntake(shooter);
   private final Command shooterFeedCommand = new Feed(shooter, InOutDirection.out);
-  private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
-  private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
+  private final Command intakeInCommand = new Intake(intake, angle, InOutDirection.in);
+  private final Command intakeOutCommand = new Intake(intake, angle, InOutDirection.out);
 
   private final Command fieldRelative = drivebase.driveCommand(
       () -> MathUtil.applyDeadband(-driverYoke.getX(), OperatorConstants.X_DEADBAND),
@@ -183,6 +183,8 @@ public class RobotContainer {
     // Controller
 
     driverXbox.leftStick().onTrue(new InstantCommand(elevator::resetElevatorEncoder));
+
+    driverXbox.rightStick().onTrue(new InstantCommand(angle::resetRelativeEncoder)); // TODO: temporary
 
     driverXbox.pov(0).onTrue(elevatorMaxCommand);
     driverXbox.pov(270).onTrue(elevatorHalfCommand);
