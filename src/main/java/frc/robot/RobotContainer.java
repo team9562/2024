@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
@@ -16,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.angle.RotateSetpoint;
+import frc.robot.commands.angle.RotateSetpointPercentage;
 import frc.robot.commands.auto.FourNoteAutoSequenceCommand;
 import frc.robot.commands.auto.MessUpCenterNotesCommand;
 import frc.robot.commands.auto.ThreeNoteAutoSequenceCommand;
@@ -40,14 +36,6 @@ import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
 import java.io.File;
 
-/**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a "declarative" paradigm, very
- * little robot logic should actually be handled in the {@link Robot} periodic
- * methods (other than the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and
- * trigger mappings) should be declared here.
- */
 public class RobotContainer {
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve"));
@@ -56,8 +44,7 @@ public class RobotContainer {
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final AngleSubystem angle = new AngleSubystem();
   private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
-  // private final AprilTagsVisionSubsystem aprilTagsVision = new
-  // AprilTagsVisionSubsystem(); // unused
+  // private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -75,10 +62,10 @@ public class RobotContainer {
   private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
   private final Command elevatorMaxCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.max);
-  private final Command angleMinCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.min, false);
-  private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half, false);
-  private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium, false);
-  private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, false);
+  private final Command angleMinCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, false);
+  private final Command angleHalfCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.half, false);
+  private final Command anglePodiumCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.podium, false);
+  private final Command angleMaxCommand = new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, false);
   private final Command shooterShootCommand = new Shoot(shooter, false);
   private final Command shooterShootAmpCommand = new ShootAmp(shooter);
   private final Command shooterIntakeCommand = new ShooterIntake(shooter);
@@ -110,7 +97,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Mess Up Center Notes",
         new MessUpCenterNotesCommand(angle, shooter, elevator, intake, drivebase, () -> {
           return m_startPositionChooser.getSelected() == SpeakerPosition.blueSourceSide
-              || m_startPositionChooser.getSelected() == SpeakerPosition.blueSourceSide;
+              || m_startPositionChooser.getSelected() == SpeakerPosition.redSourceSide;
         }));
     m_autoChooser.addOption("4 Note - Speaker Middle",
         new FourNoteAutoSequenceCommand(angle, shooter, elevator, intake, drivebase, notesVision));
@@ -197,8 +184,6 @@ public class RobotContainer {
 
     driverXbox.leftStick().onTrue(new InstantCommand(elevator::resetElevatorEncoder));
 
-    driverXbox.rightStick().onTrue(new InstantCommand(angle::bootOffset)); // TODO: temporary
-
     driverXbox.pov(0).onTrue(elevatorMaxCommand);
     driverXbox.pov(270).onTrue(elevatorHalfCommand);
     driverXbox.pov(180).onTrue(elevatorMinCommand);
@@ -211,11 +196,6 @@ public class RobotContainer {
     driverXbox.rightBumper().whileTrue(intakeOutCommand);
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     return m_autoChooser.getSelected();
   }

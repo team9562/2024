@@ -5,7 +5,7 @@ import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.angle.RotateSetpoint;
+import frc.robot.commands.angle.RotateSetpointPercentage;
 import frc.robot.commands.shooter.Feed;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.AngleSubystem;
@@ -25,12 +25,12 @@ public class MessUpCenterNotesCommand extends SequentialCommandGroup {
                 // Preloaded note
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
-                        new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, true)
+                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
                 new Feed(shooter, InOutDirection.out).withTimeout(feedDelay),
 
                 // Mess up notes
-                swerve.pathFindThenPath(PathPlannerPath.fromPathFile(isSourceSide.getAsBoolean() ? "C5 - C1" : "C1 - C5"))
+                swerve.pathFindThenPath(PathPlannerPath.fromPathFile(isSourceSide.getAsBoolean() ? "C1 - C5" : "C5 - C1"))
         );
 
         addRequirements(angle, shooter, elevator, intake, swerve);

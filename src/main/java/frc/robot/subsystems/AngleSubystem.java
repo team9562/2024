@@ -53,14 +53,22 @@ public class AngleSubystem extends SubsystemBase {
         angle.burnFlash();
     }
 
-    public void setTargetAngle(double anglePercentage) {
+    public void setTargetAnglePercentage(double anglePercentage) {
         targetAngle = anglePercentage * AngleConstants.ANGLE_MAX_REL;
         anglePidController.setReference(targetAngle, ControlType.kPosition);
-    } 
+    }
+
+    public void setTargetAngleDegrees(double degrees) {
+        if (degrees > AngleConstants.ANGLE_MAX_REL) degrees = AngleConstants.ANGLE_MAX_REL;
+        else if (degrees < AngleConstants.ANGLE_MIN_REL) degrees = AngleConstants.ANGLE_MIN_REL;
+
+        targetAngle = degrees;
+
+        anglePidController.setReference(targetAngle, ControlType.kPosition);
+    }
 
     public void move(double speed) {
         angle.set(speed);
-        // anglePidController.setReference(speed, ControlType.kVelocity);
     }
 
     public double getAngle() {

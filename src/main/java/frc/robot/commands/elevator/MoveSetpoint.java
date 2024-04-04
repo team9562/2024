@@ -22,7 +22,7 @@ public class MoveSetpoint extends Command {
 
     @Override
     public void initialize() {
-        angle.setTargetAngle(AngleSetpoint.max.percentage);
+        angle.setTargetAnglePercentage(AngleSetpoint.max.percentage);
     }
 
     @Override

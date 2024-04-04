@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.pathplanner.lib.path.PathConstraints;
@@ -13,18 +9,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean constants. This
- * class should not be used for any other purpose. All constants should be
- * declared globally (i.e. public static). Do
- * not put anything functional in this class.
- *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
   public static final double ROBOT_MASS = Units.lbsToKilograms(120.8);
   public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(28), Units.inchesToMeters(32), Units.inchesToMeters(8)), ROBOT_MASS);
@@ -151,12 +135,14 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = -0.435;
-    public static final double ANGLE_MIN_ABS = 0.712;
+    public static final double ANGLE_MAX_ABS = -0.736;
+    public static final double ANGLE_MIN_ABS = 0.297;
     
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 53.6;
+    public static final double ANGLE_MAX_REL = 47.36;
     
+    public static final double ANGLE_OFFSET_FLAT = 21; // degrees
+
     public static final int ENCODER_PORT = 8;
     
     public static final double kP = 0.0315;
@@ -187,6 +173,7 @@ public final class Constants {
       public static final double kP_RANGE = 0.06;
 
       public static final double APRILTAG_HEIGHT = 53.88; // inches
+      public static final double SPEAKER_HEIGHT = 84.63; // inches
       public static final double LIMELIGHT_HEIGHT = 26.461; // inches
       public static final double LIMELIGHT_ANGLE = 65; // degrees from horizontal
     }
@@ -195,7 +182,7 @@ public final class Constants {
   public static class OperatorConstants {
     public static final double X_DEADBAND = 0.05;
     public static final double Y_DEADBAND = 0.05;
-    public static final double Z_DEADBAND = 0.07;
+    public static final double Z_DEADBAND = 0.075;
     public static final double TURN_CONSTANT = 6;
   }
 }
