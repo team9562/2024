@@ -38,7 +38,6 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.ElevatorSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
-// import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 // import com.pathplanner.lib.auto.NamedCommands;
@@ -57,11 +56,10 @@ public class RobotContainer {
       "swerve"));
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
-  private final ShooterSubsystem shooter;
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final AngleSubystem angle = new AngleSubystem();
   private final NotesVisionSubsystem notesVision = new NotesVisionSubsystem();
-  // private final AprilTagsVisionSubsystem aprilTagsVision = new
-  // AprilTagsVisionSubsystem(); // unused
+  // private final AprilTagsVisionSubsystem aprilTagsVision = new AprilTagsVisionSubsystem(); // unused
 
   private final PowerDistribution pdh = new PowerDistribution();
 
@@ -74,7 +72,7 @@ public class RobotContainer {
 
   private final Command zeroGyroCommand = new InstantCommand(drivebase::zeroGyro);
   private final Command turnAroundCommand = new TurnAroundCommand(drivebase);
-  private final Command autoIntakeCommand;
+  private final Command autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake, notesVision);
   private final Command elevatorMinCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.min);
   private final Command elevatorHangCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.hang);
   private final Command elevatorHalfCommand = new MoveSetpoint(elevator, angle, ElevatorSetpoint.half);
@@ -83,10 +81,10 @@ public class RobotContainer {
   private final Command angleHalfCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.half, false);
   private final Command anglePodiumCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.podium, false);
   private final Command angleMaxCommand = new RotateSetpoint(angle, elevator, intake, AngleSetpoint.max, false);
-  private final Command shooterShootCommand;
-  private final Command shooterShootAmpCommand;
-  private final Command shooterIntakeCommand;
-  private final Command shooterFeedCommand;
+  private final Command shooterShootCommand = new Shoot(shooter, false);
+  private final Command shooterShootAmpCommand = new ShootAmp(shooter);
+  private final Command shooterIntakeCommand = new ShooterIntake(shooter);
+  private final Command shooterFeedCommand = new Feed(shooter, InOutDirection.out);
   private final Command intakeInCommand = new Intake(intake, InOutDirection.in);
   private final Command intakeOutCommand = new Intake(intake, InOutDirection.out);
 
@@ -94,15 +92,6 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    shooter = new ShooterSubsystem();
-
-    shooterShootCommand = new Shoot(shooter, false);
-    shooterShootAmpCommand = new ShootAmp(shooter);
-    shooterIntakeCommand = new ShooterIntake(shooter);
-    shooterFeedCommand = new Feed(shooter, InOutDirection.out);
-
-    autoIntakeCommand = new AutoIntakeCommand(drivebase, shooter, intake, notesVision);
-
     registerPathPlannerNamedCommands();
 
     configureBindings();
