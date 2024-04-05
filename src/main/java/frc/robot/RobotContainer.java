@@ -16,6 +16,7 @@ import frc.robot.commands.angle.RotateSetpointPercentage;
 import frc.robot.commands.auto.FourNoteH213;
 import frc.robot.commands.auto.MessUpC;
 import frc.robot.commands.auto.ThreeNoteH21;
+import frc.robot.commands.auto.ThreeNoteH23;
 import frc.robot.commands.auto.TwoNoteC4;
 import frc.robot.commands.auto.TwoNoteC5;
 import frc.robot.commands.elevator.MoveSetpoint;
@@ -112,6 +113,8 @@ public class RobotContainer {
         new TwoNoteC5(angle, shooter, elevator, intake, drivebase, notesVision));
     m_autoChooser.addOption("2 Note C4 - Speaker Source",
         new TwoNoteC4(angle, shooter, elevator, intake, drivebase, notesVision));
+    m_autoChooser.addOption("3 Note H23 - Speaker Middle",
+        new ThreeNoteH23(angle, shooter, elevator, intake, drivebase, notesVision));
     m_autoChooser.setDefaultOption("3 Note H21 - Speaker Middle",
         new ThreeNoteH21(angle, shooter, elevator, intake, drivebase, notesVision));
 

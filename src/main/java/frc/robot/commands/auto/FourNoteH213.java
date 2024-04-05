@@ -4,8 +4,8 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.AutonConstants.VantagePoints;
@@ -33,10 +33,8 @@ public class FourNoteH213 extends SequentialCommandGroup {
 
         double driversTargetAngle = isRed ? 0 : 180;
         double driversTargetAngleAway = isRed ? 180 : 0;
-        //SpeakerPosition speakerPosition = isRed ? SpeakerPosition.redMiddle : SpeakerPosition.blueMiddle;
         Pose2d shootPoint = isRed ? VantagePoints.PP_SHOOTING_RED : VantagePoints.PP_SHOOTING_BLUE;
         SpeakerPosition speakerPositionBack = isRed ? SpeakerPosition.redMiddleBack : SpeakerPosition.blueMiddleBack;
-        // double ShooterConstants.FEED_DURATION = 0.125;
 
         addCommands(
                 // Preloaded note
@@ -48,7 +46,7 @@ public class FourNoteH213 extends SequentialCommandGroup {
 
                 // H2
                 swerve.pathfindToSpeaker(speakerPositionBack),
-                new ParallelDeadlineGroup(
+                new ParallelCommandGroup(
                         new FaceAngleCommand(swerve, driversTargetAngleAway),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
@@ -62,7 +60,7 @@ public class FourNoteH213 extends SequentialCommandGroup {
                 new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION),
 
                 // H1
-                new ParallelRaceGroup(
+                new ParallelCommandGroup(
                         new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -90 : 90)),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
@@ -77,7 +75,7 @@ public class FourNoteH213 extends SequentialCommandGroup {
                 
                 // H3
                 new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? 90 : -90)),
-                new ParallelDeadlineGroup(
+                new ParallelCommandGroup(
                         swerve.pathfind(shootPoint),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),

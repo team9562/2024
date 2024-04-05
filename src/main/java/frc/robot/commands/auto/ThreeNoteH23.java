@@ -2,12 +2,14 @@ package frc.robot.commands.auto;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.AutonConstants.VantagePoints;
 import frc.robot.commands.angle.RotateSetpointPercentage;
 import frc.robot.commands.shooter.Feed;
 import frc.robot.commands.shooter.Shoot;
@@ -23,8 +25,8 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
 
-public class ThreeNoteH21 extends SequentialCommandGroup {
-    public ThreeNoteH21(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
+public class ThreeNoteH23 extends SequentialCommandGroup {
+    public ThreeNoteH23(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
             IntakeSubsystem intake, SwerveSubsystem swerve, NotesVisionSubsystem notesVision) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
@@ -34,6 +36,7 @@ public class ThreeNoteH21 extends SequentialCommandGroup {
         double driversTargetAngleAway = isRed ? 180 : 0;
         SpeakerPosition speakerPosition = isRed ? SpeakerPosition.redMiddle : SpeakerPosition.blueMiddle;
         SpeakerPosition speakerPositionBack = isRed ? SpeakerPosition.redMiddleBack : SpeakerPosition.blueMiddleBack;
+        Pose2d h3VantagePoint = isRed ? VantagePoints.PP_H3_VANTAGE_POINT_RED : VantagePoints.PP_H3_VANTAGE_POINT_BLUE;
 
         addCommands(
                 // Preloaded note
@@ -58,9 +61,10 @@ public class ThreeNoteH21 extends SequentialCommandGroup {
                 ),
                 new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION),
 
-                // H1
+                // H3
+                new FaceAngleCommand(swerve, driversTargetAngleAway),
                 new ParallelCommandGroup(
-                        new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -40 : 40)),
+                        swerve.pathfind(h3VantagePoint),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
                 new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
@@ -70,7 +74,7 @@ public class ThreeNoteH21 extends SequentialCommandGroup {
                         swerve.pathfindToSpeaker(speakerPosition),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
-                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION)//,
+                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION)
         );
 
         addRequirements(angle, shooter, elevator, intake, swerve);

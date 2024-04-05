@@ -28,7 +28,6 @@ public class AngleSubystem extends SubsystemBase {
         angle.setInverted(true);
 
         angle.setIdleMode(IdleMode.kBrake);
-        // angle.setIdleMode(IdleMode.kCoast);
 
         angle.enableVoltageCompensation(MotorConstants.NEO_V1_NOMINAL_VOLTAGE);
 
