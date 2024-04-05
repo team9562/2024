@@ -519,20 +519,20 @@ public class SwerveSubsystem extends SubsystemBase {
         rotationDelay);
   }
 
-  public Pose2d nearestSpeakerPosition(Pose2d[] positions) {
-    Pose2d nearestPose = null;
-    Pose2d currentPosition = getPose();
-    double nearestDistance = Double.MAX_VALUE;
+  // public Pose2d nearestSpeakerPosition(Pose2d[] positions) {
+  //   Pose2d nearestPose = null;
+  //   Pose2d currentPosition = getPose();
+  //   double nearestDistance = Double.MAX_VALUE;
 
-    for (Pose2d position : positions) {
-      double distance = currentPosition.getTranslation().getDistance(position.getTranslation());
+  //   for (Pose2d position : positions) {
+  //     double distance = currentPosition.getTranslation().getDistance(position.getTranslation());
 
-      if (distance < nearestDistance) {
-        nearestDistance = distance;
-        nearestPose = position;
-      }
-    }
+  //     if (distance < nearestDistance) {
+  //       nearestDistance = distance;
+  //       nearestPose = position;
+  //     }
+  //   }
 
-    return nearestPose;
-  }
+  //   return nearestPose;
+  // }
 }

@@ -53,14 +53,15 @@ public final class Constants {
 
     public static final class PPSpeakerPositions {
       public static final Pose2d MIDDLE_BLUE = new Pose2d(1.45, 5.55, Rotation2d.fromDegrees(180));
-      public static final Pose2d MIDDLE_BLUE_BACK = new Pose2d(1.75, 5.55, Rotation2d.fromDegrees(180));
       public static final Pose2d SOURCE_SIDE_BLUE = new Pose2d(0.75, 4.35, Rotation2d.fromDegrees(120));
       public static final Pose2d AMP_SIDE_BLUE = new Pose2d(0.75, 6.75, Rotation2d.fromDegrees(-120));
       
       public static final Pose2d MIDDLE_RED = new Pose2d(15.1, 5.55, Rotation2d.fromDegrees(0));
-      public static final Pose2d MIDDLE_RED_BACK = new Pose2d(14.85, 5.55, Rotation2d.fromDegrees(0));
       public static final Pose2d SOURCE_SIDE_RED = new Pose2d(15.75, 4.35, Rotation2d.fromDegrees(60));
       public static final Pose2d AMP_SIDE_RED = new Pose2d(15.75, 6.75, Rotation2d.fromDegrees(-60));
+      
+      public static final Pose2d MIDDLE_BLUE_BACK = new Pose2d(1.75, 5.55, Rotation2d.fromDegrees(180));
+      public static final Pose2d MIDDLE_RED_BACK = new Pose2d(14.85, 5.55, Rotation2d.fromDegrees(0));
     }
   }
   
