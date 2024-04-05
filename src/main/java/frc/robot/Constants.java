@@ -43,6 +43,9 @@ public final class Constants {
      
       public static final Pose2d PP_C5_VANTAGE_POINT_BLUE = new Pose2d(7.15, 0.8, Rotation2d.fromDegrees(0));
       public static final Pose2d PP_C5_VANTAGE_POINT_RED = new Pose2d(9.55, 0.8, Rotation2d.fromDegrees(180));
+      
+      public static final Pose2d PP_C1_VANTAGE_POINT_BLUE = new Pose2d(7.15, 7.45, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_C1_VANTAGE_POINT_RED = new Pose2d(9.55, 7.45, Rotation2d.fromDegrees(180));
 
       public static final Pose2d PP_C4_VANTAGE_POINT_BLUE = new Pose2d(7.15, 2.1, Rotation2d.fromDegrees(0));
       public static final Pose2d PP_C4_VANTAGE_POINT_RED = new Pose2d(9.55, 2.1, Rotation2d.fromDegrees(180));
@@ -143,11 +146,11 @@ public final class Constants {
   public static final class AngleConstants {
     public static final int ANGLE_CAN = 19;
     
-    public static final double ANGLE_MAX_ABS = -0.5765;
-    public static final double ANGLE_MIN_ABS = 0.5336;
+    public static final double ANGLE_MAX_ABS = -0.655;
+    public static final double ANGLE_MIN_ABS = 0.576;
     
     public static final double ANGLE_MIN_REL = 0;
-    public static final double ANGLE_MAX_REL = 50.571;
+    public static final double ANGLE_MAX_REL = 53.65;
     
     public static final double ANGLE_OFFSET_FLAT = 21; // degrees
 

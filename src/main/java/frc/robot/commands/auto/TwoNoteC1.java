@@ -3,15 +3,14 @@ package frc.robot.commands.auto;
 import java.util.Optional;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.AutonConstants.VantagePoints;
 import frc.robot.commands.angle.RotateSetpointPercentage;
 import frc.robot.commands.shooter.Feed;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.swerve.AutoIntakeCommand;
-import frc.robot.commands.swerve.FaceAngleCommand;
 import frc.robot.subsystems.AngleSubystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -22,17 +21,12 @@ import frc.robot.types.AngleSetpoint;
 import frc.robot.types.InOutDirection;
 import frc.robot.types.SpeakerPosition;
 
-public class ThreeNoteH21 extends SequentialCommandGroup {
-    public ThreeNoteH21(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
+public class TwoNoteC1 extends SequentialCommandGroup {
+    public TwoNoteC1(AngleSubystem angle, ShooterSubsystem shooter, ElevatorSubsystem elevator,
             IntakeSubsystem intake, SwerveSubsystem swerve, NotesVisionSubsystem notesVision) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
-
+        
         boolean isRed = alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
-
-        double driversTargetAngle = isRed ? 0 : 180;
-        double driversTargetAngleAway = isRed ? 180 : 0;
-        SpeakerPosition speakerPosition = isRed ? SpeakerPosition.redMiddle : SpeakerPosition.blueMiddle;
-        SpeakerPosition speakerPositionBack = isRed ? SpeakerPosition.redMiddleBack : SpeakerPosition.blueMiddleBack;
 
         addCommands(
                 // Preloaded note
@@ -42,34 +36,18 @@ public class ThreeNoteH21 extends SequentialCommandGroup {
                 ),
                 new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION),
 
-                // H2
-                swerve.pathfindToSpeaker(speakerPositionBack),
-                new ParallelCommandGroup(
-                        new FaceAngleCommand(swerve, driversTargetAngleAway),
+                // C1
+                new ParallelDeadlineGroup(
+                        swerve.pathfind(isRed ? VantagePoints.PP_C1_VANTAGE_POINT_RED : VantagePoints.PP_C1_VANTAGE_POINT_BLUE, 1.25),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
                 ),
-                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
-                new FaceAngleCommand(swerve, driversTargetAngle),
+                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),     
+                swerve.pathfindToSpeaker(isRed ? SpeakerPosition.redAmpSide : SpeakerPosition.blueAmpSide),
                 new ParallelDeadlineGroup(
                         new Shoot(shooter, true),
-                        swerve.pathfindToSpeaker(speakerPosition),
                         new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
                 ),
-                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION),
-
-                // H1
-                new ParallelCommandGroup(
-                        new FaceAngleCommand(swerve, driversTargetAngleAway + (isRed ? -40 : 40)),
-                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.min, true)
-                ),
-                new AutoIntakeCommand(swerve, shooter, intake, angle, notesVision),
-                new FaceAngleCommand(swerve, driversTargetAngle),
-                new ParallelDeadlineGroup(
-                        new Shoot(shooter, true),
-                        swerve.pathfindToSpeaker(speakerPosition),
-                        new RotateSetpointPercentage(angle, elevator, intake, AngleSetpoint.max, true)
-                ),
-                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION)//,
+                new Feed(shooter, InOutDirection.out).withTimeout(ShooterConstants.FEED_DURATION)
         );
 
         addRequirements(angle, shooter, elevator, intake, swerve);

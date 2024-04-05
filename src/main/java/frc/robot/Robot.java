@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putString("DS Alliance", DriverStation.getAlliance().get().toString());
+    SmartDashboard.putBoolean("FMS Red?", NetworkTableInstance.getDefault().getTable("FMSInfo").getValue("IsRedAlliance").getBoolean());
   }
 
   /**
