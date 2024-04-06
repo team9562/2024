@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.setMotorBrake(true);
     m_robotContainer.setStartPositionOdometry();
-    m_autonomousCommand = m_robotContainer.getSmartAutonomous();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null)
       m_autonomousCommand.schedule();

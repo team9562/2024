@@ -42,7 +42,7 @@ public class AngleSubystem extends SubsystemBase {
         anglePidController.setFF(AngleConstants.kFF);
     }
 
-    public void bootOffset() {
+    public void homeAngle() {
         double absPercent = (getAngle() - AngleConstants.ANGLE_MIN_ABS) / (AngleConstants.ANGLE_MAX_ABS - AngleConstants.ANGLE_MIN_ABS);
         angle.getEncoder().setPosition(absPercent * AngleConstants.ANGLE_MAX_REL);
     }

@@ -44,11 +44,19 @@ public final class Constants {
       public static final Pose2d PP_C5_VANTAGE_POINT_BLUE = new Pose2d(7.15, 0.8, Rotation2d.fromDegrees(0));
       public static final Pose2d PP_C5_VANTAGE_POINT_RED = new Pose2d(9.55, 0.8, Rotation2d.fromDegrees(180));
       
+      public static final Pose2d PP_C4_VANTAGE_POINT_BLUE = new Pose2d(7.15, 2.45, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_C4_VANTAGE_POINT_RED = new Pose2d(9.55, 2.45, Rotation2d.fromDegrees(180));
+      
+      public static final Pose2d PP_C3_VANTAGE_POINT_BLUE = new Pose2d(7.15, 4.1, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_C3_VANTAGE_POINT_RED = new Pose2d(9.55, 4.1, Rotation2d.fromDegrees(180));
+      
+      public static final Pose2d PP_C2_VANTAGE_POINT_BLUE = new Pose2d(7.15, 5.8, Rotation2d.fromDegrees(0));
+      public static final Pose2d PP_C2_VANTAGE_POINT_RED = new Pose2d(9.55, 5.8, Rotation2d.fromDegrees(180));
+      
       public static final Pose2d PP_C1_VANTAGE_POINT_BLUE = new Pose2d(7.15, 7.45, Rotation2d.fromDegrees(0));
       public static final Pose2d PP_C1_VANTAGE_POINT_RED = new Pose2d(9.55, 7.45, Rotation2d.fromDegrees(180));
 
-      public static final Pose2d PP_C4_VANTAGE_POINT_BLUE = new Pose2d(7.15, 2.1, Rotation2d.fromDegrees(0));
-      public static final Pose2d PP_C4_VANTAGE_POINT_RED = new Pose2d(9.55, 2.1, Rotation2d.fromDegrees(180));
+      
     }
 
     public static final class PPSpeakerPositions {
@@ -154,6 +162,8 @@ public final class Constants {
     public static final double ANGLE_MAX_REL = 53.65;
     
     public static final double ANGLE_OFFSET_FLAT = 21; // degrees
+
+    public static final double AUTON_SAG_COMPENSATION_PERCENT = 0.055;
 
     public static final int ENCODER_PORT = 8;
     

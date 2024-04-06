@@ -139,7 +139,7 @@ public class RobotContainer {
   }
 
   public void homeAngle() {
-    angle.bootOffset();
+    angle.homeAngle();
   }
 
   public boolean elevatorBottomedOut() {
@@ -216,10 +216,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return m_autoChooser.getSelected();
-  }
-
-  public Command getSmartAutonomous() {
     return m_autoChooser.getSelected();
   }
 
